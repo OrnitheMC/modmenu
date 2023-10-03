@@ -6,7 +6,7 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.render.texture.DynamicTexture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public class FabricDummyParentMod implements Mod {
 	}
 
 	@Override
-	public @NotNull NativeImageBackedTexture getIcon(FabricIconHandler iconHandler, int i) {
+	public @NotNull DynamicTexture getIcon(FabricIconHandler iconHandler, int i) {
 		String iconSourceId = host.getId();
 		FabricMod.ModMenuData.DummyParentData parentData = host.getModMenuData().getDummyParentData();
 		String iconPath = null;
@@ -103,7 +103,7 @@ public class FabricDummyParentMod implements Mod {
 		if (parentData != null) {
 			return parentData.getBadges();
 		}
-		var badges = new HashSet<Badge>();
+		Set<Badge> badges = new HashSet<Badge>();
 		if (id.equals("fabric-api")) {
 			badges.add(Badge.LIBRARY);
 		}

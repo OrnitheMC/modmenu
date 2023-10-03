@@ -13,20 +13,22 @@ import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.*;
+import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.texture.NativeImageBackedTexture;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class FabricMod implements Mod {
-	private static final Logger LOGGER = LoggerFactory.getLogger("Mod Menu | FabricMod");
+	private static final Logger LOGGER = LogManager.getLogger("Mod Menu | FabricMod");
 
 	protected final ModContainer container;
 	protected final ModMetadata metadata;
@@ -95,17 +97,13 @@ public class FabricMod implements Mod {
 				parentData
 		);
 
-		/* Hardcode parents and badges for Fabric API & Fabric Loader */
+		/* Hardcode parents and badges for OSL & Fabric Loader */
 		String id = metadata.getId();
-		if (id.startsWith("fabric") && metadata.containsCustomValue("fabric-api:module-lifecycle")) {
-			if (FabricLoader.getInstance().isModLoaded("fabric-api") || !FabricLoader.getInstance().isModLoaded("fabric")) {
-				modMenuData.fillParentIfEmpty("fabric-api");
-			} else {
-				modMenuData.fillParentIfEmpty("fabric");
-			}
+		if (id.startsWith("osl-")) {
+			modMenuData.fillParentIfEmpty("osl");
 			modMenuData.badges.add(Badge.LIBRARY);
 		}
-		if (id.startsWith("fabric") && (id.equals("fabricloader") || metadata.getProvides().contains("fabricloader") || id.equals("fabric") || id.equals("fabric-api") || metadata.getProvides().contains("fabric") || metadata.getProvides().contains("fabric-api") || id.equals("fabric-language-kotlin"))) {
+		if (id.startsWith("fabric") && (id.equals("fabricloader") || metadata.getProvides().contains("fabricloader")) || (id.equals("osl") || metadata.getProvides().contains("osl"))) {
 			modMenuData.badges.add(Badge.LIBRARY);
 		}
 
@@ -146,7 +144,7 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull NativeImageBackedTexture getIcon(FabricIconHandler iconHandler, int i) {
+	public @NotNull DynamicTexture getIcon(FabricIconHandler iconHandler, int i) {
 		String iconSourceId = getId();
 		String iconPath = metadata.getIconPath(i).orElse("assets/" + getId() + "/icon.png");
 		if ("minecraft".equals(getId())) {
@@ -158,7 +156,7 @@ public class FabricMod implements Mod {
 		}
 		final String finalIconSourceId = iconSourceId;
 		ModContainer iconSource = FabricLoader.getInstance().getModContainer(iconSourceId).orElseThrow(() -> new RuntimeException("Cannot get ModContainer for Fabric mod with id " + finalIconSourceId));
-		NativeImageBackedTexture icon = iconHandler.createIcon(iconSource, iconPath);
+		DynamicTexture icon = iconHandler.createIcon(iconSource, iconPath);
 		if (icon == null) {
 			if (defaultIconWarning) {
 				LOGGER.warn("Warning! Mod {} has a broken icon, loading default icon", metadata.getId());
@@ -176,7 +174,7 @@ public class FabricMod implements Mod {
 
 	@Override
 	public @NotNull String getTranslatedDescription() {
-		var description = Mod.super.getTranslatedDescription();
+		String description = Mod.super.getTranslatedDescription();
 		if (getId().equals("java")) {
 			description = description + "\n" + I18n.translate("modmenu.javaDistributionName", getName());
 		}
@@ -300,11 +298,11 @@ public class FabricMod implements Mod {
 	}
 
 	public @Nullable String getSha512Hash() throws IOException {
-		if (container.getContainingMod().isEmpty() && container.getOrigin().getKind() == ModOrigin.Kind.PATH) {
+		if (!container.getContainingMod().isPresent() && container.getOrigin().getKind() == ModOrigin.Kind.PATH) {
 			List<Path> paths = container.getOrigin().getPaths();
-			var fileOptional = paths.stream().filter(path -> path.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).findFirst();
+			Optional<Path> fileOptional = paths.stream().filter(path -> path.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).findFirst();
 			if (fileOptional.isPresent()) {
-				var file = fileOptional.get().toFile();
+				File file = fileOptional.get().toFile();
 				if (file.isFile()) {
 					return Files.asByteSource(file).hash(Hashing.sha512()).toString();
 				}

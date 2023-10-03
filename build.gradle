@@ -1,29 +1,85 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'maven-publish'
+	id 'fabric-loom' version '1.4-SNAPSHOT'
+	id 'ploceus' version '1.4-SNAPSHOT'
 }
 
-apply from: 'https://raw.githubusercontent.com/TerraformersMC/GradleScripts/2.5+no-cf/ferry.gradle'
-
-dependencies {
-	minecraft "com.mojang:minecraft:$project.minecraft_version"
-	mappings "net.fabricmc:yarn:$project.yarn_mappings:v2"
-
-	mod "fabric-loader", "net.fabricmc:fabric-loader:$project.loader_version"
-	includeMod "fabric-api", fabricApi.module("fabric-api-base", project.fabric_version)
-	includeMod "fabric-api", fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
-	includeMod "fabric-api", fabricApi.module("fabric-screen-api-v1", project.fabric_version)
-	includeMod "fabric-api", fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
-	includeMod "fabric-api", fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
-	compileOnly "org.quiltmc:quilt-loader:$project.quilt_loader_version"
+base {
+	archivesName = project.archives_base_name
 }
+version = "${project.version}+mc${project.minecraft_version}"
+group = project.maven_group
 
 repositories {
 	maven {
-		name = 'TerraformersMC'
-		url = 'https://maven.terraformersmc.com/'
-	}
-	maven {
 		name = 'Quilt'
 		url = 'https://maven.quiltmc.org/repository/release'
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
+
+	ploceus.dependOsl(project.osl_version)
+}
+
+processResources {
+	inputs.property 'version', version
+
+	filesMatching('fabric.mod.json') {
+		expand 'version': version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = 'UTF-8'
+	it.options.release = 8
+}
+
+java {
+	// Still required by IDEs such as Eclipse and Visual Studio Code
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task if it is present.
+	// If you remove this line, sources will not be generated.
+	withSourcesJar()
+
+	// If this mod is going to be a library, then it should also generate Javadocs in order to aid with development.
+	// Uncomment this line to generate them.
+	withJavadocJar()
+}
+
+jar {
+	from('LICENSE') {
+		rename { "${it}_${base.archivesName.get()}" }
+	}
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+
+	repositories {
+		def ENV = System.getenv()
+
+		if (ENV.MAVEN_URL) {
+			maven {
+				url ENV.MAVEN_URL
+
+				credentials {
+					username ENV.MAVEN_USERNAME
+					password ENV.MAVEN_PASSWORD
+				}
+			}
+		} else {
+			mavenLocal()
+		}
 	}
 }

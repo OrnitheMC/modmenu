@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -8,6 +7,8 @@ import com.google.gson.GsonBuilder;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
+import com.terraformersmc.modmenu.config.ModMenuConfig.GameMenuButtonStyle;
+import com.terraformersmc.modmenu.config.ModMenuConfig.TitleMenuButtonStyle;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.util.ModrinthUtil;
@@ -15,25 +16,25 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricDummyParentMod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricMod;
 import com.terraformersmc.modmenu.util.mod.quilt.QuiltMod;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.MutableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minecraft.text.TranslatableText;
+import net.ornithemc.osl.entrypoints.api.client.ClientModInitializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.function.Supplier;
 
 public class ModMenu implements ClientModInitializer {
 	public static final String MOD_ID = "modmenu";
 	public static final String GITHUB_REF = "TerraformersMC/ModMenu";
-	public static final Logger LOGGER = LoggerFactory.getLogger("Mod Menu");
+	public static final Logger LOGGER = LogManager.getLogger("Mod Menu");
 	public static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).setPrettyPrinting().create();
 	public static final Gson GSON_MINIFIED = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
@@ -64,7 +65,7 @@ public class ModMenu implements ClientModInitializer {
 	}
 
 	@Override
-	public void onInitializeClient() {
+	public void initClient() {
 		ModMenuConfigManager.initializeConfig();
 		Set<String> modpackMods = new HashSet<>();
 		FabricLoader.getInstance().getEntrypointContainers("modmenu", ModMenuApi.class).forEach(entrypoint -> {
@@ -156,22 +157,22 @@ public class ModMenu implements ClientModInitializer {
 	}
 
 	public static Text createModsButtonText(boolean title) {
-		var titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
-		var gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
-		var isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
-		var isShort = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.REPLACE_BUGS;
-		MutableText modsText = Text.translatable("modmenu.title");
+		TitleMenuButtonStyle titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
+		GameMenuButtonStyle gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
+		boolean isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
+		boolean isShort = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK : false;
+		Text modsText = new TranslatableText("modmenu.title");
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();
 			if (isShort) {
-				modsText.append(Text.literal(" ")).append(Text.translatable("modmenu.loaded.short", count));
+				modsText.append(new LiteralText(" ")).append(new TranslatableText("modmenu.loaded.short", count));
 			} else {
 				String specificKey = "modmenu.loaded." + count;
 				String key = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
 				if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
 					key = specificKey + ".secret";
 				}
-				modsText.append(Text.literal(" ")).append(Text.translatable(key, count));
+				modsText.append(new LiteralText(" ")).append(new TranslatableText(key, count));
 			}
 		}
 		return modsText;

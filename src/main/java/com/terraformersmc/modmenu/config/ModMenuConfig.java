@@ -2,11 +2,10 @@ package com.terraformersmc.modmenu.config;
 
 import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
+import com.terraformersmc.modmenu.config.option.ConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
-import com.terraformersmc.modmenu.config.option.OptionConvertable;
 import com.terraformersmc.modmenu.config.option.StringSetConfigOption;
 import com.terraformersmc.modmenu.util.mod.Mod;
-import net.minecraft.client.option.SimpleOption;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -21,7 +20,7 @@ public class ModMenuConfig {
 	public static final BooleanConfigOption COMPACT_LIST = new BooleanConfigOption("compact_list", false);
 	public static final BooleanConfigOption COUNT_CHILDREN = new BooleanConfigOption("count_children", true);
 	public static final EnumConfigOption<TitleMenuButtonStyle> MODS_BUTTON_STYLE = new EnumConfigOption<>("mods_button_style", TitleMenuButtonStyle.CLASSIC);
-	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>("game_menu_button_style", GameMenuButtonStyle.REPLACE_BUGS);
+	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>("game_menu_button_style", GameMenuButtonStyle.BELOW_ADVANCEMENTS_AND_STATISTICS);
 	public static final BooleanConfigOption COUNT_HIDDEN_MODS = new BooleanConfigOption("count_hidden_mods", true);
 	public static final EnumConfigOption<ModCountLocation> MOD_COUNT_LOCATION = new EnumConfigOption<>("mod_count_location", ModCountLocation.TITLE_SCREEN);
 	public static final BooleanConfigOption HIDE_MOD_LINKS = new BooleanConfigOption("hide_mod_links", false);
@@ -37,7 +36,6 @@ public class ModMenuConfig {
 	public static final BooleanConfigOption TRANSLATE_NAMES = new BooleanConfigOption("translate_names", true);
 	public static final BooleanConfigOption TRANSLATE_DESCRIPTIONS = new BooleanConfigOption("translate_descriptions", true);
 	public static final BooleanConfigOption CONFIG_MODE = new BooleanConfigOption("config_mode", false);
-	public static final BooleanConfigOption DISABLE_DRAG_AND_DROP = new BooleanConfigOption("disable_drag_and_drop", false);
 	public static final StringSetConfigOption HIDDEN_MODS = new StringSetConfigOption("hidden_mods", new HashSet<>());
 	public static final StringSetConfigOption HIDDEN_CONFIGS = new StringSetConfigOption("hidden_configs", new HashSet<>());
 	public static final StringSetConfigOption DISABLE_UPDATE_CHECKER = new StringSetConfigOption("disable_update_checker", new HashSet<>());
@@ -45,12 +43,12 @@ public class ModMenuConfig {
 	public static final BooleanConfigOption BUTTON_UPDATE_BADGE = new BooleanConfigOption("button_update_badge", true);
 	public static final BooleanConfigOption QUICK_CONFIGURE = new BooleanConfigOption("quick_configure", true);
 
-	public static SimpleOption<?>[] asOptions() {
-		ArrayList<SimpleOption<?>> options = new ArrayList<>();
+	public static ConfigOption[] asOptions() {
+		ArrayList<ConfigOption> options = new ArrayList<>();
 		for (Field field : ModMenuConfig.class.getDeclaredFields()) {
 			if (Modifier.isStatic(field.getModifiers())
 					&& Modifier.isFinal(field.getModifiers())
-					&& OptionConvertable.class.isAssignableFrom(field.getType())
+					&& ConfigOption.class.isAssignableFrom(field.getType())
 					&& !field.getName().equals("HIDE_CONFIG_BUTTONS")
 					&& !field.getName().equals("MODIFY_TITLE_SCREEN")
 					&& !field.getName().equals("MODIFY_GAME_MENU")
@@ -58,13 +56,13 @@ public class ModMenuConfig {
 					&& !field.getName().equals("DISABLE_DRAG_AND_DROP")
 			) {
 				try {
-					options.add(((OptionConvertable) field.get(null)).asOption());
+					options.add(((ConfigOption) field.get(null)));
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		return options.stream().toArray(SimpleOption[]::new);
+		return options.stream().toArray(ConfigOption[]::new);
 	}
 
 	public enum Sorting {
@@ -122,10 +120,12 @@ public class ModMenuConfig {
 	}
 
 	public enum GameMenuButtonStyle {
-		@SerializedName("replace_bugs")
-		REPLACE_BUGS,
-		@SerializedName("below_bugs")
-		BELOW_BUGS,
+		@SerializedName("below_advancements")
+		BELOW_ADVANCEMENTS,
+		@SerializedName("below_statistics")
+		BELOW_STATISTICS,
+		@SerializedName("below_advancements_and_statistics")
+		BELOW_ADVANCEMENTS_AND_STATISTICS,
 		@SerializedName("icon")
 		ICON;
 	}

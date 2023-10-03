@@ -5,9 +5,11 @@ import com.google.common.io.Files;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import net.fabricmc.loader.api.metadata.ModOrigin;
+import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.quiltmc.loader.api.QuiltLoader;
@@ -33,7 +35,7 @@ public interface Mod {
 	}
 
 	@NotNull
-	NativeImageBackedTexture getIcon(FabricIconHandler iconHandler, int i);
+	DynamicTexture getIcon(FabricIconHandler iconHandler, int i);
 
 	@NotNull
 	default String getSummary() {
@@ -130,7 +132,7 @@ public interface Mod {
 		private static final Map<String, Badge> KEY_MAP = new HashMap<>();
 
 		Badge(String translationKey, int outlineColor, int fillColor, String key) {
-			this.text = Text.translatable(translationKey);
+			this.text = new TranslatableText(translationKey);
 			this.outlineColor = outlineColor;
 			this.fillColor = fillColor;
 			this.key = key;

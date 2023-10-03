@@ -9,36 +9,39 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.Minecraft;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.unmapped.C_6254461;
+import net.minecraft.util.Utils;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.FutureTask;
+
+import org.apache.http.HttpRequest;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModrinthUtil {
-	public static final Logger LOGGER = LoggerFactory.getLogger("Mod Menu/Update Checker");
+	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Update Checker");
 
-	private static final HttpClient client = HttpClient.newHttpClient();
-	private static boolean apiV2Deprecated = false;
+	private static final HttpClient client = HttpClientBuilder.create().build();
 
 	private static boolean allowsUpdateChecks(Mod mod) {
 		return mod.allowsUpdateChecks();
 	}
 
 	public static void checkForUpdates() {
-		if (apiV2Deprecated || !ModMenuConfig.UPDATE_CHECKER.getValue()) {
+		if (!ModMenuConfig.UPDATE_CHECKER.getValue()) {
 			return;
 		}
 
-		Util.getMainWorkerExecutor().execute(() -> {
+/*		CompletableFuture.runAsync(() -> {
 			LOGGER.info("Checking mod updates...");
 
 			Map<String, Set<Mod>> modHashes = new HashMap<>();
@@ -60,13 +63,13 @@ public class ModrinthUtil {
 
 			String environment = ModMenu.devEnvironment ? "/development": "";
 			String primaryLoader = ModMenu.runningQuilt ? "quilt" : "fabric";
-			List<String> loaders = ModMenu.runningQuilt ? List.of("fabric", "quilt") : List.of("fabric");
+			List<String> loaders = ModMenu.runningQuilt ? Arrays.asList("fabric", "quilt") : Arrays.asList("fabric");
 
 			String mcVer = SharedConstants.getGameVersion().getName();
 			String[] splitVersion = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
 					.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
-			final var modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
-			final var userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
+			final String modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
+			final String userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
 			String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer));
 			LOGGER.debug("User agent: " + userAgent);
 			LOGGER.debug("Body: " + body);
@@ -114,17 +117,7 @@ public class ModrinthUtil {
 			} catch (IOException | InterruptedException e) {
 				LOGGER.error("Error checking for updates: ", e);
 			}
-		});
-	}
-
-	public static void triggerV2DeprecatedToast() {
-		if (apiV2Deprecated && ModMenuConfig.UPDATE_CHECKER.getValue()) {
-			MinecraftClient.getInstance().getToastManager().add(new SystemToast(
-					SystemToast.Type.PERIODIC_NOTIFICATION,
-					Text.translatable("modmenu.modrinth.v2_deprecated.title"),
-					Text.translatable("modmenu.modrinth.v2_deprecated.description")
-			));
-		}
+		});*/
 	}
 
 	public static class LatestVersionsFromHashesBody {
@@ -137,7 +130,8 @@ public class ModrinthUtil {
 		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion) {
 			this.hashes = hashes;
 			this.loaders = loaders;
-			this.gameVersions = Set.of(mcVersion);
+			this.gameVersions = new HashSet<>();
+			this.gameVersions.add(mcVersion);
 		}
 	}
 }

@@ -1,9 +1,10 @@
 package com.terraformersmc.modmenu.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class VersionUtil {
-	private static final List<String> PREFIXES = List.of("version", "ver", "v");
+	private static final List<String> PREFIXES = Arrays.asList("version", "ver", "v");
 
 	private VersionUtil() {
 		return;

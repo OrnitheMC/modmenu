@@ -1,4 +1,4 @@
-![Mod Menu](https://i.imgur.com/dMYWAjn.png)
+![Mod Menu Ornithe](https://i.imgur.com/dMYWAjn.png)
 
 Adds a screen for viewing a list of installed mods. 
 * The menu is searchable and sortable, libraries can be hidden. 
@@ -7,10 +7,13 @@ Adds a screen for viewing a list of installed mods.
 * The mod details page also lets the user configure the mod, if available (can be disabled for modpacks via config).
 
 <h4 align="center">
-Mod Menu requires <a href="https://fabricmc.net/use/">Fabric Loader</a>
+Mod Menu Ornithe requires <a href="https://ornithemc.net/">Fabric Loader</a>
 </h4>
 <h4 align="center">
-Check out the <a href="https://discord.gg/jEGF5fb">Terraformers Discord Server</a> to chat about Mod Menu and other Fabric mods!
+Mod Menu Ornithe is an Ornithe port of the original Fabric mod by TerraformersMC - check out their <a href="https://discord.gg/jEGF5fb">Discord Server</a>!
+</h4>
+<h4 align="center">
+Check out the <a href="https://discord.gg/JbRbRf62pn">Ornithe Discord Server</a> to chat about Mod Menu Ornithe and other Ornithe mods!
 </h4>
 <h4 align="center">
 Visit the <a href="https://github.com/TerraformersMC/ModMenu/wiki">Mod Menu Wiki</a> to learn more about the features
@@ -25,9 +28,3 @@ You can view the features more in-depth on the [Mod Menu wiki](https://github.co
 ### Developers
 
 If you are a developer and would like to see what metadata Mod Menu will make use of, how to add Library or Client-side only badges to your mod, or how to make your Config screens accessible via Mod Menu, check out [the API documentation on the Mod Menu wiki](https://github.com/TerraformersMC/ModMenu/wiki/API)
-
-### Translators
-
-Mod Menu uses [Crowdin](https://crowdin.com/project/mod-menu), the same cloud-based localization management tool that Minecraft uses.
-
-### Mod Menu is a mod for Fabric, and there are no plans to port this mod to Forge.

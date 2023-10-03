@@ -7,7 +7,7 @@
   "license": "MIT",
   "icon": "assets/modmenu/icon.png",
   "entrypoints": {
-    "client": [
+    "client-init": [
       "com.terraformersmc.modmenu.ModMenu"
     ],
     "modmenu": [
@@ -15,20 +15,15 @@
     ]
   },
   "contact": {
-    "homepage": "https://modrinth.com/mod/modmenu",
-    "sources": "https://github.com/TerraformersMC/ModMenu",
-    "issues": "https://github.com/TerraformersMC/ModMenu/issues"
+    "homepage": "https://modrinth.com/mod/modmenu-ornithe",
+    "sources": "https://github.com/OrnitheMC/modmenu",
+    "issues": "https://github.com/OrnitheMC/modmenu/issues"
   },
   "depends": {
-    "fabric-resource-loader-v0": "*",
-    "fabric-screen-api-v1": ">=1.0.4",
-    "fabric-key-binding-api-v1": "*",
-    "fabric-lifecycle-events-v1": "*",
-    "fabricloader": ">=0.12.13",
-    "minecraft": ">=1.19.4-"
-  },
-  "breaks" : {
-    "better_mod_button": "*"
+    "minecraft": "1.13.x",
+    "fabricloader": ">=0.14.21",
+    "osl-entrypoints": ">=0.4.0",
+    "osl-resource-loader": ">=0.2.3"
   },
   "authors": [
     "Prospector",
@@ -99,7 +94,8 @@
     "MagnusHJensen",
     "Benjamin-Norton",
     "triphora",
-    "Pyrrha"
+    "Pyrrha",
+    "Space Walker"
   ],
   "description": "Adds a mod menu to view the list of mods you have installed.",
   "mixins": [
@@ -108,7 +104,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/jEGF5fb"
+        "modmenu.discord": "https://discord.gg/JbRbRf62pn"
       }
     }
   }

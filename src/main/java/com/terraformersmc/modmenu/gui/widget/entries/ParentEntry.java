@@ -1,17 +1,19 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
+
+import net.minecraft.client.gui.GuiElement;
+import net.minecraft.client.render.TextRenderer;
+import net.minecraft.resource.Identifier;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
+import net.minecraft.util.Utils;
+
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
@@ -31,14 +33,16 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(DrawContext DrawContext, int index, int y, int x, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-		super.render(DrawContext, index, y, x, rowWidth, rowHeight, mouseX, mouseY, isSelected, delta);
+	public void render(int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
+		super.render(rowWidth, rowHeight, mouseX, mouseY, isSelected, delta);
+		int x = getX();
+		int y = getY();
 		TextRenderer font = client.textRenderer;
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
-		Text str = shownChildren == children.size() ? Text.literal(String.valueOf(shownChildren)) : Text.literal(shownChildren + "/" + children.size());
-		int childrenWidth = font.getWidth(str) - 1;
+		Text str = shownChildren == children.size() ? new LiteralText(String.valueOf(shownChildren)) : new LiteralText(shownChildren + "/" + children.size());
+		int childrenWidth = font.getWidth(str.getFormattedString()) - 1;
 		if (childrenBadgeWidth < childrenWidth + 4) {
 			childrenBadgeWidth = childrenWidth + 4;
 		}
@@ -47,19 +51,20 @@ public class ParentEntry extends ModListEntry {
 		int childrenBadgeY = y + iconSize - childrenBadgeHeight;
 		int childrenOutlineColor = 0xff107454;
 		int childrenFillColor = 0xff093929;
-		DrawContext.fill(childrenBadgeX + 1, childrenBadgeY, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX, childrenBadgeY + 1, childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
-		DrawContext.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
-		DrawContext.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
-		DrawContext.drawText(font, str.asOrderedText(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA, false);
+		GuiElement.fill(childrenBadgeX + 1, childrenBadgeY, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenOutlineColor);
+		GuiElement.fill( childrenBadgeX, childrenBadgeY + 1, childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
+		GuiElement.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
+		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
+		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
+		font.draw(str.getFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
 		if (isMouseOver(mouseX, mouseY)) {
-			DrawContext.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
+			GuiElement.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
 			int xOffset = list.getParent().showModChildren.contains(getMod().getId()) ? iconSize : 0;
 			int yOffset = hoveringIcon ? iconSize : 0;
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			DrawContext.drawTexture(PARENT_MOD_TEXTURE, x, y, xOffset, yOffset, iconSize + xOffset, iconSize + yOffset, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256);
+			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			this.client.getTextureManager().bind(PARENT_MOD_TEXTURE);
+			GuiElement.drawTexture(x, y, xOffset, yOffset, iconSize + xOffset, iconSize + yOffset, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256);
 		}
 	}
 
@@ -70,7 +75,7 @@ public class ParentEntry extends ModListEntry {
 		if (mouseX - list.getRowLeft() <= iconSize) {
 			this.toggleChildren();
 			return true;
-		} else if (!quickConfigure && Util.getMeasuringTimeMs() - this.sinceLastClick < 250) {
+		} else if (!quickConfigure && Utils.getTimeMillis() - this.sinceLastClick < 250) {
 			this.toggleChildren();
 			return true;
 		} else {
@@ -133,7 +138,6 @@ public class ParentEntry extends ModListEntry {
 		return children;
 	}
 
-	@Override
 	public boolean isMouseOver(double double_1, double double_2) {
 		return Objects.equals(this.list.getEntryAtPos(double_1, double_2), this);
 	}

@@ -12,10 +12,10 @@ import org.quiltmc.loader.api.ModContributor;
 import org.quiltmc.loader.api.ModMetadata;
 import org.quiltmc.loader.api.QuiltLoader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -67,15 +67,15 @@ public class QuiltMod extends FabricMod {
 
 
 	public @Nullable String getSha512Hash() throws IOException {
-		var fabricResult = super.getSha512Hash();
+		String fabricResult = super.getSha512Hash();
 		if (fabricResult == null) {
 			ModrinthUtil.LOGGER.debug("Checking {}", getId());
 			if (container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_QUILT) || container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_FABRIC)) {
-				for (var paths : container.getSourcePaths()) {
-					List<Path> jars = paths.stream().filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).toList();
+				for (List<Path> paths : container.getSourcePaths()) {
+					List<Path> jars = paths.stream().filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).collect(Collectors.toList());
 
 					if (jars.size() == 1 && jars.get(0).getFileSystem() == FileSystems.getDefault()) {
-						var file = jars.get(0).toFile();
+						File file = jars.get(0).toFile();
 
 						if (file.exists()) {
 							ModrinthUtil.LOGGER.debug("Found {} hash", getId());
