@@ -14,6 +14,8 @@ public class ModMenuOptionsScreen extends Screen {
 	private Screen previous;
 	private String title;
 	private ConfigOptionListWidget list;
+	private int mouseX;
+	private int mouseY;
 
 	public ModMenuOptionsScreen(Screen previous) {
 		this.previous = previous;
@@ -28,10 +30,20 @@ public class ModMenuOptionsScreen extends Screen {
 
 	@Override
 	public void render(int mouseX, int mouseY, float delta) {
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
 		this.renderBackground();
 		this.list.render(mouseX, mouseY, delta);
 		this.drawCenteredString(this.textRenderer, this.title, this.width / 2, 5, 0xffffff);
 		super.render(mouseX, mouseY, delta);
+	}
+
+	@Override
+	public void handleMouse() {
+		super.handleMouse();
+		if (this.list.isMouseInList(mouseX, mouseY)) {
+			this.list.handleMouse();
+		}
 	}
 
 	@Override

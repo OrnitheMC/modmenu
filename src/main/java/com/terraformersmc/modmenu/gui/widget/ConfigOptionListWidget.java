@@ -57,6 +57,10 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		return super.getScrollbarPosition() + 32;
 	}
 
+	public boolean isMouseInList(int mouseX, int mouseY) {
+		return mouseY >= this.minY && mouseY <= this.maxY && mouseX >= this.minX && mouseX <= this.maxX;
+	}
+
 	public final class Entry implements EntryListWidget.Entry {
 		@Nullable
 		private final ConfigOption leftOption;
