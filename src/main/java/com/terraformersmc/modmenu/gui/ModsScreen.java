@@ -1,7 +1,6 @@
 package com.terraformersmc.modmenu.gui;
 
 import com.google.common.base.Joiner;
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
@@ -11,6 +10,7 @@ import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.gui.widget.TexturedButtonWidget;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
 import com.terraformersmc.modmenu.util.DrawingUtil;
+import com.terraformersmc.modmenu.util.OsUtil;
 import com.terraformersmc.modmenu.util.ScreenUtil;
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -280,7 +280,7 @@ public class ModsScreen extends Screen implements Controller {
 			break;
 		}
 		case MODS_FOLDER: {
-			GLX.openFolder(new File(FabricLoader.getInstance().getGameDir().toFile(), "mods"));
+			OsUtil.openFolder(new File(FabricLoader.getInstance().getGameDir().toFile(), "mods"));
 			break;
 		}
 		case DONE: {

@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "AccessorButtonWidget",
+    "AccessorI18n",
+    "AccessorTranslationStorage",
     "InvokerScreen",
     "MixinGameMenu",
     "MixinTitleScreen"
