@@ -217,7 +217,7 @@ public class ModsScreen extends Screen {
 			}
 		};
 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
-			this.children.add(filtersButton);
+			this.addButton(filtersButton);
 		}
 		String showLibrariesText = ModMenuConfig.SHOW_LIBRARIES.getValueLabel();
 		String sortingText = ModMenuConfig.SORTING.getValueLabel();
@@ -226,7 +226,7 @@ public class ModsScreen extends Screen {
 		filtersWidth = showLibrariesWidth + sortingWidth + 2;
 		searchRowWidth = searchBoxX + searchBoxWidth + 22;
 		updateFiltersX();
-		this.children.add(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
+		this.addButton(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
 			@Override
 			public void m_9319498(double d, double e) {
 				ModMenuConfig.SORTING.cycleValue();
@@ -241,7 +241,7 @@ public class ModsScreen extends Screen {
 				super.render(mouseX, mouseY, delta);
 			}
 		});
-		this.children.add(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
+		this.addButton(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
 			@Override
 			public void m_9319498(double d, double e) {
 				ModMenuConfig.SHOW_LIBRARIES.toggleValue();
