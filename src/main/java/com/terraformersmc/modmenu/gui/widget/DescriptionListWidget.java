@@ -83,6 +83,8 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 	@Override
 	public void render(int mouseX, int mouseY, float delta) {
+		this.mouseX = mouseX;
+		this.mouseY = mouseY;
 		capScrolling();
 		ModListEntry selectedEntry = parent.getSelectedEntry();
 		if (selectedEntry != lastSelected) {
