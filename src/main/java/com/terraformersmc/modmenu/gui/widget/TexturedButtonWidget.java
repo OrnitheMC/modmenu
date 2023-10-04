@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-
 import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
@@ -27,9 +26,9 @@ public class TexturedButtonWidget extends ButtonWidget {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float delta) {
+	public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
 		if (this.visible) {
-			Minecraft.getInstance().getTextureManager().bind(this.texture);
+			minecraft.getTextureManager().bind(this.texture);
 			GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);
 			boolean hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			int u = this.u;

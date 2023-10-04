@@ -17,15 +17,17 @@ import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
+
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ModListWidget extends EntryListWidget<ModListEntry> implements AutoCloseable {
+public class ModListWidget extends EntryListWidget implements AutoCloseable {
 	public static final boolean DEBUG = Boolean.getBoolean("modmenu.debug");
 	private final ModsScreen parent;
+	private final List<ModListEntry> entries = new ArrayList<>();
 	private List<Mod> mods = null;
 	private final Set<Mod> addedMods = new HashSet<>();
 	private String selectedModId = null;
@@ -55,6 +57,10 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 		}
 	}
 
+	public boolean isMouseInList(int mouseX, int mouseY) {
+		return mouseY >= this.minY && mouseY <= this.maxY && mouseX >= this.minX && mouseX <= this.maxX;
+	}
+
 	protected boolean isFocused() {
 		return false; //return parent.getFocused() == this;
 	}
@@ -71,7 +77,7 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 
 	@Override
 	protected boolean isEntrySelected(int index) {
-		return selected != null && selected.getMod().getId().equals(this.children().get(index).getMod().getId());
+		return selected != null && selected.getMod().getId().equals(this.entries.get(index).getMod().getId());
 	}
 
 	public void addEntry(ModListEntry entry) {
@@ -79,7 +85,7 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 			return;
 		}
 		addedMods.add(entry.mod);
-		this.add(entry);
+		this.entries.add(entry);
 		if (entry.getMod().getId().equals(selectedModId)) {
 			setSelected(entry);
 		}
@@ -88,12 +94,26 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 
 	protected boolean removeEntry(ModListEntry entry) {
 		addedMods.remove(entry.mod);
-		return this.children().remove(entry);
+		return this.entries.remove(entry);
 	}
 
 	protected ModListEntry remove(int index) {
-		addedMods.remove(this.children().get(index).mod);
-		return this.children().remove(index);
+		addedMods.remove(this.entries.get(index).mod);
+		return this.entries.remove(index);
+	}
+
+	@Override
+	public int size() {
+		return this.entries.size();
+	}
+
+	@Override
+	public ModListEntry getEntry(int index) {
+		return this.entries.get(index);
+	}
+
+	public void clear() {
+		this.entries.clear();
 	}
 
 	public void reloadFilters() {
@@ -169,15 +189,15 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 			}
 		}
 
-		if (parent.getSelectedEntry() != null && !children().isEmpty() || this.selected != null && this.selected.getMod() != parent.getSelectedEntry().getMod()) {
-			for (ModListEntry entry : children()) {
+		if (parent.getSelectedEntry() != null && !this.entries.isEmpty() || this.selected != null && this.selected.getMod() != parent.getSelectedEntry().getMod()) {
+			for (ModListEntry entry : this.entries) {
 				if (entry.getMod().equals(parent.getSelectedEntry().getMod())) {
 					setSelected(entry);
 				}
 			}
 		} else {
-			if (this.selected == null && !children().isEmpty() && this.children().get(0) != null) {
-				setSelected(this.children().get(0));
+			if (this.selected == null && !this.entries.isEmpty() && this.entries.get(0) != null) {
+				setSelected(this.entries.get(0));
 			}
 		}
 
@@ -198,13 +218,14 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 			int entryBottom = this.getRowTop(index) + this.entryHeight;
 			if (entryBottom >= this.minY && entryTop <= this.maxY) {
 				int entryHeight = this.entryHeight - 4;
-				ModListEntry entry = this.children().get(index);
+				ModListEntry entry = this.entries.get(index);
 				int rowWidth = this.getRowWidth();
 				int entryLeft;
 				if (this.isEntrySelected(index)) {
 					entryLeft = getRowLeft() - 2 + entry.getXOffset();
 					int selectionRight = this.getRowLeft() + rowWidth + 2;
 					float float_2 = this.isFocused() ? 1.0F : 0.5F;
+					GlStateManager.disableTexture();
 					GlStateManager.color4f(float_2, float_2, float_2, 1.0F);
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
 					buffer.vertex(entryLeft, entryTop + entryHeight + 2, 0.0F).nextVertex();
@@ -219,10 +240,10 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 					buffer.vertex(selectionRight - 1, entryTop - 1, 0.0F).nextVertex();
 					buffer.vertex(entryLeft + 1, entryTop - 1, 0.0F).nextVertex();
 					tessellator.end();
+					GlStateManager.enableTexture();
 				}
 
-				entryLeft = this.getRowLeft();
-				entry.render(rowWidth, entryHeight, mouseX, mouseY, this.isMouseInList(mouseX, mouseY) && Objects.equals(this.getEntryAtPos(mouseX, mouseY), entry), delta);
+				this.renderEntry(index, this.getRowLeft(), entryTop, entryHeight, mouseX, mouseY, delta);
 			}
 		}
 	}
@@ -232,16 +253,15 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 	}
 
 	@Override
-	public boolean mouseClicked(double double_1, double double_2, int int_1) {
+	public boolean mouseClicked(int double_1, int double_2, int int_1) {
 		this.updateScrollingState(double_1, double_2, int_1);
 		if (!this.isMouseInList(double_1, double_2)) {
 			return false;
 		} else {
 			ModListEntry entry = this.getEntryAtPos(double_1, double_2);
 			if (entry != null) {
-				if (entry.mouseClicked(double_1, double_2, int_1)) {
-					this.setFocused(entry);
-					this.setDragging(true);
+				if (entry.mouseClicked(entries.indexOf(entry), double_1, double_2, int_1, double_1, double_2)) {
+					this.select(entry);
 					return true;
 				}
 			} else if (int_1 == 0) {
@@ -253,12 +273,24 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 		}
 	}
 
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (keyCode == GLFW.GLFW_KEY_UP || keyCode == GLFW.GLFW_KEY_DOWN) {
-			return super.keyPressed(keyCode, scanCode, modifiers);
-		}
+	public boolean keyPressed(char chr, int key) {
 		if (this.selected != null) {
-			return this.selected.keyPressed(keyCode, scanCode, modifiers);
+			int index = this.entries.indexOf(this.selected);
+			if (key == Keyboard.KEY_UP) {
+				if (--index < 0) {
+					index = this.size() - 1;
+				}
+				this.select(this.entries.get(index));
+				return true;
+			}
+			if (key == Keyboard.KEY_DOWN) {
+				if (++index >= this.size()) {
+					index = 0;
+				}
+				this.select(this.entries.get(index));
+				return true;
+			}
+			return this.selected.keyPressed(chr, key);
 		}
 		return false;
 	}
@@ -266,7 +298,7 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 	public final ModListEntry getEntryAtPos(double x, double y) {
 		int int_5 = MathHelper.floor(y - (double) this.minY) - this.headerHeight + (int) this.getScrollAmount() - 4;
 		int index = int_5 / this.entryHeight;
-		return x < (double) this.getScrollbarPosition() && x >= (double) getRowLeft() && x <= (double) (getRowLeft() + getRowWidth()) && index >= 0 && int_5 >= 0 && index < this.size() ? this.children().get(index) : null;
+		return x < (double) this.getScrollbarPosition() && x >= (double) getRowLeft() && x <= (double) (getRowLeft() + getRowWidth()) && index >= 0 && int_5 >= 0 && index < this.size() ? this.entries.get(index) : null;
 	}
 
 	@Override
@@ -306,7 +338,7 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 
 	public int getDisplayedCountFor(Set<String> set) {
 		int count = 0;
-		for (ModListEntry c : children()) {
+		for (ModListEntry c : this.entries) {
 			if (set.contains(c.getMod().getId())) {
 				count++;
 			}
@@ -316,7 +348,6 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 
 	@Override
 	public void close() {
-		iconHandler.close();
 	}
 
 	public FabricIconHandler getFabricIconHandler() {

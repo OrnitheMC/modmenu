@@ -1,5 +1,8 @@
 package com.terraformersmc.modmenu.gui.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.terraformersmc.modmenu.config.option.ConfigOption;
@@ -9,7 +12,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
 
-public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidget.Entry> {
+public class ConfigOptionListWidget extends EntryListWidget {
+	private final List<Entry> entries = new ArrayList<>();
+
 	private int nextId;
 
 	public ConfigOptionListWidget(Minecraft minecraft, int width, int height, int yStart, int yEnd, int entryHeight, ConfigOption ... options) {
@@ -18,7 +23,7 @@ public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidg
         for (int i = 0; i < options.length; i += 2) {
             ConfigOption option = options[i];
             ConfigOption option2 = i < options.length - 1 ? options[i + 1] : null;
-            this.add(new Entry(width, option, option2));
+            this.entries.add(new Entry(width, option, option2));
         }
     }
 
@@ -27,13 +32,19 @@ public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidg
 		if (option == null) {
 			return null;
 		}
-		return new OptionButtonWidget(id, x, y, width, 20, null, option.getValueLabel()) {
-			@Override
-			public void m_9319498(double d, double e) {
-				option.click();
-				this.message = option.getValueLabel();
-			}
-		};
+		ButtonWidget button = new OptionButtonWidget(id, x, y, null, option.getValueLabel());
+		button.setWidth(width);
+		return button;
+	}
+
+	@Override
+	public Entry getEntry(int i) {
+		return this.entries.get(i);
+	}
+
+	@Override
+	protected int size() {
+		return this.entries.size();
 	}
 
 	@Override
@@ -46,55 +57,71 @@ public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidg
 		return super.getScrollbarPosition() + 32;
 	}
 
-	public final class Entry extends EntryListWidget.Entry<Entry> {
+	public final class Entry implements EntryListWidget.Entry {
+		@Nullable
+		private final ConfigOption leftOption;
 		@Nullable
 		private final ButtonWidget left;
 		@Nullable
+		private final ConfigOption rightOption;
+		@Nullable
 		private final ButtonWidget right;
 
-		public Entry(@Nullable ButtonWidget buttonWidget, ButtonWidget buttonWidget2) {
-			this.left = buttonWidget;
-			this.right = buttonWidget2;
+		public Entry(@Nullable ButtonWidget left, @Nullable ConfigOption leftOption, ButtonWidget right, @Nullable ConfigOption rightOption) {
+			this.left = left;
+			this.leftOption = leftOption;
+			this.right = right;
+			this.rightOption = rightOption;
 		}
 
 		public Entry(int x, ConfigOption option) {
-			this(ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155, 0, 310, option), null);
+			this(ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155, 0, 310, option), option, null, null);
 		}
 
 		public Entry(int x, @Nullable ConfigOption option, ConfigOption option2) {
-			this(ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155, 0, 150, option),
-					ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155 + 160, 0, 150, option2));
+			this(ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155, 0, 150, option), option,
+					ConfigOptionListWidget.createWidget(minecraft, nextId++, x / 2 - 155 + 160, 0, 150, option2), option2);
 		}
 
 		@Override
-		public void render(int width, int height, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, float tickDelta) {
 			if (this.left != null) {
-				this.left.y = this.getY();
-				this.left.render(mouseX, mouseY, tickDelta);
+				this.left.y = y;
+				this.left.render(minecraft, mouseX, mouseY, tickDelta);
 			}
 			if (this.right != null) {
-				this.right.y = this.getY();
-				this.right.render(mouseX, mouseY, tickDelta);
+				this.right.y = y;
+				this.right.render(minecraft, mouseX, mouseY, tickDelta);
 			}
 		}
 
 		@Override
-		public boolean mouseClicked(double d, double e, int i) {
-			if (this.left.mouseClicked(d, e, i)) {
-				return true;
+		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
+			if (button == 0) {
+				if (this.left != null && this.left.isMouseOver(minecraft, mouseX, mouseY)) {
+					this.leftOption.click();
+					this.left.playDownSound(minecraft.getSoundManager());
+					this.left.message = this.leftOption.getValueLabel();
+					return true;
+				}
+				if (this.right != null && this.right.isMouseOver(minecraft, mouseX, mouseY)) {
+					this.rightOption.click();
+					this.right.playDownSound(minecraft.getSoundManager());
+					this.right.message = this.rightOption.getValueLabel();
+					return true;
+				}
 			}
-			return this.right != null && this.right.mouseClicked(d, e, i);
+			return false;
 		}
 
 		@Override
-		public boolean mouseReleased(double d, double e, int i) {
-			boolean bl = this.left != null && this.left.mouseReleased(d, e, i);
-			boolean bl2 = this.right != null && this.right.mouseReleased(d, e, i);
-			return bl || bl2;
+		public void mouseReleased(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
+			this.left.mouseReleased(mouseX, mouseY);
+			this.right.mouseReleased(mouseX, mouseY);
 		}
 
 		@Override
-		public void renderOutOfBounds(float tickDelta) {
+		public void renderOutOfBounds(int index, int x, int y, float tickDelta) {
 		}
 	}
 }

@@ -8,7 +8,6 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
 
-import net.minecraft.client.gui.GuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -34,7 +33,6 @@ public abstract class MixinTitleScreen extends Screen {
 	@Inject(at = @At(value = "TAIL"), method = "init")
 	private void onInit(CallbackInfo ci) {
 		final List<ButtonWidget> buttons = this.buttons;
-		final List<GuiEventListener> children = this.children;
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue()) {
 			int modsButtonIndex = -1;
 			final int spacing = 24;
@@ -51,10 +49,7 @@ public abstract class MixinTitleScreen extends Screen {
 				}
 				if (button.id == ONLINE) {
 					if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.REPLACE_REALMS) {
-						int j = children.indexOf(button);
-						ButtonWidget modsButton = new ModMenuButtonWidget(MODS, button.x, button.y, button.getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText(), this);
-						buttons.set(i, modsButton);
-						children.set(j, modsButton);
+						buttons.set(i, new ModMenuButtonWidget(MODS, button.x, button.y, button.getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText()));
 					} else {
 						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
 							button.setWidth(98);
@@ -69,22 +64,17 @@ public abstract class MixinTitleScreen extends Screen {
 			}
 			if (modsButtonIndex != -1) {
 				if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
-					this.addButton(new ModMenuButtonWidget(MODS, this.width / 2 - 100, buttonsY + spacing, 200, 20, ModMenuApi.createModsButtonText(), this));
+					this.addButton(new ModMenuButtonWidget(MODS, this.width / 2 - 100, buttonsY + spacing, 200, 20, ModMenuApi.createModsButtonText()));
 				} else if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
-					this.addButton(new ModMenuButtonWidget(MODS, this.width / 2 + 2, buttonsY, 98, 20, ModMenuApi.createModsButtonText(), this));
+					this.addButton(new ModMenuButtonWidget(MODS, this.width / 2 + 2, buttonsY, 98, 20, ModMenuApi.createModsButtonText()));
 				} else if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.ICON) {
-					this.addButton(new UpdateCheckerTexturedButtonWidget(MODS, this.width / 2 + 104, buttonsY, 20, 20, 0, 0, 20, FABRIC_ICON_BUTTON_LOCATION, 32, 64) {
-						@Override
-						public void m_9319498(double d, double e) {
-							MixinTitleScreen.this.minecraft.openScreen(new ModsScreen(MixinTitleScreen.this));
-						}
-					});
+					this.addButton(new UpdateCheckerTexturedButtonWidget(MODS, this.width / 2 + 104, buttonsY, 20, 20, 0, 0, 20, FABRIC_ICON_BUTTON_LOCATION, 32, 64));
 				}
 			}
 		}
 	}
 
-	@ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;init(Lnet/minecraft/client/Minecraft;II)V"), method = "init", index = 2)
+	@ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;m_0986658(II)V"), method = "init", index = 1)
 	private int adjustRealmsHeight(int height) {
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
 			return height - 51;
@@ -92,6 +82,13 @@ public abstract class MixinTitleScreen extends Screen {
 			return -99999;
 		}
 		return height;
+	}
+
+	@Inject(method = "buttonClicked", at = @At(value = "HEAD"))
+	private void onButtonClicked(ButtonWidget button, CallbackInfo ci) {
+		if (button.id == MODS) {
+			this.minecraft.openScreen(new ModsScreen(this));
+		}
 	}
 
 	@ModifyArg(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/TitleScreen;drawString(Lnet/minecraft/client/render/TextRenderer;Ljava/lang/String;III)V", ordinal = 0))

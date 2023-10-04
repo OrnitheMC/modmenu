@@ -7,18 +7,18 @@ import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.resource.Identifier;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Utils;
-
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import org.lwjgl.input.Keyboard;
 
 public class ParentEntry extends ModListEntry {
 	private static final Identifier PARENT_MOD_TEXTURE = new Identifier(ModMenu.MOD_ID, "textures/gui/parent_mod.png");
@@ -33,16 +33,14 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(int rowWidth, int rowHeight, int mouseX, int mouseY, boolean isSelected, float delta) {
-		super.render(rowWidth, rowHeight, mouseX, mouseY, isSelected, delta);
-		int x = getX();
-		int y = getY();
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float delta) {
+		super.render(index, x, y, rowWidth, rowHeight, mouseX, mouseY, hovered, delta);
 		TextRenderer font = client.textRenderer;
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
 		Text str = shownChildren == children.size() ? new LiteralText(String.valueOf(shownChildren)) : new LiteralText(shownChildren + "/" + children.size());
-		int childrenWidth = font.getWidth(str.getFormattedString()) - 1;
+		int childrenWidth = font.getStringWidth(str.getFormattedContent()) - 1;
 		if (childrenBadgeWidth < childrenWidth + 4) {
 			childrenBadgeWidth = childrenWidth + 4;
 		}
@@ -56,7 +54,7 @@ public class ParentEntry extends ModListEntry {
 		GuiElement.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
-		font.draw(str.getFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
+		font.drawWithoutShadow(str.getFormattedContent(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
 		if (isMouseOver(mouseX, mouseY)) {
 			GuiElement.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
@@ -69,17 +67,17 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int i) {
+	public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 		int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;
 		boolean quickConfigure = ModMenuConfig.QUICK_CONFIGURE.getValue();
 		if (mouseX - list.getRowLeft() <= iconSize) {
 			this.toggleChildren();
 			return true;
-		} else if (!quickConfigure && Utils.getTimeMillis() - this.sinceLastClick < 250) {
+		} else if (!quickConfigure && Minecraft.getTime() - this.sinceLastClick < 250) {
 			this.toggleChildren();
 			return true;
 		} else {
-			return super.mouseClicked(mouseX, mouseY, i);
+			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}
 	}
 
@@ -94,9 +92,9 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+	public boolean keyPressed(char chr, int key) {
 		String modId = getMod().getId();
-		if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE) {
+		if (key == Keyboard.KEY_RETURN || key == Keyboard.KEY_SPACE) {
 			if (list.getParent().showModChildren.contains(modId)) {
 				list.getParent().showModChildren.remove(modId);
 			} else {
@@ -104,22 +102,22 @@ public class ParentEntry extends ModListEntry {
 			}
 			list.filter(list.getParent().getSearchInput(), false);
 			return true;
-		} else if (keyCode == GLFW.GLFW_KEY_LEFT) {
+		} else if (key == Keyboard.KEY_LEFT) {
 			if (list.getParent().showModChildren.contains(modId)) {
 				list.getParent().showModChildren.remove(modId);
 				list.filter(list.getParent().getSearchInput(), false);
 			}
 			return true;
-		} else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+		} else if (key == Keyboard.KEY_RIGHT) {
 			if (!list.getParent().showModChildren.contains(modId)) {
 				list.getParent().showModChildren.add(modId);
 				list.filter(list.getParent().getSearchInput(), false);
 			} else {
-				return list.keyPressed(GLFW.GLFW_KEY_DOWN, 0, 0);
+				return list.keyPressed((char) -1, Keyboard.KEY_DOWN);
 			}
 			return true;
 		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(chr, key);
 	}
 
 	public void setChildren(List<Mod> children) {

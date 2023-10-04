@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.Tessellator;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
+import com.terraformersmc.modmenu.util.ScreenUtil;
 import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
@@ -17,31 +18,33 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Formatting;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Utils;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget.DescriptionEntry> implements ConfirmationListener {
+public class DescriptionListWidget extends EntryListWidget implements ConfirmationListener {
 
 	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
-	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setFormatting(Formatting.GOLD);
+	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
 	private static final Text MODRINTH_TEXT = new TranslatableText("modmenu.modrinth");
 	private static final Text CHILD_HAS_UPDATE_TEXT = new TranslatableText("modmenu.childHasUpdate");
 	private static final Text LINKS_TEXT = new TranslatableText("modmenu.links");
-	private static final Text SOURCE_TEXT = new TranslatableText("modmenu.source").setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE);
+	private static final Text SOURCE_TEXT = new TranslatableText("modmenu.source").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 	private static final Text LICENSE_TEXT = new TranslatableText("modmenu.license");
-	private static final Text VIEW_CREDITS_TEXT = new TranslatableText("modmenu.viewCredits").setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE);
+	private static final Text VIEW_CREDITS_TEXT = new TranslatableText("modmenu.viewCredits").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 	private static final Text CREDITS_TEXT = new TranslatableText("modmenu.credits");
 
 	private final ModsScreen parent;
 	private final TextRenderer textRenderer;
+	private final List<DescriptionEntry> entries = new ArrayList<>();
 	private ModListEntry lastSelected = null;
 
 	public DescriptionListWidget(Minecraft client, int width, int height, int top, int bottom, int entryHeight, ModsScreen parent) {
@@ -60,6 +63,24 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		return this.width - 6 + this.minX;
 	}
 
+	public boolean isMouseInList(int mouseX, int mouseY) {
+		return mouseY >= this.minY && mouseY <= this.maxY && mouseX >= this.minX && mouseX <= this.maxX;
+	}
+
+	@Override
+	public int size() {
+		return this.entries.size();
+	}
+
+	public void clear() {
+		this.entries.clear();
+	}
+
+	@Override
+	public DescriptionEntry getEntry(int index) {
+		return this.entries.get(index);
+	}
+
 	@Override
 	public void render(int mouseX, int mouseY, float delta) {
 		capScrolling();
@@ -75,47 +96,46 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 				Mod mod = lastSelected.getMod();
 				String description = mod.getTranslatedDescription();
 				if (!description.isEmpty()) {
-					for (String line : textRenderer.split(description.replaceAll("\n", "\n\n"), wrapWidth)) {
-						children().add(new DescriptionEntry(line));
+					for (String line : textRenderer.wrapLines(description.replaceAll("\n", "\n\n"), wrapWidth)) {
+						this.entries.add(new DescriptionEntry(line));
 					}
 				}
 
 				if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(mod.getId())) {
 					if (mod.getModrinthData() != null) {
-						children().add(emptyEntry);
+						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (String line : textRenderer.split(HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+						for (String line : textRenderer.wrapLines(HAS_UPDATE_TEXT.getFormattedContent(), wrapWidth - 11)) {
 							DescriptionEntry entry = new DescriptionEntry(line);
 							if (index == 0) entry.setUpdateTextEntry();
 
-							children().add(entry);
+							this.entries.add(entry);
 							index += 1;
 						}
 
-						for (String line : textRenderer.split(EXPERIMENTAL_TEXT.getFormattedString(), wrapWidth - 16)) {
-							children().add(new DescriptionEntry(line, 8));
+						for (String line : textRenderer.wrapLines(EXPERIMENTAL_TEXT.getFormattedContent(), wrapWidth - 16)) {
+							this.entries.add(new DescriptionEntry(line, 8));
 						}
 
 						Text updateText = new TranslatableText("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT)
-							.setFormatting(Formatting.BLUE)
-							.setFormatting(Formatting.UNDERLINE);
+							.setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 
 						String versionLink = String.format("https://modrinth.com/project/%s/version/%s", mod.getModrinthData().projectId(), mod.getModrinthData().versionId());
 
-						for (String line : textRenderer.split(updateText.getFormattedString(), wrapWidth - 16)) {
-							children().add(new LinkEntry(line, versionLink, 8));
+						for (String line : textRenderer.wrapLines(updateText.getFormattedContent(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry(line, versionLink, 8));
 						}
 					}
 					if (mod.getChildHasUpdate()) {
-						children().add(emptyEntry);
+						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (String line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+						for (String line : textRenderer.wrapLines(CHILD_HAS_UPDATE_TEXT.getFormattedContent(), wrapWidth - 11)) {
 							DescriptionEntry entry = new DescriptionEntry(line);
 							if (index == 0) entry.setUpdateTextEntry();
 
-							children().add(entry);
+							this.entries.add(entry);
 							index += 1;
 						}
 					}
@@ -124,24 +144,24 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 				Map<String, String> links = mod.getLinks();
 				String sourceLink = mod.getSource();
 				if ((!links.isEmpty() || sourceLink != null) && !ModMenuConfig.HIDE_MOD_LINKS.getValue()) {
-					children().add(emptyEntry);
+					this.entries.add(emptyEntry);
 
-					for (String line : textRenderer.split(LINKS_TEXT.getFormattedString(), wrapWidth)) {
-						children().add(new DescriptionEntry(line));
+					for (String line : textRenderer.wrapLines(LINKS_TEXT.getFormattedContent(), wrapWidth)) {
+						this.entries.add(new DescriptionEntry(line));
 					}
 
 					if (sourceLink != null) {
 						int indent = 8;
-						for (String line : textRenderer.split(SOURCE_TEXT.getFormattedString(), wrapWidth - 16)) {
-							children().add(new LinkEntry(line, sourceLink, indent));
+						for (String line : textRenderer.wrapLines(SOURCE_TEXT.getFormattedContent(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry(line, sourceLink, indent));
 							indent = 16;
 						}
 					}
 
 					links.forEach((key, value) -> {
 						int indent = 8;
-						for (String line : textRenderer.split(new TranslatableText(key).setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE).getFormattedString(), wrapWidth - 16)) {
-							children().add(new LinkEntry(line, value, indent));
+						for (String line : textRenderer.wrapLines(new TranslatableText(key).setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true)).getFormattedContent(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry(line, value, indent));
 							indent = 16;
 						}
 					});
@@ -149,16 +169,16 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 
 				Set<String> licenses = mod.getLicense();
 				if (!ModMenuConfig.HIDE_MOD_LICENSE.getValue() && !licenses.isEmpty()) {
-					children().add(emptyEntry);
+					this.entries.add(emptyEntry);
 
-					for (String line : textRenderer.split(LICENSE_TEXT.getFormattedString(), wrapWidth)) {
-						children().add(new DescriptionEntry(line));
+					for (String line : textRenderer.wrapLines(LICENSE_TEXT.getFormattedContent(), wrapWidth)) {
+						this.entries.add(new DescriptionEntry(line));
 					}
 
 					for (String license : licenses) {
 						int indent = 8;
-						for (String line : textRenderer.split(license, wrapWidth - 16)) {
-							children().add(new DescriptionEntry(line, indent));
+						for (String line : textRenderer.wrapLines(license, wrapWidth - 16)) {
+							this.entries.add(new DescriptionEntry(line, indent));
 							indent = 16;
 						}
 					}
@@ -166,24 +186,24 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 
 				if (!ModMenuConfig.HIDE_MOD_CREDITS.getValue()) {
 					if ("minecraft".equals(mod.getId())) {
-						children().add(emptyEntry);
+						this.entries.add(emptyEntry);
 
-						for (String line : textRenderer.split(VIEW_CREDITS_TEXT.getFormattedString(), wrapWidth)) {
-							children().add(new MojangCreditsEntry(line));
+						for (String line : textRenderer.wrapLines(VIEW_CREDITS_TEXT.getFormattedContent(), wrapWidth)) {
+							this.entries.add(new MojangCreditsEntry(line));
 						}
 					} else if (!"java".equals(mod.getId())) {
 						List<String> credits = mod.getCredits();
 						if (!credits.isEmpty()) {
-							children().add(emptyEntry);
+							this.entries.add(emptyEntry);
 
-							for (String line : textRenderer.split(CREDITS_TEXT.getFormattedString(), wrapWidth)) {
-								children().add(new DescriptionEntry(line));
+							for (String line : textRenderer.wrapLines(CREDITS_TEXT.getFormattedContent(), wrapWidth)) {
+								this.entries.add(new DescriptionEntry(line));
 							}
 
 							for (String credit : credits) {
 								int indent = 8;
-								for (String line : textRenderer.split(credit, wrapWidth - 16)) {
-									children().add(new DescriptionEntry(line, indent));
+								for (String line : textRenderer.wrapLines(credit, wrapWidth - 16)) {
+									this.entries.add(new DescriptionEntry(line, indent));
 									indent = 16;
 								}
 							}
@@ -309,14 +329,14 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 	@Override
 	public void confirmResult(boolean result, int id) {
 		if (result) {
-			List<DescriptionEntry> entries = this.children();
+			List<DescriptionEntry> entries = this.entries;
 
 			if (id >= 0 && id < entries.size()) {
 				DescriptionEntry entry = entries.get(id);
 
 				if (entry instanceof LinkEntry) {
 					String link = ((LinkEntry) entry).link;
-					Utils.getOS().openUri(link);
+					ScreenUtil.openLink(parent, link, parent.getSelectedEntry().mod.getId() + "/link");
 				}
 			}
 		}
@@ -324,7 +344,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		minecraft.openScreen(this.parent);
 	}
 
-	protected class DescriptionEntry extends EntryListWidget.Entry<DescriptionEntry> {
+	protected class DescriptionEntry implements EntryListWidget.Entry {
 		protected String text;
 		protected int indent;
 		public boolean updateTextEntry = false;
@@ -344,11 +364,24 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		}
 
 		@Override
-		public void render(int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+		public void renderOutOfBounds(int index, int mouseX, int mouseY, float delta) {
+		}
+
+		@Override
+		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
 			if (updateTextEntry) {
-				UpdateAvailableBadge.renderBadge(getX() + indent, getY());
+				UpdateAvailableBadge.renderBadge(x + indent, y);
 			}
-			textRenderer.drawWithShadow(text, getX() + indent, getY(), 0xAAAAAA);
+			textRenderer.drawWithShadow(text, x + indent, y, 0xAAAAAA);
+		}
+
+		@Override
+		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
+			return false;
+		}
+
+		@Override
+		public void mouseReleased(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 		}
 	}
 
@@ -358,11 +391,11 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (isMouseInList(mouseX, mouseY)) {
 				minecraft.openScreen(new MinecraftCredits());
 			}
-			return super.mouseClicked(mouseX, mouseY, button);
+			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}
 
 		class MinecraftCredits extends CreditsScreen {
@@ -385,11 +418,11 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		}
 
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (isMouseInList(mouseX, mouseY)) {
 				minecraft.openScreen(new ConfirmChatLinkScreen(DescriptionListWidget.this, link, index, false));
 			}
-			return super.mouseClicked(mouseX, mouseY, button);
+			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}
 	}
 

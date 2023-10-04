@@ -20,17 +20,10 @@ public class ModMenuOptionsScreen extends Screen {
 		this.title = I18n.translate("modmenu.options");
 	}
 
-
-	protected void init() {
+	@Override
+	public void init() {
 		this.list = new ConfigOptionListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25, ModMenuConfig.asOptions());
-		this.children.add(this.list);
-		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")) {
-			@Override
-			public void m_9319498(double d, double e) {
-				ModMenuConfigManager.save();
-				ModMenuOptionsScreen.this.minecraft.openScreen(ModMenuOptionsScreen.this.previous);
-			}
-		});
+		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")));
 	}
 
 	@Override
@@ -39,6 +32,22 @@ public class ModMenuOptionsScreen extends Screen {
 		this.list.render(mouseX, mouseY, delta);
 		this.drawCenteredString(this.textRenderer, this.title, this.width / 2, 5, 0xffffff);
 		super.render(mouseX, mouseY, delta);
+	}
+
+	@Override
+	public void mouseClicked(int mouseX, int mouseY, int button) {
+		this.list.mouseClicked(mouseX, mouseY, button);
+		super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	@Override
+	public void buttonClicked(ButtonWidget button) {
+		switch (button.id) {
+		case DONE:
+			ModMenuConfigManager.save();
+			ModMenuOptionsScreen.this.minecraft.openScreen(ModMenuOptionsScreen.this.previous);
+			break;
+		}
 	}
 
 	@Override

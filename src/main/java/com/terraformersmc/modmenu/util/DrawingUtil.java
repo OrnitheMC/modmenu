@@ -32,7 +32,7 @@ public class DrawingUtil {
 		while (string != null && string.endsWith("\n")) {
 			string = string.substring(0, string.length() - 1);
 		}
-		List<String> strings = CLIENT.textRenderer.split(string, wrapWidth);
+		List<String> strings = CLIENT.textRenderer.wrapLines(string, wrapWidth);
 		for (int i = 0; i < strings.size(); i++) {
 			if (i >= lines) {
 				break;
@@ -42,11 +42,11 @@ public class DrawingUtil {
 				renderable += "...";
 			}
 			int x1 = x;
-			if (CLIENT.textRenderer.isBidirectional()) {
-				int width = CLIENT.textRenderer.getWidth(renderable);
+			if (CLIENT.textRenderer.isRightToLeft()) {
+				int width = CLIENT.textRenderer.getStringWidth(renderable);
 				x1 += (float) (wrapWidth - width);
 			}
-			CLIENT.textRenderer.draw(renderable, x1, y + i * CLIENT.textRenderer.fontHeight, color);
+			CLIENT.textRenderer.drawWithoutShadow(renderable, x1, y + i * CLIENT.textRenderer.fontHeight, color);
 		}
 	}
 
@@ -56,7 +56,7 @@ public class DrawingUtil {
 		GuiElement.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
 		GuiElement.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
 		GuiElement.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
-		String s = text.getFormattedString();
-		CLIENT.textRenderer.draw(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(s)) / (float) 2), y + 1, textColor);
+		String s = text.getFormattedContent();
+		CLIENT.textRenderer.drawWithoutShadow(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getStringWidth(s)) / (float) 2), y + 1, textColor);
 	}
 }

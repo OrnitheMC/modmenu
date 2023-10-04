@@ -5,19 +5,18 @@ import net.minecraft.client.render.texture.DynamicTexture;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.TextureUtil;
 
 import org.apache.logging.log4j.LogManager;
 
-import java.io.Closeable;
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-public class FabricIconHandler implements Closeable {
+public class FabricIconHandler {
 	private static final Logger LOGGER = LogManager.getLogger("Mod Menu | FabricIconHandler");
 
 	private final Map<Path, DynamicTexture> modIconCache = new HashMap<>();
@@ -34,7 +33,7 @@ public class FabricIconHandler implements Closeable {
 				return cachedIcon;
 			}
 			try (InputStream inputStream = Files.newInputStream(path)) {
-				NativeImage image = NativeImage.read(Objects.requireNonNull(inputStream));
+				BufferedImage image = TextureUtil.readImage(inputStream);
 				Validate.validState(image.getWidth() == image.getHeight(), "Must be square icon");
 				DynamicTexture tex = new DynamicTexture(image);
 				cacheModIcon(path, tex);
@@ -52,13 +51,6 @@ public class FabricIconHandler implements Closeable {
 				LOGGER.error("Invalid mod icon for icon source {}: {}", iconSource.getMetadata().getId(), iconPath, t);
 			}
 			return null;
-		}
-	}
-
-	@Override
-	public void close() {
-		for (DynamicTexture tex : modIconCache.values()) {
-			tex.close();
 		}
 	}
 

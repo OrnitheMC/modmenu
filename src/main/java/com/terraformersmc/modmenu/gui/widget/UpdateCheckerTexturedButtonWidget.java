@@ -3,6 +3,7 @@ package com.terraformersmc.modmenu.gui.widget;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resource.Identifier;
 
 public class UpdateCheckerTexturedButtonWidget extends TexturedButtonWidget {
@@ -11,8 +12,8 @@ public class UpdateCheckerTexturedButtonWidget extends TexturedButtonWidget {
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float delta) {
-		super.render(mouseX, mouseY, delta);
+	public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+		super.render(minecraft, mouseX, mouseY, delta);
 		if (this.visible && ModMenuConfig.BUTTON_UPDATE_BADGE.getValue() && ModMenu.areModUpdatesAvailable()) {
 			UpdateAvailableBadge.renderBadge(this.x + this.width - 5, this.y - 3);
 		}

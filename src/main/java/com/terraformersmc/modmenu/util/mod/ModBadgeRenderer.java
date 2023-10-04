@@ -1,13 +1,10 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.util.DrawingUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.text.Text;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
 import java.util.Set;
 
 public class ModBadgeRenderer {
@@ -37,7 +34,7 @@ public class ModBadgeRenderer {
 	}
 
 	public void drawBadge(Text text, int outlineColor, int fillColor, int mouseX, int mouseY) {
-		int width = client.textRenderer.getWidth(text.getFormattedString()) + 6;
+		int width = client.textRenderer.getStringWidth(text.getFormattedContent()) + 6;
 		if (badgeX + width < badgeMax) {
 			DrawingUtil.drawBadge(badgeX, badgeY, width, text, outlineColor, fillColor, 0xCACACA);
 			badgeX += width + 3;
