@@ -25,7 +25,7 @@ public class ModMenuOptionsScreen extends Screen {
 	@Override
 	public void init() {
 		this.list = new ConfigOptionListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25, ModMenuConfig.asOptions());
-		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")));
+		this.buttons.add(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")));
 	}
 
 	@Override

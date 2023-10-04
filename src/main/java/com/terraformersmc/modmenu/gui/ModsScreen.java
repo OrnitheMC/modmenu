@@ -203,7 +203,7 @@ public class ModsScreen extends Screen implements Controller {
 			}
 		};
 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
-			this.addButton(filtersButton);
+			this.buttons.add(filtersButton);
 		}
 		String showLibrariesText = ModMenuConfig.SHOW_LIBRARIES.getValueLabel();
 		String sortingText = ModMenuConfig.SORTING.getValueLabel();
@@ -212,7 +212,7 @@ public class ModsScreen extends Screen implements Controller {
 		filtersWidth = showLibrariesWidth + sortingWidth + 2;
 		searchRowWidth = searchBoxX + searchBoxWidth + 22;
 		updateFiltersX();
-		this.addButton(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
+		this.buttons.add(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
 			@Override
 			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = filterOptionsShown;
@@ -220,7 +220,7 @@ public class ModsScreen extends Screen implements Controller {
 				super.render(minecraft, mouseX, mouseY);
 			}
 		});
-		this.addButton(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
+		this.buttons.add(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
 			@Override
 			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = filterOptionsShown;
@@ -229,12 +229,12 @@ public class ModsScreen extends Screen implements Controller {
 			}
 		});
 		if (!ModMenuConfig.HIDE_CONFIG_BUTTONS.getValue()) {
-			this.addButton(configureButton);
+			this.buttons.add(configureButton);
 		}
-		this.addButton(websiteButton);
-		this.addButton(issuesButton);
-		this.addButton(new ButtonWidget(MODS_FOLDER, this.width / 2 - 154, this.height - 28, 150, 20, I18n.translate("modmenu.modsFolder")));
-		this.addButton(new ButtonWidget(DONE, this.width / 2 + 4, this.height - 28, 150, 20, I18n.translate("gui.done")));
+		this.buttons.add(websiteButton);
+		this.buttons.add(issuesButton);
+		this.buttons.add(new ButtonWidget(MODS_FOLDER, this.width / 2 - 154, this.height - 28, 150, 20, I18n.translate("modmenu.modsFolder")));
+		this.buttons.add(new ButtonWidget(DONE, this.width / 2 + 4, this.height - 28, 150, 20, I18n.translate("gui.done")));
 		this.searchBox.setFocused(true);
 
 		init = true;
