@@ -231,7 +231,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 		int listX = this.minX + this.width / 2 - this.getRowWidth() / 2 + 2;
 		int listY = this.minY + 4 - (int)this.scrollAmount;
-		this.renderList(listX, listY, mouseX, mouseY, delta);
+		this.renderList(listX, listY, mouseX, mouseY);
 
 		GlStateManager.depthFunc(GL11.GL_LEQUAL);
 		GlStateManager.disableDepthTest();
@@ -293,9 +293,9 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 	}
 
 	@Override
-	protected void renderEntry(int index, int x, int y, int height, int mouseX, int mouseY, float tickDelta) {
+	protected void renderEntry(int index, int x, int y, int height, int mouseX, int mouseY) {
 		if (y >= this.minY && y + height <= this.maxY) {
-			super.renderEntry(index, x, y, height, mouseX, mouseY, tickDelta);
+			super.renderEntry(index, x, y, height, mouseX, mouseY);
 		}
 	}
 
@@ -366,11 +366,11 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		}
 
 		@Override
-		public void renderOutOfBounds(int index, int mouseX, int mouseY, float delta) {
+		public void renderOutOfBounds(int index, int mouseX, int mouseY) {
 		}
 
 		@Override
-		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered) {
 			if (updateTextEntry) {
 				UpdateAvailableBadge.renderBadge(x + indent, y);
 			}
@@ -395,15 +395,9 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		@Override
 		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (isMouseInList(mouseX, mouseY)) {
-				minecraft.openScreen(new MinecraftCredits());
+				minecraft.openScreen(new CreditsScreen());
 			}
 			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
-		}
-
-		class MinecraftCredits extends CreditsScreen {
-			public MinecraftCredits() {
-				super(false, () -> { });
-			}
 		}
 	}
 

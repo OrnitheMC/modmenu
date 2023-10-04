@@ -26,7 +26,7 @@ public class TexturedButtonWidget extends ButtonWidget {
 	}
 
 	@Override
-	public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+	public void render(Minecraft minecraft, int mouseX, int mouseY) {
 		if (this.visible) {
 			minecraft.getTextureManager().bind(this.texture);
 			GlStateManager.color4f(1.0f, 1.0f, 1.0f, 1.0f);

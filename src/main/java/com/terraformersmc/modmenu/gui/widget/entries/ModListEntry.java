@@ -40,11 +40,11 @@ public class ModListEntry implements EntryListWidget.Entry {
 	}
 
 	@Override
-	public void renderOutOfBounds(int index, int mouseX, int mouseY, float delta) {
+	public void renderOutOfBounds(int index, int mouseX, int mouseY) {
 	}
 
 	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float delta) {
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
 		x += getXOffset();
 		rowWidth -= getXOffset();
 		int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;

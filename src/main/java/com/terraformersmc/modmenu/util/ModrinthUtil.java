@@ -12,7 +12,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.unmapped.C_6254461;
 import net.minecraft.util.Utils;
 
 import java.io.IOException;

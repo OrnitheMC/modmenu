@@ -88,14 +88,14 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		}
 
 		@Override
-		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered) {
 			if (this.left != null) {
 				this.left.y = y;
-				this.left.render(minecraft, mouseX, mouseY, tickDelta);
+				this.left.render(minecraft, mouseX, mouseY);
 			}
 			if (this.right != null) {
 				this.right.y = y;
-				this.right.render(minecraft, mouseX, mouseY, tickDelta);
+				this.right.render(minecraft, mouseX, mouseY);
 			}
 		}
 
@@ -125,7 +125,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		}
 
 		@Override
-		public void renderOutOfBounds(int index, int x, int y, float tickDelta) {
+		public void renderOutOfBounds(int index, int x, int y) {
 		}
 	}
 }

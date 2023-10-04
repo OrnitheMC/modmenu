@@ -33,8 +33,8 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered, float delta) {
-		super.render(index, x, y, rowWidth, rowHeight, mouseX, mouseY, hovered, delta);
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+		super.render(index, x, y, rowWidth, rowHeight, mouseX, mouseY, hovered);
 		TextRenderer font = client.textRenderer;
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;

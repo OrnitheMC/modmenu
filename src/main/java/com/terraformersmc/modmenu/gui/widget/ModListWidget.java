@@ -208,7 +208,7 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 
 
 	@Override
-	protected void renderList(int x, int y, int mouseX, int mouseY, float delta) {
+	protected void renderList(int x, int y, int mouseX, int mouseY) {
 		int entryCount = this.size();
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuilder();
@@ -243,7 +243,7 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 					GlStateManager.enableTexture();
 				}
 
-				this.renderEntry(index, this.getRowLeft(), entryTop, entryHeight, mouseX, mouseY, delta);
+				this.renderEntry(index, this.getRowLeft(), entryTop, entryHeight, mouseX, mouseY);
 			}
 		}
 	}

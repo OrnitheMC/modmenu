@@ -13,8 +13,8 @@ public class ModMenuButtonWidget extends ButtonWidget {
 	}
 
 	@Override
-	public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
-		super.render(minecraft, mouseX, mouseY, delta);
+	public void render(Minecraft minecraft, int mouseX, int mouseY) {
+		super.render(minecraft, mouseX, mouseY);
 		if (ModMenuConfig.BUTTON_UPDATE_BADGE.getValue() && ModMenu.areModUpdatesAvailable()) {
 			UpdateAvailableBadge.renderBadge(this.width + this.x - 16, this.height / 2 + this.y - 4);
 		}

@@ -155,7 +155,7 @@ public class ModsScreen extends Screen implements Controller {
 		ButtonWidget configureButton = new TexturedButtonWidget(DESCRIPTION_LIST, width - 24, RIGHT_PANE_Y, 20, 20, 0, 0, 20, CONFIGURE_BUTTON_LOCATION, 32, 64) {
 			private Text tooltip;
 			@Override
-			public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				String modId = selected.getMod().getId();
 				if (selected != null) {
 					active = modHasConfigScreen.get(modId);
@@ -170,7 +170,7 @@ public class ModsScreen extends Screen implements Controller {
 				} else {
 					this.tooltip = CONFIGURE;
 				}
-				super.render(minecraft, mouseX, mouseY, delta);
+				super.render(minecraft, mouseX, mouseY);
 			}
 
 			@Override
@@ -182,18 +182,18 @@ public class ModsScreen extends Screen implements Controller {
 		int cappedButtonWidth = Math.min(urlButtonWidths, 200);
 		ButtonWidget websiteButton = new ButtonWidget(WEBSITE, rightPaneX + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.website")) {
 			@Override
-			public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = selected != null;
 				active = visible && selected.getMod().getWebsite() != null;
-				super.render(minecraft, mouseX, mouseY, delta);
+				super.render(minecraft, mouseX, mouseY);
 			}
 		};
 		ButtonWidget issuesButton = new ButtonWidget(ISSUES, rightPaneX + urlButtonWidths + 4 + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.issues")) {
 			@Override
-			public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = selected != null;
 				active = visible && selected.getMod().getIssueTracker() != null;
-				super.render(minecraft, mouseX, mouseY, delta);
+				super.render(minecraft, mouseX, mouseY);
 			}
 		};
 		ButtonWidget filtersButton = new TexturedButtonWidget(FILTERS, paneWidth / 2 + searchBoxWidth / 2 - 20 / 2 + 2, 22, 20, 20, 0, 0, 20, FILTERS_BUTTON_LOCATION, 32, 64) {
@@ -214,18 +214,18 @@ public class ModsScreen extends Screen implements Controller {
 		updateFiltersX();
 		this.addButton(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
 			@Override
-			public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = filterOptionsShown;
 				this.message = ModMenuConfig.SORTING.getValueLabel();
-				super.render(minecraft, mouseX, mouseY, delta);
+				super.render(minecraft, mouseX, mouseY);
 			}
 		});
 		this.addButton(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
 			@Override
-			public void render(Minecraft minecraft, int mouseX, int mouseY, float delta) {
+			public void render(Minecraft minecraft, int mouseX, int mouseY) {
 				visible = filterOptionsShown;
 				this.message = ModMenuConfig.SHOW_LIBRARIES.getValueLabel();
-				super.render(minecraft, mouseX, mouseY, delta);
+				super.render(minecraft, mouseX, mouseY);
 			}
 		});
 		if (!ModMenuConfig.HIDE_CONFIG_BUTTONS.getValue()) {
