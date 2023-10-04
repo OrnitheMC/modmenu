@@ -50,7 +50,7 @@ java {
 
 	// If this mod is going to be a library, then it should also generate Javadocs in order to aid with development.
 	// Uncomment this line to generate them.
-	withJavadocJar()
+//	withJavadocJar()
 }
 
 jar {
