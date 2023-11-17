@@ -20,20 +20,17 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.FutureTask;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ModrinthUtil {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Update Checker");
 
-	private static final HttpClient client = HttpClientBuilder.create().build();
+	/*private static final HttpClient client = HttpClientBuilder.create().build();
 
 	private static boolean allowsUpdateChecks(Mod mod) {
 		return mod.allowsUpdateChecks();
-	}
+	}*/
 
 	public static void checkForUpdates() {
 		if (!ModMenuConfig.UPDATE_CHECKER.getValue()) {

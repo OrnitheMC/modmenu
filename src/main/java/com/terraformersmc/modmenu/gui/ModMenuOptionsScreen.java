@@ -42,7 +42,7 @@ public class ModMenuOptionsScreen extends Screen {
 	public void handleMouse() {
 		super.handleMouse();
 		if (this.list.isMouseInList(mouseX, mouseY)) {
-			this.list.handleMouse();
+	//		this.list.handleMouse();
 		}
 	}
 

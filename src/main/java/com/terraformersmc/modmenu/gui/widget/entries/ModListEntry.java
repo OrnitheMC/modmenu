@@ -1,6 +1,8 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -13,7 +15,7 @@ import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.client.render.texture.DynamicTexture;
-import net.minecraft.resource.Identifier;
+import net.minecraft.client.resource.Identifier;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -40,11 +42,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 	}
 
 	@Override
-	public void renderOutOfBounds(int index, int mouseX, int mouseY) {
-	}
-
-	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean hovered) {
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
 		x += getXOffset();
 		rowWidth -= getXOffset();
 		int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;
@@ -52,27 +50,27 @@ public class ModListEntry implements EntryListWidget.Entry {
 		if ("java".equals(modId)) {
 			DrawingUtil.drawRandomVersionBackground(mod, x, y, iconSize, iconSize);
 		}
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GlStateManager.enableBlend();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL11.GL_BLEND);
 		this.client.getTextureManager().bind(this.getIconTexture());
 		GuiElement.drawTexture(x, y, 0.0F, 0.0F, iconSize, iconSize, iconSize, iconSize);
-		GlStateManager.disableBlend();
+		GL11.glDisable(GL11.GL_BLEND);
 		Text name = new LiteralText(mod.getTranslatedName());
 		Text trimmedName = name;
 		int maxNameWidth = rowWidth - iconSize - 3;
 		TextRenderer font = this.client.textRenderer;
-		if (font.getStringWidth(name.getFormattedContent()) > maxNameWidth) {
+		if (font.getWidth(name.getFormattedString()) > maxNameWidth) {
 			Text ellipsis = new LiteralText("...");
-			trimmedName = new LiteralText("").append(font.trimToWidth(name.getFormattedContent(), maxNameWidth - font.getStringWidth(ellipsis.getFormattedContent()))).append(ellipsis);
+			trimmedName = new LiteralText("").append(font.trim(name.getFormattedString(), maxNameWidth - font.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
 		}
-		font.drawWithoutShadow(trimmedName.getFormattedContent(), x + iconSize + 3, y + 1, 0xFFFFFF);
+		font.draw(trimmedName.getFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;
 		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.getModrinthData() != null || mod.getChildHasUpdate())) {
-			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getStringWidth(name.getFormattedContent()) + 2, y);
+			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2, y);
 			updateBadgeXOffset = 11;
 		}
 		if (!ModMenuConfig.HIDE_BADGES.getValue()) {
-			new ModBadgeRenderer(x + iconSize + 3 + font.getStringWidth(name.getFormattedContent()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
+			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
 		}
 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
 			String summary = mod.getSummary();
@@ -92,7 +90,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 					GuiElement.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 					if (hoveringIcon) {
 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
-						this.list.getParent().setTooltip(this.client.textRenderer.wrapLines(new TranslatableText("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).setStyle(new Style().setColor(Formatting.RED)).getFormattedContent(), 175));
+						this.list.getParent().setTooltip(this.client.textRenderer.split(new TranslatableText("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).setStyle(new Style().setColor(Formatting.RED)).getFormattedString(), 175));
 					}
 				} else {
 					this.client.getTextureManager().bind(MOD_CONFIGURATION_ICON);

@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.option.ConfigOption;
+import com.terraformersmc.modmenu.mixin.AccessorButtonWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -13,12 +15,14 @@ import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
 
 public class ConfigOptionListWidget extends EntryListWidget {
+	private final Minecraft minecraft;
 	private final List<Entry> entries = new ArrayList<>();
 
 	private int nextId;
 
 	public ConfigOptionListWidget(Minecraft minecraft, int width, int height, int yStart, int yEnd, int entryHeight, ConfigOption ... options) {
         super(minecraft, width, height, yStart, yEnd, entryHeight);
+        this.minecraft = minecraft;
         this.centerAlongY = false;
         for (int i = 0; i < options.length; i += 2) {
             ConfigOption option = options[i];
@@ -33,7 +37,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 			return null;
 		}
 		ButtonWidget button = new OptionButtonWidget(id, x, y, null, option.getValueLabel());
-		button.setWidth(width);
+		((AccessorButtonWidget) button).setWidth(width);
 		return button;
 	}
 
@@ -88,7 +92,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		}
 
 		@Override
-		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered) {
+		public void render(int index, int x, int y, int width, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
 			if (this.left != null) {
 				this.left.y = y;
 				this.left.render(minecraft, mouseX, mouseY);
@@ -104,13 +108,13 @@ public class ConfigOptionListWidget extends EntryListWidget {
 			if (button == 0) {
 				if (this.left != null && this.left.isMouseOver(minecraft, mouseX, mouseY)) {
 					this.leftOption.click();
-					this.left.playDownSound(minecraft.getSoundManager());
+					this.left.playClickSound(minecraft.getSoundManager());
 					this.left.message = this.leftOption.getValueLabel();
 					return true;
 				}
 				if (this.right != null && this.right.isMouseOver(minecraft, mouseX, mouseY)) {
 					this.rightOption.click();
-					this.right.playDownSound(minecraft.getSoundManager());
+					this.right.playClickSound(minecraft.getSoundManager());
 					this.right.message = this.rightOption.getValueLabel();
 					return true;
 				}
@@ -122,10 +126,6 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		public void mouseReleased(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			this.left.mouseReleased(mouseX, mouseY);
 			this.right.mouseReleased(mouseX, mouseY);
-		}
-
-		@Override
-		public void renderOutOfBounds(int index, int x, int y) {
 		}
 	}
 }

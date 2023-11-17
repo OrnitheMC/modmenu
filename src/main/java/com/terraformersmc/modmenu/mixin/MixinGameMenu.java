@@ -10,7 +10,7 @@ import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.resource.Identifier;
+import net.minecraft.client.resource.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,7 +39,7 @@ public abstract class MixinGameMenu extends Screen {
 			int modsButtonWidth = -1;
 			int modsButtonHeight = 20;
 			for (int i = 0; i < this.buttons.size(); i++) {
-				final ButtonWidget button = this.buttons.get(i);
+				final ButtonWidget button = (ButtonWidget) this.buttons.get(i);
 				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS && button.id == ADVANCEMENTS) {
 					modsButtonX = button.x;
 					modsButtonWidth = button.getWidth();

@@ -1,9 +1,7 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tessellator;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
@@ -12,8 +10,8 @@ import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
-import net.minecraft.client.gui.screen.ConfirmationListener;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import net.minecraft.client.gui.screen.ResultListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
@@ -30,7 +28,7 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-public class DescriptionListWidget extends EntryListWidget implements ConfirmationListener {
+public class DescriptionListWidget extends EntryListWidget implements ResultListener {
 
 	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
 	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
@@ -42,6 +40,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 	private static final Text VIEW_CREDITS_TEXT = new TranslatableText("modmenu.viewCredits").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 	private static final Text CREDITS_TEXT = new TranslatableText("modmenu.credits");
 
+	private final Minecraft minecraft;
 	private final ModsScreen parent;
 	private final TextRenderer textRenderer;
 	private final List<DescriptionEntry> entries = new ArrayList<>();
@@ -49,6 +48,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 	public DescriptionListWidget(Minecraft client, int width, int height, int top, int bottom, int entryHeight, ModsScreen parent) {
 		super(client, width, height, top, bottom, entryHeight);
+		this.minecraft = client;
 		this.parent = parent;
 		this.textRenderer = client.textRenderer;
 	}
@@ -98,8 +98,8 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				Mod mod = lastSelected.getMod();
 				String description = mod.getTranslatedDescription();
 				if (!description.isEmpty()) {
-					for (String line : textRenderer.wrapLines(description.replaceAll("\n", "\n\n"), wrapWidth)) {
-						this.entries.add(new DescriptionEntry(line));
+					for (Object line : textRenderer.split(description.replaceAll("\n", "\n\n"), wrapWidth)) {
+						this.entries.add(new DescriptionEntry((String) line));
 					}
 				}
 
@@ -108,16 +108,16 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (String line : textRenderer.wrapLines(HAS_UPDATE_TEXT.getFormattedContent(), wrapWidth - 11)) {
-							DescriptionEntry entry = new DescriptionEntry(line);
+						for (Object line : textRenderer.split(HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+							DescriptionEntry entry = new DescriptionEntry((String) line);
 							if (index == 0) entry.setUpdateTextEntry();
 
 							this.entries.add(entry);
 							index += 1;
 						}
 
-						for (String line : textRenderer.wrapLines(EXPERIMENTAL_TEXT.getFormattedContent(), wrapWidth - 16)) {
-							this.entries.add(new DescriptionEntry(line, 8));
+						for (Object line : textRenderer.split(EXPERIMENTAL_TEXT.getFormattedString(), wrapWidth - 16)) {
+							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
 						Text updateText = new TranslatableText("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT)
@@ -125,16 +125,16 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 						String versionLink = String.format("https://modrinth.com/project/%s/version/%s", mod.getModrinthData().projectId(), mod.getModrinthData().versionId());
 
-						for (String line : textRenderer.wrapLines(updateText.getFormattedContent(), wrapWidth - 16)) {
-							this.entries.add(new LinkEntry(line, versionLink, 8));
+						for (Object line : textRenderer.split(updateText.getFormattedString(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry((String) line, versionLink, 8));
 						}
 					}
 					if (mod.getChildHasUpdate()) {
 						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (String line : textRenderer.wrapLines(CHILD_HAS_UPDATE_TEXT.getFormattedContent(), wrapWidth - 11)) {
-							DescriptionEntry entry = new DescriptionEntry(line);
+						for (Object line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+							DescriptionEntry entry = new DescriptionEntry((String) line);
 							if (index == 0) entry.setUpdateTextEntry();
 
 							this.entries.add(entry);
@@ -148,22 +148,22 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				if ((!links.isEmpty() || sourceLink != null) && !ModMenuConfig.HIDE_MOD_LINKS.getValue()) {
 					this.entries.add(emptyEntry);
 
-					for (String line : textRenderer.wrapLines(LINKS_TEXT.getFormattedContent(), wrapWidth)) {
-						this.entries.add(new DescriptionEntry(line));
+					for (Object line : textRenderer.split(LINKS_TEXT.getFormattedString(), wrapWidth)) {
+						this.entries.add(new DescriptionEntry((String) line));
 					}
 
 					if (sourceLink != null) {
 						int indent = 8;
-						for (String line : textRenderer.wrapLines(SOURCE_TEXT.getFormattedContent(), wrapWidth - 16)) {
-							this.entries.add(new LinkEntry(line, sourceLink, indent));
+						for (Object line : textRenderer.split(SOURCE_TEXT.getFormattedString(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry((String) line, sourceLink, indent));
 							indent = 16;
 						}
 					}
 
 					links.forEach((key, value) -> {
 						int indent = 8;
-						for (String line : textRenderer.wrapLines(new TranslatableText(key).setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true)).getFormattedContent(), wrapWidth - 16)) {
-							this.entries.add(new LinkEntry(line, value, indent));
+						for (Object line : textRenderer.split(new TranslatableText(key).setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true)).getFormattedString(), wrapWidth - 16)) {
+							this.entries.add(new LinkEntry((String) line, value, indent));
 							indent = 16;
 						}
 					});
@@ -173,14 +173,14 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				if (!ModMenuConfig.HIDE_MOD_LICENSE.getValue() && !licenses.isEmpty()) {
 					this.entries.add(emptyEntry);
 
-					for (String line : textRenderer.wrapLines(LICENSE_TEXT.getFormattedContent(), wrapWidth)) {
-						this.entries.add(new DescriptionEntry(line));
+					for (Object line : textRenderer.split(LICENSE_TEXT.getFormattedString(), wrapWidth)) {
+						this.entries.add(new DescriptionEntry((String) line));
 					}
 
 					for (String license : licenses) {
 						int indent = 8;
-						for (String line : textRenderer.wrapLines(license, wrapWidth - 16)) {
-							this.entries.add(new DescriptionEntry(line, indent));
+						for (Object line : textRenderer.split(license, wrapWidth - 16)) {
+							this.entries.add(new DescriptionEntry((String) line, indent));
 							indent = 16;
 						}
 					}
@@ -190,22 +190,22 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 					if ("minecraft".equals(mod.getId())) {
 						this.entries.add(emptyEntry);
 
-						for (String line : textRenderer.wrapLines(VIEW_CREDITS_TEXT.getFormattedContent(), wrapWidth)) {
-							this.entries.add(new MojangCreditsEntry(line));
+						for (Object line : textRenderer.split(VIEW_CREDITS_TEXT.getFormattedString(), wrapWidth)) {
+							this.entries.add(new MojangCreditsEntry((String) line));
 						}
 					} else if (!"java".equals(mod.getId())) {
 						List<String> credits = mod.getCredits();
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
 
-							for (String line : textRenderer.wrapLines(CREDITS_TEXT.getFormattedContent(), wrapWidth)) {
-								this.entries.add(new DescriptionEntry(line));
+							for (Object line : textRenderer.split(CREDITS_TEXT.getFormattedString(), wrapWidth)) {
+								this.entries.add(new DescriptionEntry((String) line));
 							}
 
 							for (String credit : credits) {
 								int indent = 8;
-								for (String line : textRenderer.wrapLines(credit, wrapWidth - 16)) {
-									this.entries.add(new DescriptionEntry(line, indent));
+								for (Object line : textRenderer.split(credit, wrapWidth - 16)) {
+									this.entries.add(new DescriptionEntry((String) line, indent));
 									indent = 16;
 								}
 							}
@@ -215,91 +215,87 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 			}
 		}
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferBuilder = tessellator.getBuilder();
+		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
 
 		{
 			this.minecraft.getTextureManager().bind(Screen.BACKGROUND_LOCATION);
-			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-			bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-			bufferBuilder.vertex(this.minX, this.maxY, 0.0D).texture(this.minX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
-			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D).texture(this.maxX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
-			bufferBuilder.vertex(this.maxX, this.minY, 0.0D).texture(this.maxX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
-			bufferBuilder.vertex(this.minX, this.minY, 0.0D).texture(this.minX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
-			tessellator.end();
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			bufferBuilder.start(GL11.GL_QUADS);
+			bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
+			bufferBuilder.texture(this.minX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
+			bufferBuilder.color(32, 32, 32, 255);
+//			bufferBuilder.nextVertex();
+			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
+			bufferBuilder.texture(this.maxX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
+			bufferBuilder.color(32, 32, 32, 255);
+//			bufferBuilder.nextVertex();
+			bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
+			bufferBuilder.texture(this.maxX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
+			bufferBuilder.color(32, 32, 32, 255);
+//			bufferBuilder.nextVertex();
+			bufferBuilder.vertex(this.minX, this.minY, 0.0D);
+			bufferBuilder.texture(this.minX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
+			bufferBuilder.color(32, 32, 32, 255);
+//			bufferBuilder.nextVertex();
+			bufferBuilder.end();
 		}
 
 		int listX = this.minX + this.width / 2 - this.getRowWidth() / 2 + 2;
 		int listY = this.minY + 4 - (int)this.scrollAmount;
 		this.renderList(listX, listY, mouseX, mouseY);
 
-		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-		GlStateManager.disableDepthTest();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
-		GlStateManager.disableAlphaTest();
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.disableTexture();
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GLX.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
-		bufferBuilder.vertex(this.minX, (this.minY + 4), 0.0D).
+		bufferBuilder.start(GL11.GL_QUADS);
 
-				color(0, 0, 0, 0).
+		bufferBuilder.vertex(this.minX, (this.minY + 4), 0.0D);
+		bufferBuilder.color(0, 0, 0, 0);
 
-				nextVertex();
-		bufferBuilder.vertex(this.maxX, (this.minY + 4), 0.0D).
+		bufferBuilder.vertex(this.maxX, (this.minY + 4), 0.0D);
+		bufferBuilder.color(0, 0, 0, 0);
 
-				color(0, 0, 0, 0).
+		bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
+		bufferBuilder.color(0, 0, 0, 255);
 
-				nextVertex();
-		bufferBuilder.vertex(this.maxX, this.minY, 0.0D).
+		bufferBuilder.vertex(this.minX, this.minY, 0.0D);
+		bufferBuilder.color(0, 0, 0, 255);
 
-				color(0, 0, 0, 255).
+		bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
+		bufferBuilder.color(0, 0, 0, 255);
 
-				nextVertex();
-		bufferBuilder.vertex(this.minX, this.minY, 0.0D).
+		bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
+		bufferBuilder.color(0, 0, 0, 255);
 
-				color(0, 0, 0, 255).
+		bufferBuilder.vertex(this.maxX, (this.maxY - 4), 0.0D);
+		bufferBuilder.color(0, 0, 0, 0);
 
-				nextVertex();
-		bufferBuilder.vertex(this.minX, this.maxY, 0.0D).
+		bufferBuilder.vertex(this.minX, (this.maxY - 4), 0.0D);
+		bufferBuilder.color(0, 0, 0, 0);
 
-				color(0, 0, 0, 255).
+		bufferBuilder.end();
 
-				nextVertex();
-		bufferBuilder.vertex(this.maxX, this.maxY, 0.0D).
+		this.renderScrollBar(bufferBuilder);
 
-				color(0, 0, 0, 255).
-
-				nextVertex();
-		bufferBuilder.vertex(this.maxX, (this.maxY - 4), 0.0D).
-
-				color(0, 0, 0, 0).
-
-				nextVertex();
-		bufferBuilder.vertex(this.minX, (this.maxY - 4), 0.0D).
-
-				color(0, 0, 0, 0).
-
-				nextVertex();
-		tessellator.end();
-
-		this.renderScrollBar(bufferBuilder, tessellator);
-
-		GlStateManager.enableTexture();
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableAlphaTest();
-		GlStateManager.disableBlend();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glShadeModel(GL11.GL_FLAT);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	@Override
-	protected void renderEntry(int index, int x, int y, int height, int mouseX, int mouseY) {
+	protected void renderEntry(int index, int x, int y, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY) {
 		if (y >= this.minY && y + height <= this.maxY) {
-			super.renderEntry(index, x, y, height, mouseX, mouseY);
+			super.renderEntry(index, x, y, height, bufferBuilder, mouseX, mouseY);
 		}
 	}
 
-	public void renderScrollBar(BufferBuilder bufferBuilder, Tessellator tessellator) {
+	public void renderScrollBar(BufferBuilder bufferBuilder) {
 		int scrollbarStartX = this.getScrollbarPosition();
 		int scrollbarEndX = scrollbarStartX + 6;
 		int maxScroll = this.getMaxScroll();
@@ -311,20 +307,44 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				q = this.minY;
 			}
 
-			bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
-			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0D).color(0, 0, 0, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0D).color(0, 0, 0, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0D).color(0, 0, 0, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0D).color(0, 0, 0, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0D).color(128, 128, 128, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0D).color(128, 128, 128, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX, q, 0.0D).color(128, 128, 128, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0D).color(128, 128, 128, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0D).color(192, 192, 192, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0D).color(192, 192, 192, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0D).color(192, 192, 192, 255).nextVertex();
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0D).color(192, 192, 192, 255).nextVertex();
-			tessellator.end();
+			bufferBuilder.start(GL11.GL_QUADS);
+
+			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0D);
+			bufferBuilder.color(0, 0, 0, 255);
+			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0D);
+			bufferBuilder.color(0, 0, 0, 255);
+
+			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0D);
+			bufferBuilder.color(0, 0, 0, 255);
+
+			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0D);
+			bufferBuilder.color(0, 0, 0, 255);
+
+			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0D);
+			bufferBuilder.color(128, 128, 128, 255);
+
+			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0D);
+			bufferBuilder.color(128, 128, 128, 255);
+
+			bufferBuilder.vertex(scrollbarEndX, q, 0.0D);
+			bufferBuilder.color(128, 128, 128, 255);
+
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
+			bufferBuilder.color(128, 128, 128, 255);
+
+			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0D);
+			bufferBuilder.color(192, 192, 192, 255);
+
+			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0D);
+			bufferBuilder.color(192, 192, 192, 255);
+
+			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0D);
+			bufferBuilder.color(192, 192, 192, 255);
+
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
+			bufferBuilder.color(192, 192, 192, 255);
+
+			bufferBuilder.end();
 		}
 	}
 
@@ -366,11 +386,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		}
 
 		@Override
-		public void renderOutOfBounds(int index, int mouseX, int mouseY) {
-		}
-
-		@Override
-		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered) {
+		public void render(int index, int x, int y, int width, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
 			if (updateTextEntry) {
 				UpdateAvailableBadge.renderBadge(x + indent, y);
 			}

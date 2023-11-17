@@ -19,11 +19,19 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
+	mappings loom.layered {
+		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
+		addLayer ploceus.nestedMappings()
+	}
+	nests "net.ornithemc:nests:${project.minecraft_version}+build.${project.nests_build}"
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
 	ploceus.dependOsl(project.osl_version)
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/modmenu.accesswidener")
 }
 
 processResources {

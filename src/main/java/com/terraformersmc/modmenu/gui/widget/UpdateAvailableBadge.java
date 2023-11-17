@@ -1,16 +1,16 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
-import net.minecraft.resource.Identifier;
+import net.minecraft.client.resource.Identifier;
 
 public class UpdateAvailableBadge {
 	private static final Identifier UPDATE_ICON = new Identifier("realms", "textures/gui/realms/trial_icon.png");
 
 	public static void renderBadge(int x, int y) {
-		GlStateManager.color4f(1f, 1f, 1f, 1f);
+		GL11.glColor4f(1f, 1f, 1f, 1f);
 		int animOffset = 0;
 		if ((Minecraft.getTime() / 800L & 1L) == 1L) {
 			animOffset = 8;

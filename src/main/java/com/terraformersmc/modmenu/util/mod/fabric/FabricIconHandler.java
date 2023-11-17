@@ -5,7 +5,7 @@ import net.minecraft.client.render.texture.DynamicTexture;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.platform.TextureUtil;
+import com.terraformersmc.modmenu.util.TextureUtil;
 
 import org.apache.logging.log4j.LogManager;
 

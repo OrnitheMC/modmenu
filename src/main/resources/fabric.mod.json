@@ -20,7 +20,7 @@
     "issues": "https://github.com/OrnitheMC/modmenu/issues"
   },
   "depends": {
-    "minecraft": "1.8.x",
+    "minecraft": "1.7.x",
     "fabricloader": ">=0.14.21",
     "osl-entrypoints": ">=0.4.0",
     "osl-resource-loader": ">=0.2.3"
@@ -102,6 +102,7 @@
   "mixins": [
     "mixins.modmenu.json"
   ],
+  "accessWidener": "modmenu.accesswidener",
   "custom": {
     "modmenu": {
       "links": {

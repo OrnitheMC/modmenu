@@ -7,8 +7,8 @@
     "AccessorButtonWidget",
     "AccessorI18n",
     "AccessorTranslationStorage",
-    "InvokerScreen",
     "MixinGameMenu",
+    "MixinTextFieldWidget",
     "MixinTitleScreen"
   ],
   "injectors": {

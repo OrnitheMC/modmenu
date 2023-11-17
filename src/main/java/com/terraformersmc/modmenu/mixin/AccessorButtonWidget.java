@@ -11,4 +11,7 @@ public interface AccessorButtonWidget {
 	@Accessor("height")
 	int getHeight();
 
+	@Accessor("width")
+	void setWidth(int width);
+
 }
