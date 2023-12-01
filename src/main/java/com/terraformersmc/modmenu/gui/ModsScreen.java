@@ -307,7 +307,7 @@ public class ModsScreen extends Screen implements Controller {
 		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 		this.tooltip = null;
-		this.renderBackground();
+		this.drawBackgroundTexture(0);
 		ModListEntry selectedEntry = selected;
 		if (selectedEntry != null) {
 			this.descriptionListWidget.render(mouseX, mouseY, delta);
