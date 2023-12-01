@@ -14,8 +14,7 @@ public class ModMenuEventHandler {
 	public static void register() {
 		KeyBindingEvents.REGISTER_KEYBINDS.register(registry -> MENU_KEY_BIND = registry.register(
 				"key.modmenu.open_menu",
-				Keyboard.KEY_NONE,
-				"key.categories.misc"
+				Keyboard.KEY_NONE
 		));
 		MinecraftClientEvents.TICK_END.register(ModMenuEventHandler::onClientEndTick);
 	}

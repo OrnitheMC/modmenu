@@ -2,8 +2,9 @@ package com.terraformersmc.modmenu.gui.widget;
 
 import org.lwjgl.opengl.GL11;
 
+import com.terraformersmc.modmenu.util.DrawingUtil;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.Identifier;
 
@@ -36,7 +37,7 @@ public class TexturedButtonWidget extends ButtonWidget {
 			if (hovered) {
 				v += this.vOff;
 			}
-			GuiElement.drawTexture(this.x, this.y, u, v, this.width, this.height, this.textureWidth, this.textureHeight);
+			DrawingUtil.drawTexture(this.x, this.y, u, v, this.width, this.height, this.textureWidth, this.textureHeight);
 		}
 	}
 }

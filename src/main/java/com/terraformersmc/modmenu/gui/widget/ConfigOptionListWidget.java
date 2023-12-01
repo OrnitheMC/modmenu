@@ -7,11 +7,11 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.option.ConfigOption;
+import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
 import com.terraformersmc.modmenu.mixin.AccessorButtonWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
 
 public class ConfigOptionListWidget extends EntryListWidget {
@@ -23,7 +23,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 	public ConfigOptionListWidget(Minecraft minecraft, int width, int height, int yStart, int yEnd, int entryHeight, ConfigOption ... options) {
         super(minecraft, width, height, yStart, yEnd, entryHeight);
         this.minecraft = minecraft;
-        this.centerAlongY = false;
+//        this.centerAlongY = false;
         for (int i = 0; i < options.length; i += 2) {
             ConfigOption option = options[i];
             ConfigOption option2 = i < options.length - 1 ? options[i + 1] : null;
@@ -108,13 +108,13 @@ public class ConfigOptionListWidget extends EntryListWidget {
 			if (button == 0) {
 				if (this.left != null && this.left.isMouseOver(minecraft, mouseX, mouseY)) {
 					this.leftOption.click();
-					this.left.playClickSound(minecraft.getSoundManager());
+					minecraft.soundSystem.play("random.click", 1.0f, 1.0f);
 					this.left.message = this.leftOption.getValueLabel();
 					return true;
 				}
 				if (this.right != null && this.right.isMouseOver(minecraft, mouseX, mouseY)) {
 					this.rightOption.click();
-					this.right.playClickSound(minecraft.getSoundManager());
+					minecraft.soundSystem.play("random.click", 1.0f, 1.0f);
 					this.right.message = this.rightOption.getValueLabel();
 					return true;
 				}

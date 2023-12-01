@@ -42,18 +42,18 @@ public abstract class MixinGameMenu extends Screen {
 				final ButtonWidget button = (ButtonWidget) this.buttons.get(i);
 				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS && button.id == ADVANCEMENTS) {
 					modsButtonX = button.x;
-					modsButtonWidth = button.getWidth();
+					modsButtonWidth = ((AccessorButtonWidget) button).getWidth();
 				}
 				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_STATISTICS && button.id == STATS) {
 					modsButtonX = button.x;
-					modsButtonWidth = button.getWidth();
+					modsButtonWidth = ((AccessorButtonWidget) button).getWidth();
 				}
 				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS_AND_STATISTICS && button.id == ADVANCEMENTS) {
 					modsButtonX = button.x;
-					modsButtonWidth = 2 * button.getWidth() + spacing;
+					modsButtonWidth = 2 * ((AccessorButtonWidget) button).getWidth() + spacing;
 				}
 				if (style == ModMenuConfig.GameMenuButtonStyle.ICON && button.id == STATS) {
-					modsButtonX = button.x + button.getWidth() + spacing;
+					modsButtonX = button.x + ((AccessorButtonWidget) button).getWidth() + spacing;
 					modsButtonWidth = modsButtonHeight;
 				}
 				if (button.id == SHARE_TO_LAN) {

@@ -5,6 +5,7 @@ import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ChildEntry;
+import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
 import com.terraformersmc.modmenu.gui.widget.entries.IndependentEntry;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
 import com.terraformersmc.modmenu.gui.widget.entries.ParentEntry;
@@ -12,7 +13,6 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.input.Keyboard;
@@ -239,7 +239,7 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 					GL11.glEnable(GL11.GL_TEXTURE_2D);
 				}
 
-				this.renderEntry(index, this.getRowLeft(), entryTop, entryHeight, buffer, mouseX, mouseY);
+				this.renderEntry(index, this.getRowLeft(), entryTop, entryHeight, buffer);
 			}
 		}
 	}

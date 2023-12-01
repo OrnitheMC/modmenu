@@ -6,7 +6,6 @@ import com.terraformersmc.modmenu.mixin.AccessorTranslationStorage;
 
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
@@ -53,10 +52,10 @@ public class TranslationUtil {
 			}
 			lastKey = fullKey.toString();
 			if (TranslationUtil.hasTranslation(lastKey)) {
-				return new TranslatableText(lastKey, realArgs);
+				return Text.translatable(lastKey, realArgs);
 			}
 		}
-		return new TranslatableText(lastKey, realArgs);
+		return Text.translatable(lastKey, realArgs);
 	}
 
 	public static String translationKeyOf(String type, String id) {
@@ -64,6 +63,6 @@ public class TranslationUtil {
 	}
 
 	public static String translateOptionLabel(Text key, Text value) {
-		return I18n.translate("option.value_label", key.getFormattedString(), value.getFormattedString());
+		return I18n.translate("option.value_label", key.buildString(true), value.buildString(true));
 	}
 }

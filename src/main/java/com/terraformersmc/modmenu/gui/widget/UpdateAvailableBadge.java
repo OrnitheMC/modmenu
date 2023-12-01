@@ -2,8 +2,9 @@ package com.terraformersmc.modmenu.gui.widget;
 
 import org.lwjgl.opengl.GL11;
 
+import com.terraformersmc.modmenu.util.DrawingUtil;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.resource.Identifier;
 
 public class UpdateAvailableBadge {
@@ -16,6 +17,6 @@ public class UpdateAvailableBadge {
 			animOffset = 8;
 		}
 		Minecraft.getInstance().getTextureManager().bind(UPDATE_ICON);
-		GuiElement.drawTexture(x, y, 0f, animOffset, 8, 8, 8, 16);
+		DrawingUtil.drawTexture(x, y, 0f, animOffset, 8, 8, 8, 16);
 	}
 }

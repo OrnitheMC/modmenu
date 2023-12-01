@@ -3,3 +3,15 @@ accessWidener v2 named
 accessible	method	net/minecraft/client/gui/widget/ListWidget capScrolling ()V
 
 accessible	field	net/minecraft/client/gui/widget/ListWidget scrollAmount F
+accessible	field	net/minecraft/client/gui/widget/ListWidget headerHeight I
+accessible	field	net/minecraft/client/gui/widget/ListWidget width I
+accessible	field	net/minecraft/client/gui/widget/ListWidget height I
+accessible	field	net/minecraft/client/gui/widget/ListWidget minX I
+accessible	field	net/minecraft/client/gui/widget/ListWidget maxX I
+accessible	field	net/minecraft/client/gui/widget/ListWidget mouseYStart F
+accessible	field	net/minecraft/client/gui/widget/ListWidget pos I
+accessible	field	net/minecraft/client/gui/widget/ListWidget time J
+accessible	field	net/minecraft/client/gui/widget/ListWidget renderHeader Z
+accessible	field	net/minecraft/client/gui/widget/ListWidget renderSelectionHighlight Z
+accessible	field	net/minecraft/client/gui/widget/ListWidget minecraft Lnet/minecraft/client/Minecraft;
+accessible	field	net/minecraft/client/gui/widget/ListWidget scrollSpeedMultiplier F

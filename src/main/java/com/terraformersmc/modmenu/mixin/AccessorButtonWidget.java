@@ -8,6 +8,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 @Mixin(ButtonWidget.class)
 public interface AccessorButtonWidget {
 
+	@Accessor("width")
+	int getWidth();
+
 	@Accessor("height")
 	int getHeight();
 

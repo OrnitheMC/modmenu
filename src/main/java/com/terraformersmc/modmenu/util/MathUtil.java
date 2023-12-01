@@ -1,8 +1,17 @@
 package com.terraformersmc.modmenu.util;
 
+import java.util.Random;
+
 import net.minecraft.util.math.MathHelper;
 
 public class MathUtil {
+
+	public static float nextFloat(Random random, float min, float max) {
+		if (min >= max) {
+			return min;
+		}
+		return random.nextFloat() * (max - min) + min;
+	}
 
 	public static int toRgb(float hue, float saturation, float value) {
 		float blue;

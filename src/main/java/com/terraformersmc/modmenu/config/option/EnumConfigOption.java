@@ -2,7 +2,6 @@ package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.Locale;
 
@@ -44,12 +43,12 @@ public class EnumConfigOption<E extends Enum<E>> implements ConfigOption {
 	}
 
 	private static <E extends Enum<E>> Text getValueText(EnumConfigOption<E> option, E value) {
-		return new TranslatableText(option.translationKey + "." + value.name().toLowerCase(Locale.ROOT));
+		return Text.translatable(option.translationKey + "." + value.name().toLowerCase(Locale.ROOT));
 	}
 
 	@Override
 	public String getValueLabel() {
-		return TranslationUtil.translateOptionLabel(new TranslatableText(translationKey), getValueText(this, getValue()));
+		return TranslationUtil.translateOptionLabel(Text.translatable(translationKey), getValueText(this, getValue()));
 	}
 
 	@Override
