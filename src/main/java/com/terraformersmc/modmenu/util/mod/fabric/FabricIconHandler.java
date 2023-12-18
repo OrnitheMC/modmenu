@@ -1,8 +1,7 @@
 package com.terraformersmc.modmenu.util.mod.fabric;
 
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.render.texture.DynamicTexture;
-import org.apache.commons.lang3.Validate;
+
 import org.apache.logging.log4j.Logger;
 
 import com.terraformersmc.modmenu.util.TextureUtil;
@@ -19,12 +18,12 @@ import java.util.Map;
 public class FabricIconHandler {
 	private static final Logger LOGGER = LogManager.getLogger("Mod Menu | FabricIconHandler");
 
-	private final Map<Path, DynamicTexture> modIconCache = new HashMap<>();
+	private final Map<Path, BufferedImage> modIconCache = new HashMap<>();
 
-	public DynamicTexture createIcon(ModContainer iconSource, String iconPath) {
+	public BufferedImage createIcon(ModContainer iconSource, String iconPath) {
 		try {
 			Path path = iconSource.getPath(iconPath);
-			DynamicTexture cachedIcon = getCachedModIcon(path);
+			BufferedImage cachedIcon = getCachedModIcon(path);
 			if (cachedIcon != null) {
 				return cachedIcon;
 			}
@@ -34,10 +33,11 @@ public class FabricIconHandler {
 			}
 			try (InputStream inputStream = Files.newInputStream(path)) {
 				BufferedImage image = TextureUtil.readImage(inputStream);
-				Validate.validState(image.getWidth() == image.getHeight(), "Must be square icon");
-				DynamicTexture tex = new DynamicTexture(image);
-				cacheModIcon(path, tex);
-				return tex;
+				if (image.getWidth() != image.getHeight()) {
+					throw new IllegalStateException("must be a square icon");
+				}
+				cacheModIcon(path, image);
+				return image;
 			}
 
 		} catch (IllegalStateException e) {
@@ -54,11 +54,11 @@ public class FabricIconHandler {
 		}
 	}
 
-	DynamicTexture getCachedModIcon(Path path) {
+	BufferedImage getCachedModIcon(Path path) {
 		return modIconCache.get(path);
 	}
 
-	void cacheModIcon(Path path, DynamicTexture tex) {
+	void cacheModIcon(Path path, BufferedImage tex) {
 		modIconCache.put(path, tex);
 	}
 }

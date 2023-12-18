@@ -13,7 +13,6 @@ import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.*;
-import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.client.resource.language.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -144,19 +144,19 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull DynamicTexture getIcon(FabricIconHandler iconHandler, int i) {
+	public @NotNull BufferedImage getIcon(FabricIconHandler iconHandler, int i) {
 		String iconSourceId = getId();
-		String iconPath = metadata.getIconPath(i).orElse("assets/" + getId() + "/icon.png");
+		String iconPath = metadata.getIconPath(i).orElse("/assets/" + getId() + "/icon.png");
 		if ("minecraft".equals(getId())) {
 			iconSourceId = ModMenu.MOD_ID;
-			iconPath = "assets/" + ModMenu.MOD_ID + "/minecraft_icon.png";
+			iconPath = "/assets/" + ModMenu.MOD_ID + "/minecraft_icon.png";
 		} else if ("java".equals(getId())) {
 			iconSourceId = ModMenu.MOD_ID;
 			iconPath = "assets/" + ModMenu.MOD_ID + "/java_icon.png";
 		}
 		final String finalIconSourceId = iconSourceId;
 		ModContainer iconSource = FabricLoader.getInstance().getModContainer(iconSourceId).orElseThrow(() -> new RuntimeException("Cannot get ModContainer for Fabric mod with id " + finalIconSourceId));
-		DynamicTexture icon = iconHandler.createIcon(iconSource, iconPath);
+		BufferedImage icon = iconHandler.createIcon(iconSource, iconPath);
 		if (icon == null) {
 			if (defaultIconWarning) {
 				LOGGER.warn("Warning! Mod {} has a broken icon, loading default icon", metadata.getId());

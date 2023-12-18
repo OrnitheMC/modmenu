@@ -1,8 +1,8 @@
 package com.terraformersmc.modmenu.config.option;
 
-import net.minecraft.text.Text;
-
 import com.terraformersmc.modmenu.util.TranslationUtil;
+
+import net.minecraft.client.resource.language.I18n;
 
 import java.util.Set;
 
@@ -30,8 +30,8 @@ public class StringSetConfigOption {
 		ConfigOptionStorage.setStringSet(key, value);
 	}
 
-	public Text getMessage() {
-		return Text.translatable(translationKey);
+	public String getMessage() {
+		return I18n.translate(translationKey);
 	}
 
 	public Set<String> getDefaultValue() {

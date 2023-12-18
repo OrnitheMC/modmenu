@@ -2,21 +2,21 @@ package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
 
-import net.minecraft.text.Text;
+import net.minecraft.client.resource.language.I18n;
 
 public class BooleanConfigOption implements ConfigOption {
 	private final String key, translationKey;
 	private final boolean defaultValue;
-	private final Text enabledText;
-	private final Text disabledText;
+	private final String enabledText;
+	private final String disabledText;
 
 	public BooleanConfigOption(String key, boolean defaultValue, String enabledKey, String disabledKey) {
 		ConfigOptionStorage.setBoolean(key, defaultValue);
 		this.key = key;
 		this.translationKey = TranslationUtil.translationKeyOf("option", key);
 		this.defaultValue = defaultValue;
-		this.enabledText = Text.translatable(translationKey + "." + enabledKey);
-		this.disabledText = Text.translatable(translationKey + "." + disabledKey);
+		this.enabledText = I18n.translate(translationKey + "." + enabledKey);
+		this.disabledText = I18n.translate(translationKey + "." + disabledKey);
 	}
 
 	public BooleanConfigOption(String key, boolean defaultValue) {
@@ -45,7 +45,7 @@ public class BooleanConfigOption implements ConfigOption {
 
 	@Override
 	public String getValueLabel() {
-		return TranslationUtil.translateOptionLabel(Text.translatable(translationKey), getValue() ? enabledText : disabledText);
+		return TranslationUtil.translateOptionLabel(I18n.translate(translationKey), getValue() ? enabledText : disabledText);
 	}
 
 	@Override

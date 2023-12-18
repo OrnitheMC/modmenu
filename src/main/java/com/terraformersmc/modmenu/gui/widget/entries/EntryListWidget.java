@@ -7,7 +7,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.util.GlUtil;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.ListWidget;
 
 public abstract class EntryListWidget extends ListWidget {
@@ -108,7 +107,7 @@ public abstract class EntryListWidget extends ListWidget {
 		GL11.glDisable(2896);
 		GL11.glDisable(2912);
 		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
-		this.minecraft.getTextureManager().bind(GuiElement.BACKGROUND_LOCATION);
+		this.minecraft.textureManager.bind("/gui/background.png");
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
 		bufferBuilder.start();
@@ -228,7 +227,7 @@ public abstract class EntryListWidget extends ListWidget {
 
 	private void renderHoleBackground(int top, int bottom, int topAlpha, int bottomAlpha) {
 		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
-		this.minecraft.getTextureManager().bind(GuiElement.BACKGROUND_LOCATION);
+		this.minecraft.textureManager.bind("/gui/background.png");
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
 		bufferBuilder.start();

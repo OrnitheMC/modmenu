@@ -7,12 +7,10 @@ import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
-import com.terraformersmc.modmenu.util.TranslationUtil;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.resource.Identifier;
 import net.minecraft.client.resource.language.I18n;
 
 import java.util.List;
@@ -31,7 +29,7 @@ public abstract class MixinTitleScreen extends Screen {
 	private static final int ONLINE = 14;
 	/** button id for modmenu.title button */
 	private static final int MODS = 69;
-	private static final Identifier FABRIC_ICON_BUTTON_LOCATION = new Identifier(ModMenu.MOD_ID, "textures/gui/mods_button.png");
+	private static final String FABRIC_ICON_BUTTON_LOCATION = "/assets/" + ModMenu.MOD_ID + "/textures/gui/mods_button.png";
 
 	@Inject(at = @At(value = "TAIL"), method = "init")
 	private void onInit(CallbackInfo ci) {
@@ -80,8 +78,8 @@ public abstract class MixinTitleScreen extends Screen {
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnTitleScreen()) {
 			String count = ModMenu.getDisplayedModCount();
 			String specificKey = "modmenu.mods." + count;
-			String replacementKey = TranslationUtil.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
-			if (ModMenuConfig.EASTER_EGGS.getValue() && TranslationUtil.hasTranslation(specificKey + ".secret")) {
+			String replacementKey = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
+			if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
 				replacementKey = specificKey + ".secret";
 			}
 			return string.replace(I18n.translate(I18n.translate("menu.modded")), I18n.translate(replacementKey, count));

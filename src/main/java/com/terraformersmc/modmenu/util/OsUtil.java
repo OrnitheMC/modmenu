@@ -8,7 +8,8 @@ import org.lwjgl.Sys;
 
 import com.terraformersmc.modmenu.ModMenu;
 
-import net.minecraft.util.Utils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.OS;
 
 public class OsUtil {
 
@@ -17,7 +18,7 @@ public class OsUtil {
 	 */
 	public static void openFolder(File folder) {
 		String path = folder.getAbsolutePath();
-		if (Utils.getOS() == Utils.OS.MACOS) {
+		if (Minecraft.getOs() == OS.MACOS) {
 			try {
 				ModMenu.LOGGER.info(path);
 				Runtime.getRuntime().exec(new String[] { "/usr/bin/open", path });
@@ -25,7 +26,7 @@ public class OsUtil {
 			} catch (IOException e) {
 				ModMenu.LOGGER.error("Couldn't open file", e);
 			}
-		} else if (Utils.getOS() == Utils.OS.WINDOWS) {
+		} else if (Minecraft.getOs() == OS.WINDOWS) {
 			String command = String.format("cmd.exe /C start \"Open file\" \"%s\"", path);
 			try {
 				Runtime.getRuntime().exec(command);

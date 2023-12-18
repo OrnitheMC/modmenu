@@ -13,7 +13,6 @@ import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.util.GlUtil;
 import com.terraformersmc.modmenu.util.ModrinthUtil;
-import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricDummyParentMod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricMod;
@@ -22,7 +21,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.resource.language.I18n;
 import net.ornithemc.osl.entrypoints.api.client.ClientModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -155,23 +154,23 @@ public class ModMenu implements ClientModInitializer {
 		return NumberFormat.getInstance().format(cachedDisplayedModCount);
 	}
 
-	public static Text createModsButtonText(boolean title) {
+	public static String createModsButtonText(boolean title) {
 		TitleMenuButtonStyle titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
 		GameMenuButtonStyle gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
 		boolean isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
 		boolean isShort = /*title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK :*/ false;
-		Text modsText = Text.translatable("modmenu.title");
+		String modsText = I18n.translate("modmenu.title");
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();
 			if (isShort) {
-				modsText.append(Text.literal(" ")).appendTranslatable("modmenu.loaded.short", count);
+				modsText += " " + I18n.translate("modmenu.loaded.short", count);
 			} else {
 				String specificKey = "modmenu.loaded." + count;
-				String key = TranslationUtil.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
-				if (ModMenuConfig.EASTER_EGGS.getValue() && TranslationUtil.hasTranslation(specificKey + ".secret")) {
+				String key = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
+				if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
 					key = specificKey + ".secret";
 				}
-				modsText.append(Text.literal(" ")).appendTranslatable(key, count);
+				modsText += " " + I18n.translate(key, count);
 			}
 		}
 		return modsText;

@@ -11,8 +11,6 @@ import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
-import net.minecraft.client.resource.Identifier;
-import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +20,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class ParentEntry extends ModListEntry {
-	private static final Identifier PARENT_MOD_TEXTURE = new Identifier(ModMenu.MOD_ID, "textures/gui/parent_mod.png");
+	private static final String PARENT_MOD_TEXTURE = "/assets/" + ModMenu.MOD_ID + "/textures/gui/parent_mod.png";
 	protected List<Mod> children;
 	protected ModListWidget list;
 	protected boolean hoveringIcon = false;
@@ -40,8 +38,8 @@ public class ParentEntry extends ModListEntry {
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
-		Text str = shownChildren == children.size() ? Text.literal(String.valueOf(shownChildren)) : Text.literal(shownChildren + "/" + children.size());
-		int childrenWidth = font.getWidth(str.buildString(true)) - 1;
+		String str = shownChildren == children.size() ? String.valueOf(shownChildren) : shownChildren + "/" + children.size();
+		int childrenWidth = font.getWidth(str) - 1;
 		if (childrenBadgeWidth < childrenWidth + 4) {
 			childrenBadgeWidth = childrenWidth + 4;
 		}
@@ -55,14 +53,14 @@ public class ParentEntry extends ModListEntry {
 		GuiElement.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
-		font.draw(str.buildString(true), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
+		font.draw(str, (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
 		if (isMouseOver(mouseX, mouseY)) {
 			GuiElement.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
 			int xOffset = list.getParent().showModChildren.contains(getMod().getId()) ? iconSize : 0;
 			int yOffset = hoveringIcon ? iconSize : 0;
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.client.getTextureManager().bind(PARENT_MOD_TEXTURE);
+			this.client.textureManager.bind(PARENT_MOD_TEXTURE);
 			DrawingUtil.drawTexture(x, y, xOffset, yOffset, iconSize + xOffset, iconSize + yOffset, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256);
 		}
 	}

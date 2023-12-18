@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -28,7 +27,7 @@ public interface ModMenuApi {
 	 *
 	 * @return The text that would be displayed on a Mods button
 	 */
-	static Text createModsButtonText() {
+	static String createModsButtonText() {
 		return ModMenu.createModsButtonText(true);
 	}
 

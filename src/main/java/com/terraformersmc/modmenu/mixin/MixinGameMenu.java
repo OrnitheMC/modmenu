@@ -10,7 +10,6 @@ import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
 import net.minecraft.client.gui.screen.GameMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.resource.Identifier;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +26,7 @@ public abstract class MixinGameMenu extends Screen {
 	private static final int SHARE_TO_LAN = 7;
 	/** button id for modmenu.title button */
 	private static final int MODS = 69;
-	private static final Identifier FABRIC_ICON_BUTTON_LOCATION = new Identifier(ModMenu.MOD_ID, "textures/gui/mods_button.png");
+	private static final String FABRIC_ICON_BUTTON_LOCATION = "/assets/" + ModMenu.MOD_ID + "/textures/gui/mods_button.png";
 	@Inject(method = "init", at = @At(value = "TAIL"))
 	private void onInit(CallbackInfo ci) {
 		if (ModMenuConfig.MODIFY_GAME_MENU.getValue()) {
