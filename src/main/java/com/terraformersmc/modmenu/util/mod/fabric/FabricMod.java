@@ -149,7 +149,7 @@ public class FabricMod implements Mod {
 		String iconPath = metadata.getIconPath(i).orElse("/assets/" + getId() + "/icon.png");
 		if ("minecraft".equals(getId())) {
 			iconSourceId = ModMenu.MOD_ID;
-			iconPath = "/assets/" + ModMenu.MOD_ID + "/minecraft_icon.png";
+			iconPath = "assets/" + ModMenu.MOD_ID + "/minecraft_icon.png";
 		} else if ("java".equals(getId())) {
 			iconSourceId = ModMenu.MOD_ID;
 			iconPath = "assets/" + ModMenu.MOD_ID + "/java_icon.png";

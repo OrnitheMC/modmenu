@@ -131,7 +131,6 @@ public class ModListEntry implements EntryListWidget.Entry {
 
 	public void bindIconTexture() {
 		if (this.iconGlId == null) {
-			String iconLocation = "/assets/" + ModMenu.MOD_ID + "/" + mod.getId() + "_icon";
 			BufferedImage icon = mod.getIcon(list.getFabricIconHandler(), 64 * this.client.options.guiScale);
 			if (icon != null) {
 				this.iconGlId = this.client.textureManager.bind(icon);
@@ -139,7 +138,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 				this.iconGlId = this.client.textureManager.load(UNKNOWN_ICON);
 			}
 		}
-		this.client.textureManager.bind(COMPACT_ICON_SIZE);
+		this.client.textureManager.bind(this.iconGlId);
 	}
 
 	public int getXOffset() {
