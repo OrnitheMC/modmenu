@@ -219,22 +219,11 @@ public class DescriptionListWidget extends EntryListWidget {
 			this.minecraft.getTextureManager().bind(Screen.BACKGROUND_LOCATION);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
-			bufferBuilder.texture(this.minX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
-			bufferBuilder.texture(this.maxX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
-			bufferBuilder.texture(this.maxX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.minX, this.minY, 0.0D);
-			bufferBuilder.texture(this.minX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
+			bufferBuilder.color(0x20, 0x20, 0x20);
+            bufferBuilder.vertex(this.minX, this.maxY, 0.0, (this.minX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+            bufferBuilder.vertex(this.maxX, this.maxY, 0.0, (this.maxX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+            bufferBuilder.vertex(this.maxX, this.minY, 0.0, (this.maxX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
+            bufferBuilder.vertex(this.minX, this.minY, 0.0, (this.minX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
 			bufferBuilder.end();
 		}
 
