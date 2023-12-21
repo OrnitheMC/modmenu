@@ -16,8 +16,9 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
-public class DrawingUtil {
+public class DrawingUtil extends GuiElement {
 	private static final Minecraft CLIENT = AccessorMinecraft.getInstance();
+	private static final DrawingUtil GUI = new DrawingUtil();
 
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
@@ -27,7 +28,7 @@ public class DrawingUtil {
 			color = 0xFFDD5656;
 		}
 		GL11.glColor4f(1f, 1f, 1f, 1f);
-		GuiElement.fill(x, y, x + width, y + height, color);
+		GUI.fill(x, y, x + width, y + height, color);
 	}
 
 	public static void drawWrappedString(String string, int x, int y, int wrapWidth, int lines, int color) {
@@ -53,11 +54,11 @@ public class DrawingUtil {
 	}
 
 	public static void drawBadge(int x, int y, int tagWidth, String text, int outlineColor, int fillColor, int textColor) {
-		GuiElement.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
-		GuiElement.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		GuiElement.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
-		GuiElement.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		GuiElement.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
+		GUI.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
+		GUI.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
+		GUI.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
+		GUI.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
+		GUI.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
 		CLIENT.textRenderer.draw(text, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(text)) / (float) 2), y + 1, textColor);
 	}
 

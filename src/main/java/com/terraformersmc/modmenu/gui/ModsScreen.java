@@ -20,7 +20,6 @@ import com.terraformersmc.modmenu.util.mod.ModBadgeRenderer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
-import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -116,7 +115,7 @@ public class ModsScreen extends Screen implements Controller {
 		int searchWidthMax = paneWidth - 32 - filtersButtonSize;
 		int searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
 		searchBoxX = paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
-		this.searchBox = new TextFieldWidget(this.textRenderer, searchBoxX, 22, searchBoxWidth, 20);
+		this.searchBox = new TextFieldWidget(this, this.textRenderer, searchBoxX, 22, searchBoxWidth, 20, "");
 		((TextFieldAccess) this.searchBox).setController(this);
 
 		for (Mod mod : ModMenu.MODS.values()) {
@@ -239,7 +238,7 @@ public class ModsScreen extends Screen implements Controller {
 			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE) {
 
 				@Override
-				public void m_2404638() {
+				public void copy() {
 				}
 			});
 			break;
@@ -249,7 +248,7 @@ public class ModsScreen extends Screen implements Controller {
 			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES) {
 
 				@Override
-				public void m_2404638() {
+				public void copy() {
 				}
 			});
 			break;

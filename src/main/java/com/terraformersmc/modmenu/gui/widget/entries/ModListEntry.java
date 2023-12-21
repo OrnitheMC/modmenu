@@ -19,7 +19,7 @@ import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.resource.language.I18n;
 
-public class ModListEntry implements EntryListWidget.Entry {
+public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 	public static final String UNKNOWN_ICON = "/gui/unknown_pack.png";
 	private static final String MOD_CONFIGURATION_ICON = "/assets/modmenu/textures/gui/mod_configuration.png";
 //	private static final String ERROR_ICON = new Identifier("minecraft", "textures/gui/world_selection.png");
@@ -80,7 +80,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 		if (!(this instanceof ParentEntry) && ModMenuConfig.QUICK_CONFIGURE.getValue() && (this.list.getParent().getModHasConfigScreen().get(modId) || this.list.getParent().modScreenErrors.containsKey(modId))) {
 			final int textureSize = ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256;
 			if (/*this.client.options.touchscreen ||*/ hovered) {
-				GuiElement.fill(x, y, x + iconSize, y + iconSize, -1601138544);
+				this.fill(x, y, x + iconSize, y + iconSize, -1601138544);
 				boolean hoveringIcon = mouseX - x < iconSize;
 				int v = hoveringIcon ? iconSize : 0;
 				if (this.list.getParent().modScreenErrors.containsKey(modId)) {

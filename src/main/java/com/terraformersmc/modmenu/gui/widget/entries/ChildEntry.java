@@ -3,7 +3,6 @@ package com.terraformersmc.modmenu.gui.widget.entries;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.util.mod.Mod;
-import net.minecraft.client.gui.GuiElement;
 import org.lwjgl.input.Keyboard;
 
 public class ChildEntry extends ModListEntry {
@@ -21,8 +20,8 @@ public class ChildEntry extends ModListEntry {
 		super.render(index, x, y, rowWidth, rowHeight, bufferBuilder, mouseX, mouseY, hovered);
 		x += 4;
 		int color = 0xFFA0A0A0;
-		GuiElement.fill(x, y - 2, x + 1, y + (bottomChild ? rowHeight / 2 : rowHeight + 2), color);
-		GuiElement.fill(x, y + rowHeight / 2, x + 7, y + rowHeight / 2 + 1, color);
+		this.fill(x, y - 2, x + 1, y + (bottomChild ? rowHeight / 2 : rowHeight + 2), color);
+		this.fill(x, y + rowHeight / 2, x + 7, y + rowHeight / 2 + 1, color);
 	}
 
 	@Override
