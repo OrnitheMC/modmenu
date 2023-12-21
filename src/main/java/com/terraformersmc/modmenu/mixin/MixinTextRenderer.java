@@ -8,13 +8,36 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import com.terraformersmc.modmenu.util.TextRendererHelper;
 
+import net.minecraft.SharedConstants;
 import net.minecraft.client.render.TextRenderer;
 
 @Mixin(TextRenderer.class)
 public class MixinTextRenderer implements TextRendererHelper {
 
-	@Shadow
-	private int getWidth(char chr) { return 0; }
+	@Shadow private int[] characterWidths;
+	@Shadow private byte[] glyphSizes;
+	@Shadow private boolean unicode;
+
+	@Override
+	public int getWidth(char chr) {
+		if (chr == '\u00a7') {
+			return -1;
+		}
+		int index = SharedConstants.VALID_CHAT_CHARACTERS.indexOf(chr);
+		if (index >= 0 && !this.unicode) {
+			return this.characterWidths[index + 32];
+		}
+		if (this.glyphSizes[chr] != 0) {
+			int n2 = this.glyphSizes[chr] >> 4;
+			int n3 = this.glyphSizes[chr] & 0xF;
+			if (n3 > 7) {
+				n3 = 15;
+				n2 = 0;
+			}
+			return (++n3 - n2) / 2 + 1;
+		}
+		return 0;
+	}
 
 	@Override
 	public String trim(String text, int width) {

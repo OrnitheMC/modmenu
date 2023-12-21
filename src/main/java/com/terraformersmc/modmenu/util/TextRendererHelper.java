@@ -4,6 +4,10 @@ import java.util.List;
 
 public interface TextRendererHelper {
 
+	default int getWidth(char chr) {
+		throw new UnsupportedOperationException();
+	}
+
 	default String trim(String text, int width) {
 		throw new UnsupportedOperationException();
 	}
