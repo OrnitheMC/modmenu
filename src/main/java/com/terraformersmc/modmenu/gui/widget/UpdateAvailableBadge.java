@@ -16,7 +16,7 @@ public class UpdateAvailableBadge {
 		if ((Minecraft.getTime() / 800L & 1L) == 1L) {
 			animOffset = 8;
 		}
-		Minecraft.getInstance().textureManager.bind(UPDATE_ICON);
+		Minecraft.getInstance().textureManager.bind(Minecraft.getInstance().textureManager.load(UPDATE_ICON));
 		DrawingUtil.drawTexture(x, y, 0f, animOffset, 8, 8, 8, 16);
 	}
 }

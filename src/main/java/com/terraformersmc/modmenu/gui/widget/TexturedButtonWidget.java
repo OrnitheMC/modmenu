@@ -28,7 +28,7 @@ public class TexturedButtonWidget extends ButtonWidget {
 	@Override
 	public void render(Minecraft minecraft, int mouseX, int mouseY) {
 		if (this.visible) {
-			minecraft.textureManager.bind(this.texture);
+			minecraft.textureManager.bind(minecraft.textureManager.load(this.texture));
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 			boolean hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			int u = this.u;

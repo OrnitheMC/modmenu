@@ -15,9 +15,7 @@ import com.terraformersmc.modmenu.util.mod.ModBadgeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
-import net.minecraft.client.render.texture.Texture;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Formatting;
 
 public class ModListEntry implements EntryListWidget.Entry {
 	public static final String UNKNOWN_ICON = "/gui/unknown_pack.png";
@@ -84,14 +82,14 @@ public class ModListEntry implements EntryListWidget.Entry {
 				boolean hoveringIcon = mouseX - x < iconSize;
 				int v = hoveringIcon ? iconSize : 0;
 				if (this.list.getParent().modScreenErrors.containsKey(modId)) {
-					this.client.textureManager.bind(ERROR_ICON);
+					this.client.textureManager.bind(this.client.textureManager.load(ERROR_ICON));
 					DrawingUtil.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 					if (hoveringIcon) {
 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
-						this.list.getParent().setTooltip(this.client.textRenderer.split(I18n.translate("modmenu.configure.error", modId, modId) + "\n\n" + Formatting.RED + e.toString(), 175));
+						this.list.getParent().setTooltip(this.client.textRenderer.split(I18n.translate("modmenu.configure.error", modId, modId) + "\n\n" + /*Formatting.RED +*/ e.toString(), 175));
 					}
 				} else {
-					this.client.textureManager.bind(MOD_CONFIGURATION_ICON);
+					this.client.textureManager.bind(this.client.textureManager.load(MOD_CONFIGURATION_ICON));
 					DrawingUtil.drawTexture(x, y, 0.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 				}
 			}

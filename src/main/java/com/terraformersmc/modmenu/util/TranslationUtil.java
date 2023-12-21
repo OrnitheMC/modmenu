@@ -1,6 +1,7 @@
 package com.terraformersmc.modmenu.util;
 
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.mixin.AccessorLanguageManager;
 
 import net.minecraft.client.resource.language.I18n;
 
@@ -8,6 +9,10 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 
 public class TranslationUtil {
+	public static boolean hasTranslation(String key) {
+		return AccessorLanguageManager.getTranslations().containsKey(key);
+	}
+
 	public static String translateNumeric(String key, int[]... args) {
 		Object[] realArgs = new Object[args.length];
 		for (int i = 0; i < args.length; i++) {
@@ -44,7 +49,7 @@ public class TranslationUtil {
 				}
 			}
 			lastKey = fullKey.toString();
-			if (I18n.hasTranslation(lastKey)) {
+			if (TranslationUtil.hasTranslation(lastKey)) {
 				return I18n.translate(lastKey, realArgs);
 			}
 		}

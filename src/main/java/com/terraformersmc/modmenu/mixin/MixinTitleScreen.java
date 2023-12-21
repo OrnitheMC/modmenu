@@ -7,6 +7,7 @@ import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
+import com.terraformersmc.modmenu.util.TranslationUtil;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
@@ -78,8 +79,8 @@ public abstract class MixinTitleScreen extends Screen {
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnTitleScreen()) {
 			String count = ModMenu.getDisplayedModCount();
 			String specificKey = "modmenu.mods." + count;
-			String replacementKey = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
-			if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
+			String replacementKey = TranslationUtil.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
+			if (ModMenuConfig.EASTER_EGGS.getValue() && TranslationUtil.hasTranslation(specificKey + ".secret")) {
 				replacementKey = specificKey + ".secret";
 			}
 			return string.replace(I18n.translate(I18n.translate("menu.modded")), I18n.translate(replacementKey, count));

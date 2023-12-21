@@ -13,6 +13,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.util.GlUtil;
 import com.terraformersmc.modmenu.util.ModrinthUtil;
+import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricDummyParentMod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricMod;
@@ -166,8 +167,8 @@ public class ModMenu implements ClientModInitializer {
 				modsText += " " + I18n.translate("modmenu.loaded.short", count);
 			} else {
 				String specificKey = "modmenu.loaded." + count;
-				String key = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
-				if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
+				String key = TranslationUtil.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
+				if (ModMenuConfig.EASTER_EGGS.getValue() && TranslationUtil.hasTranslation(specificKey + ".secret")) {
 					key = specificKey + ".secret";
 				}
 				modsText += " " + I18n.translate(key, count);

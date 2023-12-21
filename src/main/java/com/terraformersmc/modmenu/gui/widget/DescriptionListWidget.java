@@ -16,7 +16,6 @@ import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Formatting;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
@@ -29,13 +28,13 @@ import org.lwjgl.opengl.GL11;
 public class DescriptionListWidget extends EntryListWidget {
 
 	private static final String HAS_UPDATE_TEXT = I18n.translate("modmenu.hasUpdate");
-	private static final String EXPERIMENTAL_TEXT = Formatting.GOLD + I18n.translate("modmenu.experimental");
+	private static final String EXPERIMENTAL_TEXT = /*Formatting.GOLD +*/ I18n.translate("modmenu.experimental");
 	private static final String MODRINTH_TEXT = I18n.translate("modmenu.modrinth");
 	private static final String CHILD_HAS_UPDATE_TEXT = I18n.translate("modmenu.childHasUpdate");
 	private static final String LINKS_TEXT = I18n.translate("modmenu.links");
-	private static final String SOURCE_TEXT = "" + Formatting.BLUE + Formatting.UNDERLINE + I18n.translate("modmenu.source");
+	private static final String SOURCE_TEXT = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.source");
 	private static final String LICENSE_TEXT = I18n.translate("modmenu.license");
-	private static final String VIEW_CREDITS_TEXT = "" + Formatting.BLUE + Formatting.UNDERLINE + I18n.translate("modmenu.viewCredits");
+	private static final String VIEW_CREDITS_TEXT = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.viewCredits");
 	private static final String CREDITS_TEXT = I18n.translate("modmenu.credits");
 
 	private final Minecraft minecraft;
@@ -118,7 +117,7 @@ public class DescriptionListWidget extends EntryListWidget {
 							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
-						String updateText = "" + Formatting.BLUE + Formatting.UNDERLINE + I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT);
+						String updateText = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT);
 
 						String versionLink = String.format("https://modrinth.com/project/%s/version/%s", mod.getModrinthData().projectId(), mod.getModrinthData().versionId());
 
@@ -159,7 +158,7 @@ public class DescriptionListWidget extends EntryListWidget {
 
 					links.forEach((key, value) -> {
 						int indent = 8;
-						for (Object line : textRenderer.split("" + Formatting.BLUE + Formatting.UNDERLINE + I18n.translate(key), wrapWidth - 16)) {
+						for (Object line : textRenderer.split("" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate(key), wrapWidth - 16)) {
 							this.entries.add(new LinkEntry((String) line, value, indent));
 							indent = 16;
 						}
@@ -215,7 +214,7 @@ public class DescriptionListWidget extends EntryListWidget {
 		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
 
 		{
-			this.minecraft.textureManager.bind("/gui/background.png");
+			this.minecraft.textureManager.bind(this.minecraft.textureManager.load("/gui/background.png"));
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			bufferBuilder.start(GL11.GL_QUADS);
 			bufferBuilder.color(0x20, 0x20, 0x20);
@@ -418,7 +417,7 @@ public class DescriptionListWidget extends EntryListWidget {
 		@Override
 		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (isMouseInList(mouseX, mouseY)) {
-				minecraft.openScreen(new ConfirmChatLinkScreen(DescriptionListWidget.this.parent, link, ModsScreen.MODS_LIST_CONFIRM_ID_OFFSET + index, false));
+				minecraft.openScreen(new ConfirmChatLinkScreen(DescriptionListWidget.this.parent, link, ModsScreen.MODS_LIST_CONFIRM_ID_OFFSET + index));
 			}
 			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}

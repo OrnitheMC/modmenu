@@ -107,7 +107,7 @@ public abstract class EntryListWidget extends ListWidget {
 		GL11.glDisable(2896);
 		GL11.glDisable(2912);
 		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
-		this.minecraft.textureManager.bind("/gui/background.png");
+		this.minecraft.textureManager.bind(this.minecraft.textureManager.load("/gui/background.png"));
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
 		bufferBuilder.start();
@@ -227,7 +227,7 @@ public abstract class EntryListWidget extends ListWidget {
 
 	private void renderHoleBackground(int top, int bottom, int topAlpha, int bottomAlpha) {
 		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
-		this.minecraft.textureManager.bind("/gui/background.png");
+		this.minecraft.textureManager.bind(this.minecraft.textureManager.load("/gui/background.png"));
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
 		bufferBuilder.start();

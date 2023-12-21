@@ -26,7 +26,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Formatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -158,7 +157,7 @@ public class ModsScreen extends Screen implements Controller {
 				visible = selected != null && modHasConfigScreen.get(modId) || modScreenErrors.containsKey(modId);
 				if (modScreenErrors.containsKey(modId)) {
 					Throwable e = modScreenErrors.get(modId);
-					this.tooltip = I18n.translate("modmenu.configure.error", modId, modId) + "\n\n" + Formatting.RED + e.toString();
+					this.tooltip = I18n.translate("modmenu.configure.error", modId, modId) + "\n\n" /*+ Formatting.RED*/ + e.toString();
 				} else {
 					this.tooltip = CONFIGURE;
 				}
@@ -247,12 +246,12 @@ public class ModsScreen extends Screen implements Controller {
 		}
 		case WEBSITE: {
 			final Mod mod = Objects.requireNonNull(selected).getMod();
-			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE, false));
+			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE));
 			break;
 		}
 		case ISSUES: {
 			final Mod mod = Objects.requireNonNull(selected).getMod();
-			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES, false));
+			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES));
 			break;
 		}
 		case FILTERS: {

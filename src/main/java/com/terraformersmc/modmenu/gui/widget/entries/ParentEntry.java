@@ -60,7 +60,7 @@ public class ParentEntry extends ModListEntry {
 			int xOffset = list.getParent().showModChildren.contains(getMod().getId()) ? iconSize : 0;
 			int yOffset = hoveringIcon ? iconSize : 0;
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.client.textureManager.bind(PARENT_MOD_TEXTURE);
+			this.client.textureManager.bind(this.client.textureManager.load(PARENT_MOD_TEXTURE));
 			DrawingUtil.drawTexture(x, y, xOffset, yOffset, iconSize + xOffset, iconSize + yOffset, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256, ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256);
 		}
 	}
