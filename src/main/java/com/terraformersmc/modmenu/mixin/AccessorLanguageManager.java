@@ -11,7 +11,6 @@ import net.minecraft.locale.LanguageManager;
 public interface AccessorLanguageManager {
 
 	@Accessor("translations")
-	public static Properties getTranslations() {
-		throw new UnsupportedOperationException();
-	}
+	Properties getTranslations();
+
 }
