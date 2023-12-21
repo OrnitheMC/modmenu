@@ -2,12 +2,12 @@ package com.terraformersmc.modmenu.util;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
+import com.terraformersmc.modmenu.mixin.AccessorMinecraft;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
-import net.minecraft.text.*;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class DrawingUtil {
-	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final Minecraft CLIENT = AccessorMinecraft.getInstance();
 
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
@@ -44,7 +44,7 @@ public class DrawingUtil {
 				renderable += "...";
 			}
 			int x1 = x;
-			if (CLIENT.textRenderer.isBidirectional()) {
+			if (CLIENT.textRenderer.bidirectional) {
 				int width = CLIENT.textRenderer.getWidth(renderable);
 				x1 += (float) (wrapWidth - width);
 			}

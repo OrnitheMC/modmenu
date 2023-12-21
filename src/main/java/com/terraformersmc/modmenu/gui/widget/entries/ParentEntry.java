@@ -5,6 +5,7 @@ import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.util.DrawingUtil;
+import com.terraformersmc.modmenu.util.MathUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 
@@ -72,7 +73,7 @@ public class ParentEntry extends ModListEntry {
 		if (mouseX - list.getRowLeft() <= iconSize) {
 			this.toggleChildren();
 			return true;
-		} else if (!quickConfigure && Minecraft.getTime() - this.sinceLastClick < 250) {
+		} else if (!quickConfigure && MathUtil.getTime() - this.sinceLastClick < 250) {
 			this.toggleChildren();
 			return true;
 		} else {

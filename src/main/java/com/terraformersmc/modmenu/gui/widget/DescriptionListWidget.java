@@ -15,7 +15,7 @@ import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;

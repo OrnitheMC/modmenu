@@ -5,12 +5,14 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.util.GlUtil;
+import com.terraformersmc.modmenu.util.MathUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ListWidget;
 
 public abstract class EntryListWidget extends ListWidget {
 
+	protected double scrollAmount;
 	private boolean scrolling;
 
 	public EntryListWidget(Minecraft minecraft, int i, int j, int k, int l, int m) {
@@ -54,10 +56,10 @@ public abstract class EntryListWidget extends ListWidget {
 						n4 = mouseY - this.minY - this.headerHeight + (int) this.scrollAmount - 4;
 						n3 = n4 / this.entryHeight;
 						if (mouseX >= n10 && mouseX <= n5 && n3 >= 0 && n4 >= 0 && n3 < n6) {
-							n2 = n3 == this.pos && Minecraft.getTime() - this.time < 250L ? 1 : 0;
+							n2 = n3 == this.pos && MathUtil.getTime() - this.time < 250L ? 1 : 0;
 							this.entryClicked(n3, n2 != 0);
 							this.pos = n3;
-							this.time = Minecraft.getTime();
+							this.time = MathUtil.getTime();
 						} else if (mouseX >= n10 && mouseX <= n5 && n4 < 0) {
 							this.headerClicked(mouseX - n10, mouseY - this.minY + (int) this.scrollAmount - 4);
 							n9 = 0;
@@ -278,6 +280,25 @@ public abstract class EntryListWidget extends ListWidget {
 		return (int) this.scrollAmount;
 	}
 
+	protected void scroll(int i) {
+		this.setScrollAmount(this.getScrollAmount() + (double)i);
+		this.mouseYStart = -2.0F;
+	}
+
+	public void setScrollAmount(double amount) {
+		if (amount < 0) {
+			amount = 0;
+		}
+		if (amount > getMaxScroll()) {
+			amount = getMaxScroll();
+		}
+		this.scrollAmount = amount;
+	}
+
+	protected int getMaxScroll() {
+		return Math.max(0, this.getHeight() - (this.maxY - this.minY - 4));
+	}
+
 	public boolean isMouseInList(int mouseY) {
 		return mouseY >= this.minY && mouseY <= this.maxY;
 	}
@@ -288,6 +309,10 @@ public abstract class EntryListWidget extends ListWidget {
 
 	public boolean isScrolling() {
 		return this.scrolling;
+	}
+
+	protected int getScrollbarPosition() {
+		return this.width / 2 + 124;
 	}
 
 	public void setX(int x) {

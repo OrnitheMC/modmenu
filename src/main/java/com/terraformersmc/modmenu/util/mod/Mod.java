@@ -4,7 +4,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import net.fabricmc.loader.api.metadata.ModOrigin;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.resource.language.I18n;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

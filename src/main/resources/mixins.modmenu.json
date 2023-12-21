@@ -6,6 +6,7 @@
   "client": [
     "AccessorButtonWidget",
     "AccessorLanguageManager",
+    "AccessorMinecraft",
     "MixinGameMenu",
     "MixinGLX",
     "MixinTextFieldWidget",

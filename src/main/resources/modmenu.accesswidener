@@ -1,5 +1,6 @@
 accessWidener v2 named
 
+accessible	method	net/minecraft/client/Minecraft getOs ()Lnet/minecraft/util/OS;
 accessible	method	net/minecraft/client/gui/widget/ListWidget capScrolling ()V
 accessible	method	net/minecraft/client/render/texture/TextureManager	load	(Ljava/lang/String;)I
 accessible	method	net/minecraft/client/render/texture/TextureManager	bind	(I)V
@@ -10,6 +11,8 @@ accessible	field	net/minecraft/client/gui/widget/ListWidget width I
 accessible	field	net/minecraft/client/gui/widget/ListWidget height I
 accessible	field	net/minecraft/client/gui/widget/ListWidget minX I
 accessible	field	net/minecraft/client/gui/widget/ListWidget maxX I
+mutable	field	net/minecraft/client/gui/widget/ListWidget minX I
+mutable	field	net/minecraft/client/gui/widget/ListWidget maxX I
 accessible	field	net/minecraft/client/gui/widget/ListWidget mouseYStart F
 accessible	field	net/minecraft/client/gui/widget/ListWidget pos I
 accessible	field	net/minecraft/client/gui/widget/ListWidget time J
@@ -17,3 +20,4 @@ accessible	field	net/minecraft/client/gui/widget/ListWidget renderHeader Z
 accessible	field	net/minecraft/client/gui/widget/ListWidget renderSelectionHighlight Z
 accessible	field	net/minecraft/client/gui/widget/ListWidget minecraft Lnet/minecraft/client/Minecraft;
 accessible	field	net/minecraft/client/gui/widget/ListWidget scrollSpeedMultiplier F
+accessible	field	net/minecraft/client/render/TextRenderer bidirectional Z

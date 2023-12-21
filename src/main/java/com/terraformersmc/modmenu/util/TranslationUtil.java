@@ -3,8 +3,8 @@ package com.terraformersmc.modmenu.util;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.mixin.AccessorLanguageManager;
 
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.locale.LanguageManager;
+import net.minecraft.resource.language.I18n;
 
 import java.text.NumberFormat;
 import java.util.Arrays;

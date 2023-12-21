@@ -1,6 +1,7 @@
 package com.terraformersmc.modmenu.util.mod;
 
 import com.terraformersmc.modmenu.gui.ModsScreen;
+import com.terraformersmc.modmenu.mixin.AccessorMinecraft;
 import com.terraformersmc.modmenu.util.DrawingUtil;
 import net.minecraft.client.Minecraft;
 
@@ -18,7 +19,7 @@ public class ModBadgeRenderer {
 		this.badgeMax = endX;
 		this.mod = mod;
 		this.screen = screen;
-		this.client = Minecraft.getInstance();
+		this.client = AccessorMinecraft.getInstance();
 	}
 
 	public void draw(int mouseX, int mouseY) {

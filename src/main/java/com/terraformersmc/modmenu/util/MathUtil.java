@@ -2,6 +2,8 @@ package com.terraformersmc.modmenu.util;
 
 import java.util.Random;
 
+import org.lwjgl.Sys;
+
 import net.minecraft.util.math.MathHelper;
 
 public class MathUtil {
@@ -67,5 +69,9 @@ public class MathUtil {
 		int g = MathHelper.clamp((int) (green * 255.0f), 0, 255);
 		int b = MathHelper.clamp((int) (blue * 255.0f), 0, 255);
 		return r << 16 | g << 8 | b;
+	}
+
+	public static long getTime() {
+		return Sys.getTime() * 1000L / Sys.getTimerResolution();
 	}
 }

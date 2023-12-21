@@ -9,13 +9,15 @@ import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
 import com.terraformersmc.modmenu.gui.widget.UpdateAvailableBadge;
+import com.terraformersmc.modmenu.mixin.AccessorMinecraft;
 import com.terraformersmc.modmenu.util.DrawingUtil;
+import com.terraformersmc.modmenu.util.MathUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModBadgeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.resource.language.I18n;
 
 public class ModListEntry implements EntryListWidget.Entry {
 	public static final String UNKNOWN_ICON = "/gui/unknown_pack.png";
@@ -34,7 +36,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 	public ModListEntry(Mod mod, ModListWidget list) {
 		this.mod = mod;
 		this.list = list;
-		this.client = Minecraft.getInstance();
+		this.client = AccessorMinecraft.getInstance();
 	}
 
 	@Override
@@ -103,11 +105,11 @@ public class ModListEntry implements EntryListWidget.Entry {
 			int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;
 			if (mouseX - list.getRowLeft() <= iconSize) {
 				this.openConfig();
-			} else if (Minecraft.getTime() - this.sinceLastClick < 250) {
+			} else if (MathUtil.getTime() - this.sinceLastClick < 250) {
 				this.openConfig();
 			}
 		}
-		this.sinceLastClick = Minecraft.getTime();
+		this.sinceLastClick = MathUtil.getTime();
 		return true;
 	}
 

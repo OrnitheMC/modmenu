@@ -2,7 +2,7 @@ package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
 
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.resource.language.I18n;
 
 public class BooleanConfigOption implements ConfigOption {
 	private final String key, translationKey;
