@@ -88,7 +88,7 @@ public abstract class EntryListWidget extends ListWidget {
 					this.mouseYStart = mouseY;
 				}
 			} else {
-				while (!this.minecraft.options.touchscreen && Mouse.next()) {
+				while (/*!this.minecraft.options.touchScreen &&*/ Mouse.next()) {
 					n9 = Mouse.getEventDWheel();
 					if (n9 != 0) {
 						if (n9 > 0) {

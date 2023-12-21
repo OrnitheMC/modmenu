@@ -163,11 +163,6 @@ public class ModsScreen extends Screen implements Controller {
 				}
 				super.render(minecraft, mouseX, mouseY);
 			}
-
-			@Override
-			public void renderTooltip(int mouseX, int mouseY) {
-				ModsScreen.this.renderTooltip(this.tooltip, mouseX, mouseY);
-			}
 		};
 		int urlButtonWidths = paneWidth / 2 - 2;
 		int cappedButtonWidth = Math.min(urlButtonWidths, 200);
@@ -187,12 +182,7 @@ public class ModsScreen extends Screen implements Controller {
 				super.render(minecraft, mouseX, mouseY);
 			}
 		};
-		ButtonWidget filtersButton = new TexturedButtonWidget(FILTERS, paneWidth / 2 + searchBoxWidth / 2 - 20 / 2 + 2, 22, 20, 20, 0, 0, 20, FILTERS_BUTTON_LOCATION, 32, 64) {
-			@Override
-			public void renderTooltip(int mouseX, int mouseY) {
-				ModsScreen.this.renderTooltip(TOGGLE_FILTER_OPTIONS, mouseX, mouseY);
-			}
-		};
+		ButtonWidget filtersButton = new TexturedButtonWidget(FILTERS, paneWidth / 2 + searchBoxWidth / 2 - 20 / 2 + 2, 22, 20, 20, 0, 0, 20, FILTERS_BUTTON_LOCATION, 32, 64);
 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
 			this.buttons.add(filtersButton);
 		}
@@ -246,12 +236,22 @@ public class ModsScreen extends Screen implements Controller {
 		}
 		case WEBSITE: {
 			final Mod mod = Objects.requireNonNull(selected).getMod();
-			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE));
+			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE) {
+
+				@Override
+				public void m_2404638() {
+				}
+			});
 			break;
 		}
 		case ISSUES: {
 			final Mod mod = Objects.requireNonNull(selected).getMod();
-			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES));
+			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES) {
+
+				@Override
+				public void m_2404638() {
+				}
+			});
 			break;
 		}
 		case FILTERS: {

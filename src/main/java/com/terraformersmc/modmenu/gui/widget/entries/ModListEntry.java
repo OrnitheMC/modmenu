@@ -77,7 +77,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 
 		if (!(this instanceof ParentEntry) && ModMenuConfig.QUICK_CONFIGURE.getValue() && (this.list.getParent().getModHasConfigScreen().get(modId) || this.list.getParent().modScreenErrors.containsKey(modId))) {
 			final int textureSize = ModMenuConfig.COMPACT_LIST.getValue() ? (int) (256 / (FULL_ICON_SIZE / (double) COMPACT_ICON_SIZE)) : 256;
-			if (this.client.options.touchscreen || hovered) {
+			if (/*this.client.options.touchscreen ||*/ hovered) {
 				GuiElement.fill(x, y, x + iconSize, y + iconSize, -1601138544);
 				boolean hoveringIcon = mouseX - x < iconSize;
 				int v = hoveringIcon ? iconSize : 0;
