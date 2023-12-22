@@ -15,8 +15,6 @@ import net.minecraft.client.render.TextRenderer;
 public class MixinTextRenderer implements TextRendererHelper {
 
 	@Shadow private int[] characterWidths;
-	@Shadow private byte[] glyphSizes;
-	@Shadow private boolean unicode;
 
 	@Override
 	public int getWidth(char chr) {
@@ -24,17 +22,8 @@ public class MixinTextRenderer implements TextRendererHelper {
 			return -1;
 		}
 		int index = SharedConstants.VALID_CHAT_CHARACTERS.indexOf(chr);
-		if (index >= 0 && !this.unicode) {
+		if (index >= 0) {
 			return this.characterWidths[index + 32];
-		}
-		if (this.glyphSizes[chr] != 0) {
-			int n2 = this.glyphSizes[chr] >> 4;
-			int n3 = this.glyphSizes[chr] & 0xF;
-			if (n3 > 7) {
-				n3 = 15;
-				n2 = 0;
-			}
-			return (++n3 - n2) / 2 + 1;
 		}
 		return 0;
 	}
