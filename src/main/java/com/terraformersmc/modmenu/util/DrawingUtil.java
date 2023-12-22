@@ -45,10 +45,6 @@ public class DrawingUtil extends GuiElement {
 				renderable += "...";
 			}
 			int x1 = x;
-			if (CLIENT.textRenderer.bidirectional) {
-				int width = CLIENT.textRenderer.getWidth(renderable);
-				x1 += (float) (wrapWidth - width);
-			}
 			CLIENT.textRenderer.draw(renderable, x1, y + i * CLIENT.textRenderer.fontHeight, color);
 		}
 	}
