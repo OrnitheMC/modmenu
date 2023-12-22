@@ -20,27 +20,33 @@ public class MixinTextFieldWidget implements TextFieldAccess {
 	@Unique
 	private Controller controller;
 
+	// captured value of TextFieldWidget#text at the start of a keyPressed call
+	private String modmenu$prevText;
+
 	@Inject(
-		method = "write",
+		method = "keyPressed",
 		at = @At(
-			value = "TAIL"
+			value = "HEAD"
 		)
 	)
-	private void onWrite(CallbackInfo ci) {
+	private void modmenu$beforeKeyPressed(CallbackInfo ci) {
 		if (this.controller != null) {
-			this.controller.setValue(this.text);
+			this.modmenu$prevText = this.text;
 		}
 	}
 
 	@Inject(
-		method = "eraseCharacters",
+		method = "keyPressed",
 		at = @At(
 			value = "TAIL"
 		)
 	)
-	private void onEraseCharacters(CallbackInfo ci) {
+	private void modmenu$afterKeyPressed(CallbackInfo ci) {
 		if (this.controller != null) {
-			this.controller.setValue(this.text);
+			if (this.modmenu$prevText != null && !this.text.equals(this.modmenu$prevText)) {
+				this.controller.setValue(this.text);
+			}
+			this.modmenu$prevText = null;
 		}
 	}
 
