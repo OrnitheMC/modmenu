@@ -140,7 +140,7 @@ public class ModsScreen extends Screen implements Controller {
 		this.modList.setX(0);
 		modList.reloadFilters();
 
-		this.descriptionListWidget = new DescriptionListWidget(this.minecraft, paneWidth, this.height, RIGHT_PANE_Y + 60, this.height - 36, textRenderer.fontHeight + 1, this);
+		this.descriptionListWidget = new DescriptionListWidget(this.minecraft, paneWidth, this.height, RIGHT_PANE_Y + 60, this.height - 36, DrawingUtil.fontHeight + 1, this);
 		this.descriptionListWidget.setX(rightPaneX);
 		ButtonWidget configureButton = new TexturedButtonWidget(DESCRIPTION_LIST, width - 24, RIGHT_PANE_Y, 20, 20, 0, 0, 20, CONFIGURE_BUTTON_LOCATION, 32, 64) {
 			private String tooltip;
@@ -343,7 +343,7 @@ public class ModsScreen extends Screen implements Controller {
 			this.selected.bindIconTexture();
 			DrawingUtil.drawTexture(x, RIGHT_PANE_Y, 0.0F, 0.0F, 32, 32, 32, 32);
 			GL11.glDisable(GL11.GL_BLEND);
-			int lineSpacing = textRenderer.fontHeight + 1;
+			int lineSpacing = DrawingUtil.fontHeight + 1;
 			int imageOffset = 36;
 			String name = mod.getTranslatedName();
 			String trimmedName = name;
@@ -353,7 +353,7 @@ public class ModsScreen extends Screen implements Controller {
 				trimmedName = textRenderer.trim(name, maxNameWidth - textRenderer.getWidth(ellipsis)) + ellipsis;
 			}
 			this.textRenderer.draw(trimmedName, x + imageOffset, RIGHT_PANE_Y + 1, 0xFFFFFF);
-			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName)) {
+			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + DrawingUtil.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName)) {
 				setTooltip(Arrays.asList(I18n.translate("modmenu.modIdToolTip", mod.getId())));
 			}
 			if (init || modBadgeRenderer == null || modBadgeRenderer.getMod() != mod) {
@@ -516,7 +516,8 @@ public class ModsScreen extends Screen implements Controller {
 			n4 = this.height - n5 - 6;
 		}
 		this.drawOffset = 300.0f;
-		ModsScreen.itemRenderer.zOffset = 300.0f;
+		GL11.glPushMatrix();
+		GL11.glTranslatef(0.0F, 0.0F, 300.0F);
 		int n6 = -267386864;
 		this.fillGradient(n3 - 3, n4 - 4, n3 + n + 3, n4 - 3, n6, n6);
 		this.fillGradient(n3 - 3, n4 + n5 + 3, n3 + n + 3, n4 + n5 + 4, n6, n6);
@@ -538,7 +539,7 @@ public class ModsScreen extends Screen implements Controller {
 			n4 += 10;
 		}
 		this.drawOffset = 0.0f;
-		ModsScreen.itemRenderer.zOffset = 0.0f;
+		GL11.glPopMatrix();
 		GL11.glEnable(2896);
 		GL11.glEnable(2929);
 		Lighting.turnOn();

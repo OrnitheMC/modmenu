@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ConfirmChatLinkScreen;
@@ -8,15 +7,13 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
 import com.terraformersmc.modmenu.util.GlUtil;
+import com.terraformersmc.modmenu.util.MathUtil;
 import com.terraformersmc.modmenu.util.ScreenUtil;
 import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.resource.language.I18n;
-import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,10 +182,6 @@ public class DescriptionListWidget extends EntryListWidget {
 				if (!ModMenuConfig.HIDE_MOD_CREDITS.getValue()) {
 					if ("minecraft".equals(mod.getId())) {
 						this.entries.add(emptyEntry);
-
-						for (Object line : textRenderer.split(VIEW_CREDITS_TEXT, wrapWidth)) {
-							this.entries.add(new MojangCreditsEntry((String) line));
-						}
 					} else if (!"java".equals(mod.getId())) {
 						List<String> credits = mod.getCredits();
 						if (!credits.isEmpty()) {
@@ -286,7 +279,7 @@ public class DescriptionListWidget extends EntryListWidget {
 		int maxScroll = this.getMaxScroll();
 		if (maxScroll > 0) {
 			int p = (int) ((float) ((this.maxY - this.minY) * (this.maxY - this.minY)) / (float) this.getMaxScroll());
-			p = MathHelper.clamp(p, 32, this.maxY - this.minY - 8);
+			p = MathUtil.clamp(p, 32, this.maxY - this.minY - 8);
 			int q = (int) this.getScrollAmount() * (this.maxY - this.minY - p) / maxScroll + this.minY;
 			if (q < this.minY) {
 				q = this.minY;
@@ -385,20 +378,6 @@ public class DescriptionListWidget extends EntryListWidget {
 
 		@Override
 		public void mouseReleased(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
-		}
-	}
-
-	protected class MojangCreditsEntry extends DescriptionEntry {
-		public MojangCreditsEntry(String text) {
-			super(text);
-		}
-
-		@Override
-		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
-			if (isMouseInList(mouseX, mouseY)) {
-				minecraft.openScreen(new CreditsScreen());
-			}
-			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}
 	}
 

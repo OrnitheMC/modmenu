@@ -65,10 +65,20 @@ public class MathUtil {
 			throw new RuntimeException("Something went wrong when converting from HSV to RGB. Input was " + hue + ", " + saturation + ", " + value);
 		}
 		}
-		int r = MathHelper.clamp((int) (red * 255.0f), 0, 255);
-		int g = MathHelper.clamp((int) (green * 255.0f), 0, 255);
-		int b = MathHelper.clamp((int) (blue * 255.0f), 0, 255);
+		int r = MathUtil.clamp((int) (red * 255.0f), 0, 255);
+		int g = MathUtil.clamp((int) (green * 255.0f), 0, 255);
+		int b = MathUtil.clamp((int) (blue * 255.0f), 0, 255);
 		return r << 16 | g << 8 | b;
+	}
+
+	public static int clamp(int x, int min, int max) {
+		if (x < min) {
+			return min;
+		}
+		if (x > max) {
+			return max;
+		}
+		return x;
 	}
 
 	public static long getTime() {

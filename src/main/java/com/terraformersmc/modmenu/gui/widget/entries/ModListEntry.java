@@ -72,9 +72,9 @@ public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 		}
 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
 			String summary = mod.getSummary();
-			DrawingUtil.drawWrappedString(summary, (x + iconSize + 3 + 4), (y + client.textRenderer.fontHeight + 2), rowWidth - iconSize - 7, 2, 0x808080);
+			DrawingUtil.drawWrappedString(summary, (x + iconSize + 3 + 4), (y + DrawingUtil.fontHeight + 2), rowWidth - iconSize - 7, 2, 0x808080);
 		} else {
-			DrawingUtil.drawWrappedString(mod.getPrefixedVersion(), (x + iconSize + 3), (y + client.textRenderer.fontHeight + 2), rowWidth - iconSize - 7, 2, 0x808080);
+			DrawingUtil.drawWrappedString(mod.getPrefixedVersion(), (x + iconSize + 3), (y + DrawingUtil.fontHeight + 2), rowWidth - iconSize - 7, 2, 0x808080);
 		}
 
 		if (!(this instanceof ParentEntry) && ModMenuConfig.QUICK_CONFIGURE.getValue() && (this.list.getParent().getModHasConfigScreen().get(modId) || this.list.getParent().modScreenErrors.containsKey(modId))) {

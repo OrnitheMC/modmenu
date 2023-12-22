@@ -8,7 +8,7 @@
     "AccessorLanguageManager",
     "AccessorMinecraft",
     "MixinGameMenu",
-    "MixinGLX",
+    "MixinMinecraft",
     "MixinTextFieldWidget",
     "MixinTextRenderer",
     "MixinTitleScreen"

@@ -20,6 +20,8 @@ public class DrawingUtil extends GuiElement {
 	private static final Minecraft CLIENT = AccessorMinecraft.getInstance();
 	private static final DrawingUtil GUI = new DrawingUtil();
 
+	public static final int fontHeight = 8;
+
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
 		Random random = new Random(seed);
@@ -45,16 +47,16 @@ public class DrawingUtil extends GuiElement {
 				renderable += "...";
 			}
 			int x1 = x;
-			CLIENT.textRenderer.draw(renderable, x1, y + i * CLIENT.textRenderer.fontHeight, color);
+			CLIENT.textRenderer.draw(renderable, x1, y + i * DrawingUtil.fontHeight, color);
 		}
 	}
 
 	public static void drawBadge(int x, int y, int tagWidth, String text, int outlineColor, int fillColor, int textColor) {
 		GUI.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
-		GUI.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		GUI.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
-		GUI.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
-		GUI.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
+		GUI.fill(x, y, x + 1, y + DrawingUtil.fontHeight, outlineColor);
+		GUI.fill(x + 1, y + 1 + DrawingUtil.fontHeight - 1, x + tagWidth, y + DrawingUtil.fontHeight + 1, outlineColor);
+		GUI.fill( x + tagWidth, y, x + tagWidth + 1, y + DrawingUtil.fontHeight, outlineColor);
+		GUI.fill( x + 1, y, x + tagWidth, y + DrawingUtil.fontHeight, fillColor);
 		CLIENT.textRenderer.draw(text, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(text)) / (float) 2), y + 1, textColor);
 	}
 

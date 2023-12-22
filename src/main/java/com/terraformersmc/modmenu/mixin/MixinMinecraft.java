@@ -5,14 +5,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.platform.GLX;
-
 import com.terraformersmc.modmenu.util.GlUtil;
 
-@Mixin(GLX.class)
-public class MixinGLX {
+import net.minecraft.client.Minecraft;
 
-	@Inject(method = "init", at = @At("HEAD"))
+@Mixin(Minecraft.class)
+public class MixinMinecraft {
+
+	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getRunDirectory()Ljava/io/File;"))
 	private static void modmenu$initGlx(CallbackInfo ci) {
 		GlUtil.init();
 	}
