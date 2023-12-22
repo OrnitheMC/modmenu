@@ -12,6 +12,8 @@ import net.minecraft.client.gui.widget.ListWidget;
 
 public abstract class EntryListWidget extends ListWidget {
 
+	protected int mouseX;
+	protected int mouseY;
 	protected double scrollAmount;
 	private boolean scrolling;
 
