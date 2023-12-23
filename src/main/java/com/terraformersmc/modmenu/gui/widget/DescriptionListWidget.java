@@ -270,7 +270,7 @@ public class DescriptionListWidget extends EntryListWidget {
 		int scrollbarMinX = this.getScrollbarPosition();
 		int scrollbarMaxX = scrollbarMinX + 6;
 		if (mouseX > this.minX && mouseX < this.maxX && mouseY > this.minY && mouseY < this.maxY) {
-			if (Mouse.isButtonDown(0) && this.isScrolling()) {
+			if (Mouse.isButtonDown(0)) {
 				if (this.mouseYStart == -1.0f) {
 					int mouseClickMode = 1;
 					if (mouseY >= this.minY && mouseY <= this.maxY) {
