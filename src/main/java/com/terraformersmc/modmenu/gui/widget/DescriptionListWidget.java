@@ -311,7 +311,7 @@ public class DescriptionListWidget extends EntryListWidget {
 					this.mouseYStart = mouseY;
 				}
 			} else {
-				while (!this.minecraft.options.touchscreen && Mouse.next()) {
+				while (/*!this.minecraft.options.touchscreen &&*/ Mouse.next()) {
 					int dwheel = Mouse.getEventDWheel();
 					if (dwheel != 0) {
 						if (dwheel > 0) {
