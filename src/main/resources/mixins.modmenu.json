@@ -8,6 +8,7 @@
     "AccessorLanguageManager",
     "AccessorMinecraft",
     "MixinGameMenu",
+    "MixinListWidget",
     "MixinMinecraft",
     "MixinTextFieldWidget",
     "MixinTextRenderer",
