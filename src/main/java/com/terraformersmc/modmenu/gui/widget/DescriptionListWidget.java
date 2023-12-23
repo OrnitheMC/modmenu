@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ConfirmChatLinkScreen;
@@ -8,12 +7,12 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
 import com.terraformersmc.modmenu.util.GlUtil;
+import com.terraformersmc.modmenu.util.MathUtil;
 import com.terraformersmc.modmenu.util.ScreenUtil;
 import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
@@ -277,10 +276,10 @@ public class DescriptionListWidget extends EntryListWidget {
 						int selectedY = mouseY - this.minY - this.headerHeight + (int) this.scrollAmount - 4;
 						int selectedPos = selectedY / this.entryHeight;
 						if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedPos >= 0 && selectedY >= 0 && selectedPos < size) {
-							int selectedIndex = selectedPos == this.pos && Minecraft.getTime() - this.time < 250L ? 1 : 0;
+							int selectedIndex = selectedPos == this.pos && MathUtil.getTime() - this.time < 250L ? 1 : 0;
 							this.entryClicked(selectedPos, selectedIndex != 0);
 							this.pos = selectedPos;
-							this.time = Minecraft.getTime();
+							this.time = MathUtil.getTime();
 						} else if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedY < 0) {
 							this.headerClicked(mouseX - rowMinX, mouseY - this.minY + (int) this.scrollAmount - 4);
 							mouseClickMode = 0;
