@@ -239,31 +239,20 @@ public class DescriptionListWidget extends EntryListWidget {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		bufferBuilder.start(GL11.GL_QUADS);
-
-		bufferBuilder.vertex(this.minX, (this.minY + 4), 0.0D);
 		bufferBuilder.color(0, 0, 0, 0);
-
-		bufferBuilder.vertex(this.maxX, (this.minY + 4), 0.0D);
+		bufferBuilder.vertex(this.minX, this.minY + 4, 0.0, 0.0, 1.0);
+		bufferBuilder.vertex(this.maxX, this.minY + 4, 0.0, 1.0, 1.0);
+		bufferBuilder.color(0, 0, 0, 255);
+		bufferBuilder.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
+		bufferBuilder.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
+		bufferBuilder.end();
+		bufferBuilder.start(GL11.GL_QUADS);
+		bufferBuilder.color(0, 0, 0, 255);
+		bufferBuilder.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
+		bufferBuilder.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
 		bufferBuilder.color(0, 0, 0, 0);
-
-		bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
-		bufferBuilder.color(0, 0, 0, 255);
-
-		bufferBuilder.vertex(this.minX, this.minY, 0.0D);
-		bufferBuilder.color(0, 0, 0, 255);
-
-		bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
-		bufferBuilder.color(0, 0, 0, 255);
-
-		bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
-		bufferBuilder.color(0, 0, 0, 255);
-
-		bufferBuilder.vertex(this.maxX, (this.maxY - 4), 0.0D);
-		bufferBuilder.color(0, 0, 0, 0);
-
-		bufferBuilder.vertex(this.minX, (this.maxY - 4), 0.0D);
-		bufferBuilder.color(0, 0, 0, 0);
-
+		bufferBuilder.vertex(this.maxX, this.maxY - 4, 0.0, 1.0, 0.0);
+		bufferBuilder.vertex(this.minX, this.maxY - 4, 0.0, 0.0, 0.0);
 		bufferBuilder.end();
 
 		this.renderScrollBar(bufferBuilder);
@@ -294,42 +283,25 @@ public class DescriptionListWidget extends EntryListWidget {
 			}
 
 			bufferBuilder.start(GL11.GL_QUADS);
-
-			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0D);
-			bufferBuilder.color(0, 0, 0, 255);
-			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0D);
-			bufferBuilder.color(0, 0, 0, 255);
-
-			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0D);
-			bufferBuilder.color(0, 0, 0, 255);
-
-			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0D);
-			bufferBuilder.color(0, 0, 0, 255);
-
-			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0D);
-			bufferBuilder.color(128, 128, 128, 255);
-
-			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0D);
-			bufferBuilder.color(128, 128, 128, 255);
-
-			bufferBuilder.vertex(scrollbarEndX, q, 0.0D);
-			bufferBuilder.color(128, 128, 128, 255);
-
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
-			bufferBuilder.color(128, 128, 128, 255);
-
-			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0D);
-			bufferBuilder.color(192, 192, 192, 255);
-
-			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0D);
-			bufferBuilder.color(192, 192, 192, 255);
-
-			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0D);
-			bufferBuilder.color(192, 192, 192, 255);
-
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
-			bufferBuilder.color(192, 192, 192, 255);
-
+			bufferBuilder.color(0, 0, 0, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0, 0.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0, 1.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0, 0.0, 0.0);
+			bufferBuilder.end();
+			bufferBuilder.start(GL11.GL_QUADS);
+			bufferBuilder.color(0x80, 0x80, 0x80, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0, 0.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0, 1.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, q, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
+			bufferBuilder.end();
+			bufferBuilder.start(GL11.GL_QUADS);
+			bufferBuilder.color(0xC0, 0xC0, 0xC0, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0, 0.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0, 1.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
 			bufferBuilder.end();
 		}
 	}
