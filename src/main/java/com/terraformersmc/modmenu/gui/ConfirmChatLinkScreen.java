@@ -11,7 +11,7 @@ public abstract class ConfirmChatLinkScreen extends ConfirmScreen {
 	private String copy;
 
 	public ConfirmChatLinkScreen(Screen parent, String string, int id) {
-		super(parent, LanguageManager.getInstance().translate("chat.link.confirm"), LanguageManager.getInstance().translate("gui.yes"), LanguageManager.getInstance().translate("gui.no"), string, id);
+		super(parent, LanguageManager.getInstance().translate("chat.link.confirm"), string, LanguageManager.getInstance().translate("gui.yes"), LanguageManager.getInstance().translate("gui.no"), id);
 		LanguageManager languageManager = LanguageManager.getInstance();
 		this.copy = languageManager.translate("chat.copy");
 		this.warning = languageManager.translate("chat.link.warning");
