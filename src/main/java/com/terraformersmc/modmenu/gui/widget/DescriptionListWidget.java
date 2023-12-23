@@ -345,10 +345,13 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 
 		@Override
 		public void render(int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
+			int x = getX();
+			int y = getY();
 			if (updateTextEntry) {
-				UpdateAvailableBadge.renderBadge(getX() + indent, getY());
+				UpdateAvailableBadge.renderBadge(x + indent, y);
+				x+=11;
 			}
-			textRenderer.drawWithShadow(text, getX() + indent, getY(), 0xAAAAAA);
+			textRenderer.drawWithShadow(text, x + indent, y, 0xAAAAAA);
 		}
 	}
 
