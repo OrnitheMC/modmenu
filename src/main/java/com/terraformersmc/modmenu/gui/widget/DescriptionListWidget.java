@@ -279,7 +279,7 @@ public class DescriptionListWidget extends EntryListWidget {
 						int selectedPos = selectedY / this.entryHeight;
 						if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedPos >= 0 && selectedY >= 0 && selectedPos < size) {
 							int selectedIndex = selectedPos == this.pos && Minecraft.getTime() - this.time < 250L ? 1 : 0;
-							this.entryClicked(selectedPos, selectedIndex != 0, mouseX, mouseY);
+							this.entryClicked(selectedPos, selectedIndex != 0);
 							this.pos = selectedPos;
 							this.time = Minecraft.getTime();
 						} else if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedY < 0) {
