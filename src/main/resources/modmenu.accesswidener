@@ -6,4 +6,4 @@ accessible	field	net/minecraft/client/gui/widget/ListWidget scrollAmount F
 accessible	field	net/minecraft/client/gui/widget/ListWidget mouseYStart F
 accessible	field	net/minecraft/client/gui/widget/ListWidget pos I
 accessible	field	net/minecraft/client/gui/widget/ListWidget time J
-accessible	field	net/minecraft/client/gui/widget/ListWidget scrollingSpeedMultiplier F
+accessible	field	net/minecraft/client/gui/widget/ListWidget scrollSpeedMultiplier F
