@@ -373,6 +373,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		public void render(int index, int x, int y, int width, int height, int mouseX, int mouseY, boolean hovered, float delta) {
 			if (updateTextEntry) {
 				UpdateAvailableBadge.renderBadge(x + indent, y);
+				x+=11;
 			}
 			textRenderer.drawWithShadow(text, x + indent, y, 0xAAAAAA);
 		}

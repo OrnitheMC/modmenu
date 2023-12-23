@@ -1,5 +1,11 @@
 package com.terraformersmc.modmenu.util;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
@@ -8,22 +14,13 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.unmapped.C_6254461;
-import net.minecraft.util.Utils;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.FutureTask;
-
-import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +28,7 @@ public class ModrinthUtil {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Update Checker");
 
 	private static final HttpClient client = HttpClientBuilder.create().build();
+	private static boolean apiV2Deprecated = false;
 
 	private static boolean allowsUpdateChecks(Mod mod) {
 		return mod.allowsUpdateChecks();
@@ -41,7 +39,7 @@ public class ModrinthUtil {
 			return;
 		}
 
-/*		CompletableFuture.runAsync(() -> {
+		CompletableFuture.runAsync(() -> {
 			LOGGER.info("Checking mod updates...");
 
 			Map<String, Set<Mod>> modHashes = new HashMap<>();
@@ -61,49 +59,54 @@ public class ModrinthUtil {
 				}
 			});
 
-			String environment = ModMenu.devEnvironment ? "/development": "";
+			String environment = ModMenu.devEnvironment ? "/development" : "";
 			String primaryLoader = ModMenu.runningQuilt ? "quilt" : "fabric";
-			List<String> loaders = ModMenu.runningQuilt ? Arrays.asList("fabric", "quilt") : Arrays.asList("fabric");
+			List<String> loaders = ModMenu.runningQuilt ? Arrays.asList("fabric", "quilt") : Collections.singletonList("fabric");
 
-			String mcVer = SharedConstants.getGameVersion().getName();
+			String mcVer = FabricLoader.getInstance().getModContainer("minecraft").get()
+				.getMetadata().getVersion().getFriendlyString();
 			String[] splitVersion = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
-					.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
+				.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
 			final String modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
-			final String userAgent = "%s/%s (%s/%s%s)".formatted(ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
+			final String userAgent = String.format("%s/%s (%s/%s%s)", ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
 			String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer));
 			LOGGER.debug("User agent: " + userAgent);
 			LOGGER.debug("Body: " + body);
-			var latestVersionsRequest = HttpRequest.newBuilder()
-					.POST(HttpRequest.BodyPublishers.ofString(body))
-					.header("User-Agent", userAgent)
-					.header("Content-Type", "application/json")
-					.uri(URI.create("https://api.modrinth.com/v2/version_files/update"))
-					.build();
 
 			try {
-				var latestVersionsResponse = client.send(latestVersionsRequest, HttpResponse.BodyHandlers.ofString());
+				HttpUriRequest latestVersionsRequest = RequestBuilder.post()
+					.setEntity(new StringEntity(body))
+					.addHeader("User-Agent", userAgent)
+					.addHeader("Content-Type", "application/json")
+					.setUri(URI.create("https://api.modrinth.com/v2/version_files/update"))
+					.build();
 
-				int status = latestVersionsResponse.statusCode();
+				HttpResponse latestVersionsResponse = client.execute(latestVersionsRequest);
+
+				int status = latestVersionsResponse.getStatusLine().getStatusCode();
 				LOGGER.debug("Status: " + status);
 				if (status == 410) {
 					apiV2Deprecated = true;
 					LOGGER.warn("Modrinth API v2 is deprecated, unable to check for mod updates.");
 				} else if (status == 200) {
-					JsonObject responseObject = JsonParser.parseString(latestVersionsResponse.body()).getAsJsonObject();
+					JsonObject responseObject = new JsonParser().parse(EntityUtils.toString(latestVersionsResponse.getEntity())).getAsJsonObject();
 					LOGGER.debug(String.valueOf(responseObject));
-					responseObject.asMap().forEach((lookupHash, versionJson) -> {
-						var versionObj = versionJson.getAsJsonObject();
-						var projectId = versionObj.get("project_id").getAsString();
-						var versionNumber = versionObj.get("version_number").getAsString();
-						var versionId = versionObj.get("id").getAsString();
-						var primaryFile = versionObj.get("files").getAsJsonArray().asList().stream()
-								.filter(file -> file.getAsJsonObject().get("primary").getAsBoolean()).findFirst();
+					responseObject.entrySet().forEach(entry -> {
+						String lookupHash = entry.getKey();
+						JsonObject versionObj = entry.getValue().getAsJsonObject();
+						String projectId = versionObj.get("project_id").getAsString();
+						String versionNumber = versionObj.get("version_number").getAsString();
+						String versionId = versionObj.get("id").getAsString();
+						List<JsonElement> files = new ArrayList<>();
+						versionObj.get("files").getAsJsonArray().forEach(files::add);
+						Optional<JsonElement> primaryFile = files.stream()
+							.filter(file -> file.getAsJsonObject().get("primary").getAsBoolean()).findFirst();
 
-						if (primaryFile.isEmpty()) {
+						if (!primaryFile.isPresent()) {
 							return;
 						}
 
-						var versionHash = primaryFile.get().getAsJsonObject().get("hashes").getAsJsonObject().get("sha512").getAsString();
+						String versionHash = primaryFile.get().getAsJsonObject().get("hashes").getAsJsonObject().get("sha512").getAsString();
 
 						if (!Objects.equals(versionHash, lookupHash)) {
 							// hashes different, there's an update.
@@ -114,10 +117,10 @@ public class ModrinthUtil {
 						}
 					});
 				}
-			} catch (IOException | InterruptedException e) {
+			} catch (IOException e) {
 				LOGGER.error("Error checking for updates: ", e);
 			}
-		});*/
+		});
 	}
 
 	public static class LatestVersionsFromHashesBody {
