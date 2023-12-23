@@ -286,7 +286,7 @@ public class DescriptionListWidget extends EntryListWidget {
 							mouseClickMode = 0;
 						}
 						if (mouseX >= scrollbarMinX && mouseX <= scrollbarMaxX) {
-							this.scrollingSpeedMultiplier = -1.0f;
+							this.scrollSpeedMultiplier = -1.0f;
 							int maxScroll = this.getMaxScroll();
 							if (maxScroll < 1) {
 								maxScroll = 1;
@@ -298,16 +298,16 @@ public class DescriptionListWidget extends EntryListWidget {
 							if (heightForScrolling > this.maxY - this.minY - 8) {
 								heightForScrolling = this.maxY - this.minY - 8;
 							}
-							this.scrollingSpeedMultiplier /= (float) (this.maxY - this.minY - heightForScrolling) / (float) maxScroll;
+							this.scrollSpeedMultiplier /= (float) (this.maxY - this.minY - heightForScrolling) / (float) maxScroll;
 						} else {
-							this.scrollingSpeedMultiplier = 1.0f;
+							this.scrollSpeedMultiplier = 1.0f;
 						}
 						this.mouseYStart = mouseClickMode != 0 ? (float) mouseY : -2.0f;
 					} else {
 						this.mouseYStart = -2.0f;
 					}
 				} else if (this.mouseYStart >= 0.0f) {
-					this.scrollAmount -= ((float) mouseY - this.mouseYStart) * this.scrollingSpeedMultiplier;
+					this.scrollAmount -= ((float) mouseY - this.mouseYStart) * this.scrollSpeedMultiplier;
 					this.mouseYStart = mouseY;
 				}
 			} else {
