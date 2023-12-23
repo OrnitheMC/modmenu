@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class DescriptionListWidget extends EntryListWidget implements ResultListener {
@@ -264,6 +265,72 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		GL11.glShadeModel(GL11.GL_FLAT);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	public void handleMouse() {
+		int size = this.size();
+		int scrollbarMinX = this.getScrollbarPosition();
+		int scrollbarMaxX = scrollbarMinX + 6;
+		if (mouseX > this.minX && mouseX < this.maxX && mouseY > this.minY && mouseY < this.maxY) {
+			if (Mouse.isButtonDown(0) && this.isScrolling()) {
+				if (this.mouseYStart == -1.0f) {
+					int mouseClickMode = 1;
+					if (mouseY >= this.minY && mouseY <= this.maxY) {
+						int rowMinX = this.width / 2 - this.getRowWidth() / 2;
+						int rowMaxX = this.width / 2 + this.getRowWidth() / 2;
+						int selectedY = mouseY - this.minY - this.headerHeight + (int) this.scrollAmount - 4;
+						int selectedPos = selectedY / this.entryHeight;
+						if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedPos >= 0 && selectedY >= 0 && selectedPos < size) {
+							int selectedIndex = selectedPos == this.pos && Minecraft.getTime() - this.time < 250L ? 1 : 0;
+							this.entryClicked(selectedPos, selectedIndex != 0, mouseX, mouseY);
+							this.pos = selectedPos;
+							this.time = Minecraft.getTime();
+						} else if (mouseX >= rowMinX && mouseX <= rowMaxX && selectedY < 0) {
+							this.headerClicked(mouseX - rowMinX, mouseY - this.minY + (int) this.scrollAmount - 4);
+							mouseClickMode = 0;
+						}
+						if (mouseX >= scrollbarMinX && mouseX <= scrollbarMaxX) {
+							this.scrollingSpeedMultiplier = -1.0f;
+							int maxScroll = this.getMaxScroll();
+							if (maxScroll < 1) {
+								maxScroll = 1;
+							}
+							int heightForScrolling;
+							if ((heightForScrolling = (int) ((float) ((this.maxY - this.minY) * (this.maxY - this.minY)) / (float) this.getHeight())) < 32) {
+								heightForScrolling = 32;
+							}
+							if (heightForScrolling > this.maxY - this.minY - 8) {
+								heightForScrolling = this.maxY - this.minY - 8;
+							}
+							this.scrollingSpeedMultiplier /= (float) (this.maxY - this.minY - heightForScrolling) / (float) maxScroll;
+						} else {
+							this.scrollingSpeedMultiplier = 1.0f;
+						}
+						this.mouseYStart = mouseClickMode != 0 ? (float) mouseY : -2.0f;
+					} else {
+						this.mouseYStart = -2.0f;
+					}
+				} else if (this.mouseYStart >= 0.0f) {
+					this.scrollAmount -= ((float) mouseY - this.mouseYStart) * this.scrollingSpeedMultiplier;
+					this.mouseYStart = mouseY;
+				}
+			} else {
+				while (!this.minecraft.options.touchscreen && Mouse.next()) {
+					int dwheel = Mouse.getEventDWheel();
+					if (dwheel != 0) {
+						if (dwheel > 0) {
+							dwheel = -1;
+						} else if (dwheel < 0) {
+							dwheel = 1;
+						}
+						this.scrollAmount += dwheel * this.entryHeight / 2;
+					}
+					this.minecraft.screen.handleMouse();
+				}
+				this.mouseYStart = -1.0f;
+			}
+		}
+		this.capScrolling();
 	}
 
 	@Override
