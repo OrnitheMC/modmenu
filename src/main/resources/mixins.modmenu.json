@@ -9,6 +9,7 @@
     "AccessorMinecraft",
     "MixinGameMenu",
     "MixinGLX",
+    "MixinListWidget",
     "MixinTextFieldWidget",
     "MixinTextRenderer",
     "MixinTitleScreen"
