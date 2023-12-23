@@ -111,10 +111,6 @@ public class ModMenuConfig {
 	public enum TitleMenuButtonStyle {
 		@SerializedName("classic")
 		CLASSIC(),
-		@SerializedName("replace_realms")
-		REPLACE_REALMS(),
-		@SerializedName("shrink")
-		SHRINK(),
 		@SerializedName("icon")
 		ICON();
 	}
