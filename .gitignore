@@ -28,3 +28,4 @@ logs
 
 Thumbs.db
 *.psd
+.profileconfig.json
