@@ -44,16 +44,23 @@ public abstract class MixinTitleScreen extends Screen {
 				ButtonWidget button = buttons.get(i);
 				if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
 					if (button.visible) {
-//						ModMenuEventHandler.shiftButtons(button, modsButtonIndex == -1, spacing);
+						ModMenuEventHandler.shiftButtons(button, modsButtonIndex == -1, spacing);
 						if (modsButtonIndex == -1) {
 							buttonsY = button.y;
 						}
 					}
 				}
-				if (button.id == MULTIPLAYER) {
-					modsButtonIndex = i + 1;
-					if (button.visible) {
-						buttonsY = button.y;
+				if (button.id == ONLINE) {
+					if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.REPLACE_REALMS) {
+						buttons.set(i, new ModMenuButtonWidget(MODS, button.x, button.y, button.getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText()));
+					} else {
+						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
+							((AccessorButtonWidget) button).setWidth(98);
+						}
+						modsButtonIndex = i + 1;
+						if (button.visible) {
+							buttonsY = button.y;
+						}
 					}
 				}
 
@@ -61,6 +68,8 @@ public abstract class MixinTitleScreen extends Screen {
 			if (modsButtonIndex != -1) {
 				if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
 					this.buttons.add(new ModMenuButtonWidget(MODS, this.width / 2 - 100, buttonsY + spacing, 200, 20, ModMenuApi.createModsButtonText()));
+				} else if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
+					this.buttons.add(new ModMenuButtonWidget(MODS, this.width / 2 + 2, buttonsY, 98, 20, ModMenuApi.createModsButtonText()));
 				} else if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.ICON) {
 					this.buttons.add(new UpdateCheckerTexturedButtonWidget(MODS, this.width / 2 + 104, buttonsY, 20, 20, 0, 0, 20, FABRIC_ICON_BUTTON_LOCATION, 32, 64));
 				}
