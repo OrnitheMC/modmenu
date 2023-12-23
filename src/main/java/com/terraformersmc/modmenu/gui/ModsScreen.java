@@ -98,7 +98,7 @@ public class ModsScreen extends Screen implements Controller {
 		if (modList.isMouseInList(mouseX, mouseY)) {
 //			this.modList.handleMouse();
 		} else if (descriptionListWidget.isMouseInList(mouseX, mouseY)) {
-//			this.descriptionListWidget.handleMouse();
+			this.descriptionListWidget.handleMouse();
 		}
 	}
 
