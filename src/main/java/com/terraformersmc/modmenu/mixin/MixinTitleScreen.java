@@ -52,7 +52,7 @@ public abstract class MixinTitleScreen extends Screen {
 				}
 				if (button.id == ONLINE) {
 					if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.REPLACE_REALMS) {
-						buttons.set(i, new ModMenuButtonWidget(MODS, button.x, button.y, button.getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText()));
+						buttons.set(i, new ModMenuButtonWidget(MODS, button.x, button.y, ((AccessorButtonWidget) button).getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText()));
 					} else {
 						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
 							((AccessorButtonWidget) button).setWidth(98);
