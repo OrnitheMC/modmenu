@@ -4,13 +4,15 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
+
 import com.terraformersmc.modmenu.util.GlUtil;
+import com.terraformersmc.modmenu.util.ListWidgetHelper;
 import com.terraformersmc.modmenu.util.MathUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ListWidget;
 
-public abstract class EntryListWidget extends ListWidget {
+public abstract class EntryListWidget extends ListWidget implements ListWidgetHelper {
 
 	protected double scrollAmount;
 	private boolean scrolling;
@@ -293,6 +295,20 @@ public abstract class EntryListWidget extends ListWidget {
 			amount = getMaxScroll();
 		}
 		this.scrollAmount = amount;
+	}
+
+	@Override
+	public void doCapScrolling() {
+		int max = this.getHeight() - (this.maxY - this.minY - 4);
+		if (max < 0) {
+			max /= 2;
+		}
+		if (this.scrollAmount < 0.0F) {
+			this.scrollAmount = 0.0F;
+		}
+		if (this.scrollAmount > max) {
+			this.scrollAmount = max;
+		}
 	}
 
 	protected int getMaxScroll() {
