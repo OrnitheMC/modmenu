@@ -27,6 +27,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
+	ploceus.addCommonLibraries()
 	ploceus.dependOsl(project.osl_version)
 }
 
