@@ -36,7 +36,7 @@ dependencies {
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
 	ploceus.addCommonLibraries()
-	ploceus.dependOsl(project.osl_version)
+	ploceus.dependOsl(project.osl_version, "client")
 }
 
 loom {
