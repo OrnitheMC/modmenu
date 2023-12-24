@@ -26,11 +26,8 @@ dependencies {
 	nests "net.ornithemc:nests:${project.minecraft_version}+build.${project.nests_build}"
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
-	compileOnly "org.apache.logging.log4j:log4j-api:2.19.0"
-	compileOnly "org.apache.logging.log4j:log4j-core:2.19.0"
-	compileOnly 'com.google.code.gson:gson:2.2.2'
-	compileOnly 'com.google.guava:guava:14.0'
 
+	ploceus.addCommonLibraries()
 	ploceus.dependOsl(project.osl_version)
 }
 
