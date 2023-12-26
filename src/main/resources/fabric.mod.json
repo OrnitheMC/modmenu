@@ -23,7 +23,7 @@
     "minecraft": "1.0.x",
     "fabricloader": ">=0.14.21",
     "osl-entrypoints": ">=0.4.0",
-    "osl-resource-loader": ">=0.2.3"
+    "osl-resource-loader": ">=0.3.0"
   },
   "authors": [
     "Prospector",
