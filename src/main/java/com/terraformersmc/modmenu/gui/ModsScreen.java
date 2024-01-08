@@ -20,7 +20,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
-import net.minecraft.client.gui.screen.ResultListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -42,7 +41,7 @@ import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-public class ModsScreen extends Screen implements ResultListener, Controller {
+public class ModsScreen extends Screen implements Controller {
 	private static final Identifier FILTERS_BUTTON_LOCATION = new Identifier(ModMenu.MOD_ID, "textures/gui/filters_button.png");
 	private static final Identifier CONFIGURE_BUTTON_LOCATION = new Identifier(ModMenu.MOD_ID, "textures/gui/configure_button.png");
 
@@ -55,6 +54,7 @@ public class ModsScreen extends Screen implements ResultListener, Controller {
 	private static final int LIBRARIES = 6;
 	private static final int MODS_FOLDER = 7;
 	private static final int DONE = 8;
+	public static final int MODS_LIST_CONFIRM_ID_OFFSET = 10;
 	private static final Text TOGGLE_FILTER_OPTIONS = new TranslatableText("modmenu.toggleFilterOptions");
 	private static final Text CONFIGURE = new TranslatableText("modmenu.configure");
 	private static final Logger LOGGER = LogManager.getLogger("Mod Menu | ModsScreen");
@@ -467,18 +467,22 @@ public class ModsScreen extends Screen implements ResultListener, Controller {
 
 	@Override
 	public void confirmResult(boolean result, int id) {
-		super.confirmResult(result, id);
-		if (result && this.selected != null) {
-			switch (id) {
-			case WEBSITE:
-				ScreenUtil.openLink(this, this.selected.mod.getWebsite(), this.selected.mod.getId() + " /website");
-				break;
-			case ISSUES:
-				ScreenUtil.openLink(this, this.selected.mod.getIssueTracker(), this.selected.mod.getId() + "/issues");
-				break;
+		if (id < MODS_LIST_CONFIRM_ID_OFFSET) {
+			super.confirmResult(result, id);
+			if (result && this.selected != null) {
+				switch (id) {
+				case WEBSITE:
+					ScreenUtil.openLink(this, this.selected.mod.getWebsite(), this.selected.mod.getId() + " /website");
+					break;
+				case ISSUES:
+					ScreenUtil.openLink(this, this.selected.mod.getIssueTracker(), this.selected.mod.getId() + "/issues");
+					break;
+				}
 			}
-		}
 
-		this.minecraft.openScreen(this);
+			this.minecraft.openScreen(this);
+		} else {
+			this.descriptionListWidget.confirmResult(result, id);
+		}
 	}
 }

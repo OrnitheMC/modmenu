@@ -11,7 +11,6 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.CreditsScreen;
-import net.minecraft.client.gui.screen.ResultListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
@@ -29,7 +28,7 @@ import java.util.Set;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class DescriptionListWidget extends EntryListWidget implements ResultListener {
+public class DescriptionListWidget extends EntryListWidget {
 
 	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
 	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
@@ -376,13 +375,13 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		}
 	}
 
-	@Override
 	public void confirmResult(boolean result, int id) {
 		if (result) {
+			int index = id - ModsScreen.MODS_LIST_CONFIRM_ID_OFFSET;
 			List<DescriptionEntry> entries = this.entries;
 
-			if (id >= 0 && id < entries.size()) {
-				DescriptionEntry entry = entries.get(id);
+			if (index >= 0 && index < entries.size()) {
+				DescriptionEntry entry = entries.get(index);
 
 				if (entry instanceof LinkEntry) {
 					String link = ((LinkEntry) entry).link;
@@ -461,7 +460,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		@Override
 		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (isMouseInList(mouseX, mouseY)) {
-				minecraft.openScreen(new ConfirmChatLinkScreen(DescriptionListWidget.this, link, index, false));
+				minecraft.openScreen(new ConfirmChatLinkScreen(DescriptionListWidget.this.parent, link, ModsScreen.MODS_LIST_CONFIRM_ID_OFFSET + index, false));
 			}
 			return super.mouseClicked(index, mouseX, mouseY, button, entryMouseX, entryMouseY);
 		}
