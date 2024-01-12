@@ -2,7 +2,6 @@ package com.terraformersmc.modmenu.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tessellator;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
@@ -227,19 +226,19 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 					float float_2 = this.isFocused() ? 1.0F : 0.5F;
 					GlStateManager.disableTexture();
 					GlStateManager.color4f(float_2, float_2, float_2, 1.0F);
-					buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
-					buffer.vertex(entryLeft, entryTop + entryHeight + 2, 0.0F).nextVertex();
-					buffer.vertex(selectionRight, entryTop + entryHeight + 2, 0.0F).nextVertex();
-					buffer.vertex(selectionRight, entryTop - 2, 0.0F).nextVertex();
-					buffer.vertex(entryLeft, entryTop - 2, 0.0F).nextVertex();
-					tessellator.end();
-					GlStateManager.color4f(0.0F, 0.0F, 0.0F, 1.0F);
-					buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
-					buffer.vertex(entryLeft + 1, entryTop + entryHeight + 1, 0.0F).nextVertex();
-					buffer.vertex(selectionRight - 1, entryTop + entryHeight + 1, 0.0F).nextVertex();
-					buffer.vertex(selectionRight - 1, entryTop - 1, 0.0F).nextVertex();
-					buffer.vertex(entryLeft + 1, entryTop - 1, 0.0F).nextVertex();
-					tessellator.end();
+					buffer.start(GL11.GL_QUADS);
+ 					buffer.vertex(entryLeft, entryTop + entryHeight + 2, 0.0F);
+ 					buffer.vertex(selectionRight, entryTop + entryHeight + 2, 0.0F);
+ 					buffer.vertex(selectionRight, entryTop - 2, 0.0F);
+ 					buffer.vertex(entryLeft, entryTop - 2, 0.0F);
+ 					buffer.end();
+ 					GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);
+ 					buffer.start(GL11.GL_QUADS);
+ 					buffer.vertex(entryLeft + 1, entryTop + entryHeight + 1, 0.0F);
+ 					buffer.vertex(selectionRight - 1, entryTop + entryHeight + 1, 0.0F);
+ 					buffer.vertex(selectionRight - 1, entryTop - 1, 0.0F);
+ 					buffer.vertex(entryLeft + 1, entryTop - 1, 0.0F);
+ 					buffer.end();
 					GlStateManager.enableTexture();
 				}
 

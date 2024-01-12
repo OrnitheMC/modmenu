@@ -39,7 +39,7 @@ public abstract class MixinGameMenu extends Screen {
 			int modsButtonWidth = -1;
 			int modsButtonHeight = 20;
 			for (int i = 0; i < this.buttons.size(); i++) {
-				final ButtonWidget button = this.buttons.get(i);
+				final ButtonWidget button = (ButtonWidget) this.buttons.get(i);
 				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS && button.id == ADVANCEMENTS) {
 					modsButtonX = button.x;
 					modsButtonWidth = button.getWidth();

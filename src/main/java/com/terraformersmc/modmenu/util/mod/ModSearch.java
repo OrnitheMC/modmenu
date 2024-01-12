@@ -3,10 +3,9 @@ package com.terraformersmc.modmenu.util.mod;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
+import com.terraformersmc.modmenu.util.Pair;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.util.Pair;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;

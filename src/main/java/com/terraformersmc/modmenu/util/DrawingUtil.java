@@ -20,7 +20,7 @@ public class DrawingUtil {
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
 		Random random = new Random(seed);
-		int color = 0xFF000000 | MathHelper.toRgb(MathHelper.nextFloat(random, 0f, 1f), MathHelper.nextFloat(random, 0.7f, 0.8f), 0.9f);
+		int color = 0xFF000000 | MathUtil.toRgb(MathHelper.nextFloat(random, 0f, 1f), MathHelper.nextFloat(random, 0.7f, 0.8f), 0.9f);
 		if (!ModMenuConfig.RANDOM_JAVA_COLORS.getValue()) {
 			color = 0xFFDD5656;
 		}
