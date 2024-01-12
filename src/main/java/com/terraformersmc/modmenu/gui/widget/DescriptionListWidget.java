@@ -220,24 +220,13 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		{
 			this.minecraft.getTextureManager().bind(Screen.BACKGROUND_LOCATION);
 			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
-			bufferBuilder.texture(this.minX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
-			bufferBuilder.texture(this.maxX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
-			bufferBuilder.texture(this.maxX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.vertex(this.minX, this.minY, 0.0D);
-			bufferBuilder.texture(this.minX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F);
-			bufferBuilder.color(32, 32, 32, 255);
-//			bufferBuilder.nextVertex();
-			bufferBuilder.end();
+			bufferBuilder.start();
+			bufferBuilder.color(0x20, 0x20, 0x20);
+			bufferBuilder.vertex(this.minX, this.maxY, 0.0D, (this.minX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D, (this.maxX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+			bufferBuilder.vertex(this.maxX, this.minY, 0.0D, (this.maxX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
+			bufferBuilder.vertex(this.minX, this.minY, 0.0D, (this.minX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
+			tessellator.end();
 		}
 
 		int listX = this.minX + this.width / 2 - this.getRowWidth() / 2 + 2;
@@ -252,33 +241,22 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.disableTexture();
 
-		bufferBuilder.start(GL11.GL_QUADS);
-
- 		bufferBuilder.vertex(this.minX, (this.minY + 4), 0.0D);
- 		bufferBuilder.color(0, 0, 0, 0);
-
- 		bufferBuilder.vertex(this.maxX, (this.minY + 4), 0.0D);
- 		bufferBuilder.color(0, 0, 0, 0);
-
- 		bufferBuilder.vertex(this.maxX, this.minY, 0.0D);
- 		bufferBuilder.color(0, 0, 0, 255);
-
- 		bufferBuilder.vertex(this.minX, this.minY, 0.0D);
- 		bufferBuilder.color(0, 0, 0, 255);
-
- 		bufferBuilder.vertex(this.minX, this.maxY, 0.0D);
- 		bufferBuilder.color(0, 0, 0, 255);
-
- 		bufferBuilder.vertex(this.maxX, this.maxY, 0.0D);
- 		bufferBuilder.color(0, 0, 0, 255);
-
- 		bufferBuilder.vertex(this.maxX, (this.maxY - 4), 0.0D);
- 		bufferBuilder.color(0, 0, 0, 0);
-
- 		bufferBuilder.vertex(this.minX, (this.maxY - 4), 0.0D);
- 		bufferBuilder.color(0, 0, 0, 0);
-
- 		bufferBuilder.end();
+		bufferBuilder.start();
+		bufferBuilder.color(0x0, 0x0, 0x0, 0x0);
+		bufferBuilder.vertex(this.minX, (this.minY + 4), 0.0, 0.0, 1.0);
+		bufferBuilder.vertex(this.maxX, (this.minY + 4), 0.0, 1.0, 1.0);
+		bufferBuilder.color(0, 255);
+		bufferBuilder.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
+		bufferBuilder.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
+		tessellator.end();
+		bufferBuilder.start();
+		bufferBuilder.color(0x0, 0x0, 0x0, 0xFF);
+		bufferBuilder.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
+		bufferBuilder.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
+		bufferBuilder.color(0x0, 0x0, 0x0, 0x0);
+		bufferBuilder.vertex(this.maxX, (this.maxY - 4), 0.0, 1.0, 0.0);
+		bufferBuilder.vertex(this.minX, (this.maxY - 4), 0.0, 0.0, 0.0);
+		tessellator.end();
 
 		this.renderScrollBar(bufferBuilder, tessellator);
 
@@ -307,44 +285,27 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				q = this.minY;
 			}
 
-			bufferBuilder.start(GL11.GL_QUADS);
-
- 			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0D);
- 			bufferBuilder.color(0, 0, 0, 255);
- 			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0D);
- 			bufferBuilder.color(0, 0, 0, 255);
-
- 			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0D);
- 			bufferBuilder.color(0, 0, 0, 255);
-
- 			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0D);
- 			bufferBuilder.color(0, 0, 0, 255);
-
- 			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0D);
- 			bufferBuilder.color(128, 128, 128, 255);
-
- 			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0D);
- 			bufferBuilder.color(128, 128, 128, 255);
-
- 			bufferBuilder.vertex(scrollbarEndX, q, 0.0D);
- 			bufferBuilder.color(128, 128, 128, 255);
-
- 			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
- 			bufferBuilder.color(128, 128, 128, 255);
-
- 			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0D);
- 			bufferBuilder.color(192, 192, 192, 255);
-
- 			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0D);
- 			bufferBuilder.color(192, 192, 192, 255);
-
- 			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0D);
- 			bufferBuilder.color(192, 192, 192, 255);
-
- 			bufferBuilder.vertex(scrollbarStartX, q, 0.0D);
- 			bufferBuilder.color(192, 192, 192, 255);
-
- 			bufferBuilder.end();
+			bufferBuilder.start();
+			bufferBuilder.color(0x0, 0x0, 0x0, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0, 0.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0, 1.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0, 0.0, 0.0);
+			tessellator.end();
+			bufferBuilder.start();
+			bufferBuilder.color(0x80, 0x80, 0x80, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, (q + p), 0.0, 0.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, (q + p), 0.0, 1.0, 1.0);
+			bufferBuilder.vertex(scrollbarEndX, q, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
+			tessellator.end();
+			bufferBuilder.start();
+			bufferBuilder.color(0xC0, 0xC0, 0xC0, 0xFF);
+			bufferBuilder.vertex(scrollbarStartX, (q + p - 1), 0.0, 0.0, 1.0);
+			bufferBuilder.vertex((scrollbarEndX - 1), (q + p - 1), 0.0, 1.0, 1.0);
+			bufferBuilder.vertex((scrollbarEndX - 1), q, 0.0, 1.0, 0.0);
+			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
+			tessellator.end();
 		}
 	}
 
