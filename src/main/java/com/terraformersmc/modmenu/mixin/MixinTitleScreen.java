@@ -55,7 +55,7 @@ public abstract class MixinTitleScreen extends Screen {
 						buttons.set(i, new ModMenuButtonWidget(MODS, button.x, button.y, button.getWidth(), ((AccessorButtonWidget) button).getHeight(), ModMenuApi.createModsButtonText()));
 					} else {
 						if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.SHRINK) {
-							((AccessorButtonWidget) button).setWidth(98);
+							button.setWidth(98);
 						}
 						modsButtonIndex = i + 1;
 						if (button.visible) {
