@@ -18,12 +18,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameMenuScreen.class)
 public abstract class MixinGameMenu extends Screen {
-	/** button id for gui.advancements button */
-	private static final int ADVANCEMENTS = 5;
+	/** button id for Options... button */
+	private static final int OPTIONS = 0;
+	/** button id for gui.achievements button */
+	private static final int ACHIEVEMENTS = 5;
 	/** button id for gui.stats button */
 	private static final int STATS = 6;
-	/** button id for menu.shareToLan button */
-	private static final int SHARE_TO_LAN = 7;
 	/** button id for modmenu.title button */
 	private static final int MODS = 69;
 	private static final String FABRIC_ICON_BUTTON_LOCATION = "/assets/" + ModMenu.MOD_ID + "/textures/gui/mods_button.png";
@@ -39,7 +39,7 @@ public abstract class MixinGameMenu extends Screen {
 			int modsButtonHeight = 20;
 			for (int i = 0; i < this.buttons.size(); i++) {
 				final ButtonWidget button = (ButtonWidget) this.buttons.get(i);
-				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS && button.id == ADVANCEMENTS) {
+				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ACHIEVEMENTS && button.id == ACHIEVEMENTS) {
 					modsButtonX = button.x;
 					modsButtonWidth = ((AccessorButtonWidget) button).getWidth();
 				}
@@ -47,7 +47,7 @@ public abstract class MixinGameMenu extends Screen {
 					modsButtonX = button.x;
 					modsButtonWidth = ((AccessorButtonWidget) button).getWidth();
 				}
-				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ADVANCEMENTS_AND_STATISTICS && button.id == ADVANCEMENTS) {
+				if (style == ModMenuConfig.GameMenuButtonStyle.BELOW_ACHIEVEMENTS_AND_STATISTICS && button.id == ACHIEVEMENTS) {
 					modsButtonX = button.x;
 					modsButtonWidth = 2 * ((AccessorButtonWidget) button).getWidth() + spacing;
 				}
@@ -55,7 +55,7 @@ public abstract class MixinGameMenu extends Screen {
 					modsButtonX = button.x + ((AccessorButtonWidget) button).getWidth() + spacing;
 					modsButtonWidth = modsButtonHeight;
 				}
-				if (button.id == SHARE_TO_LAN) {
+				if (button.id == OPTIONS) {
 					modsButtonIndex = i + 1;
 					if (style == ModMenuConfig.GameMenuButtonStyle.ICON) {
 						modsButtonY = button.y;

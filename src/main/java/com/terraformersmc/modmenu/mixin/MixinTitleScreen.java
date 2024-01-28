@@ -24,8 +24,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(TitleScreen.class)
 public abstract class MixinTitleScreen extends Screen {
-	/** button id for menu.multiplayer button */
-	private static final int MULTIPLAYER = 2;
+	/** button id for menu.mods button */
+	private static final int TEXTURE_PACKS = 3;
 	/** button id for modmenu.title button */
 	private static final int MODS = 69;
 	private static final String FABRIC_ICON_BUTTON_LOCATION = "/assets/" + ModMenu.MOD_ID + "/textures/gui/mods_button.png";
@@ -41,12 +41,13 @@ public abstract class MixinTitleScreen extends Screen {
 				ButtonWidget button = buttons.get(i);
 				if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
 					if (button.visible) {
+						ModMenuEventHandler.shiftButtons(button, modsButtonIndex == -1, spacing);
 						if (modsButtonIndex == -1) {
 							buttonsY = button.y;
 						}
 					}
 				}
-				if (button.id == MULTIPLAYER) {
+				if (button.id == TEXTURE_PACKS) {
 					modsButtonIndex = i + 1;
 					if (button.visible) {
 						buttonsY = button.y;
