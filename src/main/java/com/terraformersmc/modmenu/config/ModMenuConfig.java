@@ -20,7 +20,7 @@ public class ModMenuConfig {
 	public static final BooleanConfigOption COMPACT_LIST = new BooleanConfigOption("compact_list", false);
 	public static final BooleanConfigOption COUNT_CHILDREN = new BooleanConfigOption("count_children", true);
 	public static final EnumConfigOption<TitleMenuButtonStyle> MODS_BUTTON_STYLE = new EnumConfigOption<>("mods_button_style", TitleMenuButtonStyle.CLASSIC);
-	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>("game_menu_button_style", GameMenuButtonStyle.BELOW_ADVANCEMENTS_AND_STATISTICS);
+	public static final EnumConfigOption<GameMenuButtonStyle> GAME_MENU_BUTTON_STYLE = new EnumConfigOption<>("game_menu_button_style", GameMenuButtonStyle.BELOW_ACHIEVEMENTS_AND_STATISTICS);
 	public static final BooleanConfigOption COUNT_HIDDEN_MODS = new BooleanConfigOption("count_hidden_mods", true);
 	public static final EnumConfigOption<ModCountLocation> MOD_COUNT_LOCATION = new EnumConfigOption<>("mod_count_location", ModCountLocation.TITLE_SCREEN);
 	public static final BooleanConfigOption HIDE_MOD_LINKS = new BooleanConfigOption("hide_mod_links", false);
@@ -116,12 +116,12 @@ public class ModMenuConfig {
 	}
 
 	public enum GameMenuButtonStyle {
-		@SerializedName("below_advancements")
-		BELOW_ADVANCEMENTS,
+		@SerializedName("below_achievements")
+		BELOW_ACHIEVEMENTS,
 		@SerializedName("below_statistics")
 		BELOW_STATISTICS,
-		@SerializedName("below_advancements_and_statistics")
-		BELOW_ADVANCEMENTS_AND_STATISTICS,
+		@SerializedName("below_achievements_and_statistics")
+		BELOW_ACHIEVEMENTS_AND_STATISTICS,
 		@SerializedName("icon")
 		ICON;
 	}
