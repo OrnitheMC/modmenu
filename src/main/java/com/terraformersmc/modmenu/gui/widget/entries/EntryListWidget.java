@@ -15,7 +15,7 @@ import net.minecraft.client.gui.widget.ListWidget;
 public abstract class EntryListWidget extends ListWidget implements ListWidgetHelper {
 
 	protected double scrollAmount;
-	private boolean scrolling;
+	protected boolean scrolling;
 
 	public EntryListWidget(Minecraft minecraft, int i, int j, int k, int l, int m) {
 		super(minecraft, i, j, k, l, m);
@@ -88,7 +88,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 						this.mouseYStart = -2.0f;
 					}
 				} else if (this.mouseYStart >= 0.0f) {
-					this.scrollAmount -= ((float) mouseY - this.mouseYStart) * this.scrollSpeedMultiplier;
+					super.scrollAmount = (float) (this.scrollAmount -= ((float) mouseY - this.mouseYStart) * this.scrollSpeedMultiplier);
 					this.mouseYStart = mouseY;
 				}
 			} else {
@@ -100,7 +100,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 						} else if (n9 < 0) {
 							n9 = 1;
 						}
-						this.scrollAmount += (float) (n9 * this.entryHeight / 2);
+						super.scrollAmount = (float) (this.scrollAmount += (float) (n9 * this.entryHeight / 2));
 					}
 					this.minecraft.screen.handleMouse();
 				}
@@ -283,7 +283,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 	}
 
 	protected void scroll(int i) {
-		this.setScrollAmount(this.getScrollAmount() + (double)i);
+		this.setScrollAmount(this.scrollAmount + (double)i);
 		this.mouseYStart = -2.0F;
 	}
 
@@ -294,7 +294,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 		if (amount > getMaxScroll()) {
 			amount = getMaxScroll();
 		}
-		this.scrollAmount = amount;
+		super.scrollAmount = (float) (this.scrollAmount = amount);
 	}
 
 	@Override
@@ -304,10 +304,10 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 			max /= 2;
 		}
 		if (this.scrollAmount < 0.0F) {
-			this.scrollAmount = 0.0F;
+			super.scrollAmount = (float) (this.scrollAmount = 0.0F);
 		}
 		if (this.scrollAmount > max) {
-			this.scrollAmount = max;
+			super.scrollAmount = (float) (this.scrollAmount = max);
 		}
 	}
 
