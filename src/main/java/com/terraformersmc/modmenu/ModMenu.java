@@ -11,7 +11,6 @@ import com.terraformersmc.modmenu.config.ModMenuConfig.GameMenuButtonStyle;
 import com.terraformersmc.modmenu.config.ModMenuConfig.TitleMenuButtonStyle;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
-import com.terraformersmc.modmenu.util.GlUtil;
 import com.terraformersmc.modmenu.util.ModrinthUtil;
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -159,7 +158,7 @@ public class ModMenu implements ClientModInitializer {
 		TitleMenuButtonStyle titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
 		GameMenuButtonStyle gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
 		boolean isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
-		boolean isShort = /*title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK :*/ false;
+		boolean isShort = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK : false;
 		String modsText = I18n.translate("modmenu.title");
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();
