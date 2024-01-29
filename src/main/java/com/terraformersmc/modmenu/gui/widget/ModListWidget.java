@@ -28,7 +28,6 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 	private List<Mod> mods = null;
 	private final Set<Mod> addedMods = new HashSet<>();
 	private String selectedModId = null;
-	private boolean scrolling;
 	private final FabricIconHandler iconHandler = new FabricIconHandler();
 	private ModListEntry selected;
 
