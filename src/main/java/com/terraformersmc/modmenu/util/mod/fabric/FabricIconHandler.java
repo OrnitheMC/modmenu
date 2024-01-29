@@ -47,7 +47,7 @@ public class FabricIconHandler {
 
 			return null;
 		} catch (Throwable t) {
-			if (!iconPath.equals("assets/" + iconSource.getMetadata().getId() + "/icon.png")) {
+			if (!iconPath.equals("/assets/" + iconSource.getMetadata().getId() + "/icon.png")) {
 				LOGGER.error("Invalid mod icon for icon source {}: {}", iconSource.getMetadata().getId(), iconPath, t);
 			}
 			return null;
