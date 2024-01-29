@@ -111,6 +111,8 @@ public class ModMenuConfig {
 	public enum TitleMenuButtonStyle {
 		@SerializedName("classic")
 		CLASSIC(),
+		@SerializedName("shrink")
+		SHRINK(),
 		@SerializedName("icon")
 		ICON();
 	}
