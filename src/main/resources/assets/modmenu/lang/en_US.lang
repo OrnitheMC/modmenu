@@ -132,6 +132,7 @@ option.modmenu.easter_eggs.true=Enabled
 option.modmenu.easter_eggs.false=Disabled
 option.modmenu.mods_button_style=Title Screen
 option.modmenu.mods_button_style.classic=Below Texture Packs
+option.modmenu.mods_button_style.shrink=Adjacent
 option.modmenu.mods_button_style.icon=Icon
 option.modmenu.game_menu_button_style=Game Menu
 option.modmenu.game_menu_button_style.below_achievements=Below Achievements
