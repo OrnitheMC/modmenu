@@ -50,7 +50,7 @@ modmenu.creditsАўтары:
 modmenu.viewCreditsПаглядзець аўтараў
 modmenu.licenseЛіцэнзія:
 modmenu.linksСпасылкі:
-modmenu.sourceКрыінца
+modmenu.sourceКрыніца
 modmenu.hasUpdateДаступна абнаўленне:
 modmenu.childHasUpdateАбнаўленне дзіцячага мода даступна.
 modmenu.updateTextv%s на %s
@@ -72,7 +72,7 @@ modmenu.patreonPatreon
 modmenu.paypalPayPal
 modmenu.redditReddit
 modmenu.twitchTwitch
-modmenu.twitterTwitter
+modmenu.twitterX (былы Twitter)
 modmenu.wikiWiki
 modmenu.youtubeYouTube
 modmenu.modsFolderАдкрыць папку модаў
@@ -121,7 +121,7 @@ option.modmenu.mod_count_location.title_screenВугал экрана
 option.modmenu.mod_count_location.mods_buttonКнопка модаў
 option.modmenu.mod_count_location.title_screen_and_mods_buttonАбодва
 option.modmenu.mod_count_location.noneНіяк
-option.modmenu.easter_eggsСхованкі
+option.modmenu.easter_eggsСакрэты
 option.modmenu.easter_eggs.trueУключаны
 option.modmenu.easter_eggs.falseАдключаны
 option.modmenu.mods_button_styleКнопка модаў
