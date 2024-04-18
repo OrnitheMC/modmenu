@@ -63,7 +63,7 @@ public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 		}
 		font.draw(trimmedName, x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;
-		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.getModrinthData() != null || mod.getChildHasUpdate())) {
+		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.hasUpdate() || mod.getChildHasUpdate())) {
 			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name) + 2, y);
 			updateBadgeXOffset = 11;
 		}
