@@ -1,7 +1,7 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import net.fabricmc.loader.api.metadata.ModOrigin;
@@ -12,7 +12,6 @@ import net.minecraft.text.TranslatableText;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.IOException;
 import java.util.*;
@@ -101,16 +100,29 @@ public interface Mod {
 
 	boolean isReal();
 
-	@Nullable
-	ModrinthData getModrinthData();
-
 	boolean allowsUpdateChecks();
+
+	@Nullable
+	UpdateChecker getUpdateChecker();
+
+	void setUpdateChecker(@Nullable UpdateChecker updateChecker);
+
+	@Nullable
+	UpdateInfo getUpdateInfo();
+
+	void setUpdateInfo(@Nullable UpdateInfo updateInfo);
+
+	default boolean hasUpdate() {
+		UpdateInfo updateInfo = getUpdateInfo();
+		if (updateInfo == null) {
+			return false;
+		}
+		return updateInfo.isUpdateAvailable();
+	}
 
 	default @Nullable String getSha512Hash() throws IOException {
 		return null;
 	}
-
-	void setModrinthData(ModrinthData modrinthData);
 
 	void setChildHasUpdate();
 

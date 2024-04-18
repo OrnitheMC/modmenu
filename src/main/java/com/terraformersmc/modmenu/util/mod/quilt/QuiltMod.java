@@ -3,7 +3,7 @@ package com.terraformersmc.modmenu.util.mod.quilt;
 import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
-import com.terraformersmc.modmenu.util.ModrinthUtil;
+import com.terraformersmc.modmenu.util.UpdateCheckerUtil;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +69,7 @@ public class QuiltMod extends FabricMod {
 	public @Nullable String getSha512Hash() throws IOException {
 		String fabricResult = super.getSha512Hash();
 		if (fabricResult == null) {
-			ModrinthUtil.LOGGER.debug("Checking {}", getId());
+			UpdateCheckerUtil.LOGGER.debug("Checking {}", getId());
 			if (container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_QUILT) || container.getSourceType().equals(ModContainer.BasicSourceType.NORMAL_FABRIC)) {
 				for (List<Path> paths : container.getSourcePaths()) {
 					List<Path> jars = paths.stream().filter(p -> p.toString().toLowerCase(Locale.ROOT).endsWith(".jar")).collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class QuiltMod extends FabricMod {
 						File file = jars.get(0).toFile();
 
 						if (file.exists()) {
-							ModrinthUtil.LOGGER.debug("Found {} hash", getId());
+							UpdateCheckerUtil.LOGGER.debug("Found {} hash", getId());
 							return Files.asByteSource(file).hash(Hashing.sha512()).toString();
 						}
 					}
