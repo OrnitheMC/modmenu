@@ -278,7 +278,11 @@ public class FabricMod implements Mod {
 
 	@Override
 	public boolean allowsUpdateChecks() {
-		return this.allowsUpdateChecks || ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId());
+		if (ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId())) {
+			return false;
+		}
+
+		return this.allowsUpdateChecks;
 	}
 
 	@Override
