@@ -2,6 +2,7 @@ package com.terraformersmc.modmenu.gui.widget;
 
 import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
@@ -13,6 +14,7 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.*;
 import net.minecraft.client.resource.language.I18n;
@@ -31,6 +33,7 @@ public class DescriptionListWidget extends EntryListWidget {
 	private static final String HAS_UPDATE_TEXT = I18n.translate("modmenu.hasUpdate");
 	private static final String EXPERIMENTAL_TEXT = /*Formatting.GOLD +*/ I18n.translate("modmenu.experimental");
 	private static final String MODRINTH_TEXT = I18n.translate("modmenu.modrinth");
+	private static final String DOWNLOAD_TEXT = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.downloadLink");
 	private static final String CHILD_HAS_UPDATE_TEXT = I18n.translate("modmenu.childHasUpdate");
 	private static final String LINKS_TEXT = I18n.translate("modmenu.links");
 	private static final String SOURCE_TEXT = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.source");
@@ -102,7 +105,8 @@ public class DescriptionListWidget extends EntryListWidget {
 				}
 
 				if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(mod.getId())) {
-					if (mod.getModrinthData() != null) {
+					UpdateInfo updateInfo = mod.getUpdateInfo();
+					if (updateInfo != null && updateInfo.isUpdateAvailable()) {
 						this.entries.add(emptyEntry);
 
 						int index = 0;
@@ -118,12 +122,30 @@ public class DescriptionListWidget extends EntryListWidget {
 							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
-						String updateText = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT);
+						if (updateInfo instanceof ModrinthUpdateInfo) {
+							ModrinthUpdateInfo modrinthUpdateInfo = (ModrinthUpdateInfo) updateInfo;
+							String updateText = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(modrinthUpdateInfo.getVersionNumber()), MODRINTH_TEXT);
 
-						String versionLink = String.format("https://modrinth.com/project/%s/version/%s", mod.getModrinthData().projectId(), mod.getModrinthData().versionId());
-
-						for (Object line : textRenderer.split(updateText, wrapWidth - 16)) {
-							this.entries.add(new LinkEntry((String) line, versionLink, 8));
+							for (Object line : textRenderer.split(updateText, wrapWidth - 16)) {
+								this.entries.add(new LinkEntry((String) line, modrinthUpdateInfo.getDownloadLink(), 8));
+							}
+						} else {
+							String updateMessage = updateInfo.getUpdateMessage();
+							String downloadLink = updateInfo.getDownloadLink();
+							if (updateMessage == null) {
+								updateMessage = DOWNLOAD_TEXT;
+							} else {
+								if (downloadLink != null) {
+									updateMessage = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ updateMessage;
+								}
+							}
+							for (Object line : textRenderer.split(updateMessage, wrapWidth - 16)) {
+								if (downloadLink != null) {
+									this.entries.add(new LinkEntry((String) line, downloadLink, 8));
+								} else {
+									this.entries.add(new DescriptionEntry((String) line, 8));
+								}
+							}
 						}
 					}
 					if (mod.getChildHasUpdate()) {

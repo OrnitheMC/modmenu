@@ -1,5 +1,7 @@
 package com.terraformersmc.modmenu.util.mod;
 
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
@@ -97,16 +99,29 @@ public interface Mod {
 
 	boolean isReal();
 
-	@Nullable
-	ModrinthData getModrinthData();
-
 	boolean allowsUpdateChecks();
+
+	@Nullable
+	UpdateChecker getUpdateChecker();
+
+	void setUpdateChecker(@Nullable UpdateChecker updateChecker);
+
+	@Nullable
+	UpdateInfo getUpdateInfo();
+
+	void setUpdateInfo(@Nullable UpdateInfo updateInfo);
+
+	default boolean hasUpdate() {
+		UpdateInfo updateInfo = getUpdateInfo();
+		if (updateInfo == null) {
+			return false;
+		}
+		return updateInfo.isUpdateAvailable();
+	}
 
 	default @Nullable String getSha512Hash() throws IOException {
 		return null;
 	}
-
-	void setModrinthData(ModrinthData modrinthData);
 
 	void setChildHasUpdate();
 
