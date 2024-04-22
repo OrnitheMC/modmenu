@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -89,7 +90,20 @@ public class UpdateCheckerUtil {
 			.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
 		final String modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
 		final String userAgent = String.format("%s/%s (%s/%s%s)", ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
-		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer));
+
+		List<UpdateChannel> updateChannels;
+		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
+
+		if (preferredChannel == UpdateChannel.RELEASE) {
+			updateChannels = Arrays.asList(UpdateChannel.RELEASE);
+		} else if (preferredChannel == UpdateChannel.BETA) {
+			updateChannels = Arrays.asList(UpdateChannel.BETA, UpdateChannel.RELEASE);
+		} else {
+			updateChannels = Arrays.asList(UpdateChannel.ALPHA, UpdateChannel.BETA, UpdateChannel.RELEASE);
+		}
+
+		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer, updateChannels));
+
 		LOGGER.debug("User agent: " + userAgent);
 		LOGGER.debug("Body: " + body);
 
@@ -115,6 +129,7 @@ public class UpdateCheckerUtil {
 					String lookupHash = entry.getKey();
 					JsonObject versionObj = entry.getValue().getAsJsonObject();
 					String projectId = versionObj.get("project_id").getAsString();
+					String versionType = versionObj.get("version_type").getAsString();
 					String versionNumber = versionObj.get("version_number").getAsString();
 					String versionId = versionObj.get("id").getAsString();
 					List<JsonElement> files = new ArrayList<>();
@@ -126,13 +141,14 @@ public class UpdateCheckerUtil {
 						return;
 					}
 
+					UpdateChannel updateChannel = UpdateCheckerUtil.getUpdateChannel(versionType);
 					String versionHash = primaryFile.get().getAsJsonObject().get("hashes").getAsJsonObject().get("sha512").getAsString();
 
 					if (!Objects.equals(versionHash, lookupHash)) {
 						// hashes different, there's an update.
 						modHashes.get(lookupHash).forEach(mod -> {
 							LOGGER.info("Update available for '{}@{}', (-> {})", mod.getId(), mod.getVersion(), versionNumber);
-							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber));
+							mod.setUpdateInfo(new ModrinthUpdateInfo(projectId, versionId, versionNumber, updateChannel));
 						});
 					}
 				});
@@ -142,18 +158,34 @@ public class UpdateCheckerUtil {
 		}
 	}
 
+	private static UpdateChannel getUpdateChannel(String versionType) {
+		try {
+			return UpdateChannel.valueOf(versionType.toUpperCase(Locale.ROOT));
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return UpdateChannel.RELEASE;
+		}
+	}
+
 	public static class LatestVersionsFromHashesBody {
 		public Collection<String> hashes;
 		public String algorithm = "sha512";
 		public Collection<String> loaders;
 		@SerializedName("game_versions")
 		public Collection<String> gameVersions;
+		@SerializedName("version_types")
+		public Collection<String> versionTypes;
 
-		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion) {
+		public LatestVersionsFromHashesBody(Collection<String> hashes, Collection<String> loaders, String mcVersion, Collection<UpdateChannel> updateChannels) {
 			this.hashes = hashes;
 			this.loaders = loaders;
 			this.gameVersions = new HashSet<>();
 			this.gameVersions.add(mcVersion);
+			
+			this.versionTypes = new HashSet<>();
+
+			for (UpdateChannel updateChannel : updateChannels) {
+				this.versionTypes.add(updateChannel.toString().toLowerCase());
+			}
 		}
 	}
 }
