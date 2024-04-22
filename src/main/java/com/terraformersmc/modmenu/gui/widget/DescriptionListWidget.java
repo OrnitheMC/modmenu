@@ -21,14 +21,18 @@ import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.Style;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.lwjgl.opengl.GL11;
 
@@ -216,7 +220,8 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 							this.entries.add(new MojangCreditsEntry(line));
 						}
 					} else if (!"java".equals(mod.getId())) {
-						List<String> credits = mod.getCredits();
+						SortedMap<String, SortedSet<String>> credits = mod.getCredits();
+
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
 
@@ -224,11 +229,30 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 								this.entries.add(new DescriptionEntry(line));
 							}
 
-							for (String credit : credits) {
+							Iterator<Map.Entry<String, SortedSet<String>>> iterator = credits.entrySet().iterator();
+
+							while (iterator.hasNext()) {
 								int indent = 8;
-								for (String line : textRenderer.wrapLines(credit, wrapWidth - 16)) {
+
+								Map.Entry<String, SortedSet<String>> role = iterator.next();
+								String roleName = role.getKey();
+
+								for (String line : textRenderer.wrapLines(this.creditsRoleText(roleName).getFormattedContent(), wrapWidth - 16)) {
 									this.entries.add(new DescriptionEntry(line, indent));
 									indent = 16;
+								}
+
+								for (String contributor : role.getValue()) {
+									indent = 16;
+
+									for (String line : textRenderer.wrapLines(new LiteralText(contributor).getFormattedContent(), wrapWidth - 24)) {
+										this.entries.add(new DescriptionEntry(line, indent));
+										indent = 24;
+									}
+								}
+
+								if (iterator.hasNext()) {
+									this.entries.add(emptyEntry);
 								}
 							}
 						}
@@ -366,6 +390,14 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		}
 
 		minecraft.openScreen(this.parent);
+	}
+
+	private Text creditsRoleText(String roleName) {
+		// Replace spaces and dashes in role names with underscores if they exist
+		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+		String translationKey = roleName.replaceAll("[\\s-]", "_");
+
+		return new TranslatableText("modmenu.credits.role." + translationKey).append(new LiteralText(":"));
 	}
 
 	protected class DescriptionEntry implements EntryListWidget.Entry {
