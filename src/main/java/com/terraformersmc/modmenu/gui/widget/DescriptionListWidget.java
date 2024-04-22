@@ -21,9 +21,12 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -213,7 +216,8 @@ public class DescriptionListWidget extends EntryListWidget {
 							this.entries.add(new MojangCreditsEntry((String) line));
 						}
 					} else if (!"java".equals(mod.getId())) {
-						List<String> credits = mod.getCredits();
+						SortedMap<String, SortedSet<String>> credits = mod.getCredits();
+
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
 
@@ -221,11 +225,30 @@ public class DescriptionListWidget extends EntryListWidget {
 								this.entries.add(new DescriptionEntry((String) line));
 							}
 
-							for (String credit : credits) {
+							Iterator<Map.Entry<String, SortedSet<String>>> iterator = credits.entrySet().iterator();
+
+							while (iterator.hasNext()) {
 								int indent = 8;
-								for (Object line : textRenderer.split(credit, wrapWidth - 16)) {
+
+								Map.Entry<String, SortedSet<String>> role = iterator.next();
+								String roleName = role.getKey();
+
+								for (Object line : textRenderer.split(this.creditsRoleText(roleName), wrapWidth - 16)) {
 									this.entries.add(new DescriptionEntry((String) line, indent));
 									indent = 16;
+								}
+
+								for (String contributor : role.getValue()) {
+									indent = 16;
+
+									for (Object line : textRenderer.split(contributor, wrapWidth - 24)) {
+										this.entries.add(new DescriptionEntry((String) line, indent));
+										indent = 24;
+									}
+								}
+
+								if (iterator.hasNext()) {
+									this.entries.add(emptyEntry);
 								}
 							}
 						}
@@ -410,6 +433,14 @@ public class DescriptionListWidget extends EntryListWidget {
 		}
 
 		minecraft.openScreen(this.parent);
+	}
+
+	private String creditsRoleText(String roleName) {
+		// Replace spaces and dashes in role names with underscores if they exist
+		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+		String translationKey = roleName.replaceAll("[\\s-]", "_");
+
+		return I18n.translate("modmenu.credits.role." + translationKey) + ":";
 	}
 
 	protected class DescriptionEntry implements EntryListWidget.Entry {

@@ -209,20 +209,35 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		List<String> authors = metadata.getContributors().stream().map(Person::getName).collect(Collectors.toList());
-		if ("minecraft".equals(getId()) && authors.isEmpty()) {
-			return Lists.newArrayList();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		Map<String, Collection<String>> contributors = new HashMap<>();
+
+		for (Person contributor : this.metadata.getContributors()) {
+			contributors.put(contributor.getName(), Arrays.asList("Contributor"));
 		}
-		return authors;
+
+		return contributors;
 	}
 
-	@NotNull
-	public List<String> getCredits() {
-		List<String> list = new ArrayList<>();
-		list.addAll(getAuthors());
-		list.addAll(getContributors());
-		return list;
+	@Override
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+
+		List<String> authors = this.getAuthors();
+		Map<String, Collection<String>> contributors = this.getContributors();
+
+		for (String author : authors) {
+			contributors.put(author, Arrays.asList("Author"));
+		}
+
+		for (Map.Entry<String, Collection<String>> contributor : contributors.entrySet()) {
+			for (String role : contributor.getValue()) {
+				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.get(role).add(contributor.getKey());
+			}
+		}
+
+		return credits;
 	}
 
 	@Override

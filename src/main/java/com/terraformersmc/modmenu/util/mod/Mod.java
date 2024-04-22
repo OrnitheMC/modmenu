@@ -70,11 +70,17 @@ public interface Mod {
 	@NotNull
 	List<String> getAuthors();
 
+	/**
+	 * @return a mapping of contributors to their roles.
+	 */
 	@NotNull
-	List<String> getContributors();
+	Map<String, Collection<String>> getContributors();
 
+	/**
+	 * @return a mapping of roles to each contributor with that role.
+	 */
 	@NotNull
-	List<String> getCredits();
+	SortedMap<String, SortedSet<String>> getCredits();
 
 	@NotNull
 	Set<Badge> getBadges();
