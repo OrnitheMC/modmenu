@@ -116,7 +116,8 @@ public interface Mod {
 		if (updateInfo == null) {
 			return false;
 		}
-		return updateInfo.isUpdateAvailable();
+
+		return updateInfo.isUpdateAvailable() && updateInfo.getUpdateChannel().compareTo(ModMenuConfig.UPDATE_CHANNEL.getValue()) >= 0;
 	}
 
 	default @Nullable String getSha512Hash() throws IOException {

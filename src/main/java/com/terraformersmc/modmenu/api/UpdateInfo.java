@@ -3,7 +3,6 @@ package com.terraformersmc.modmenu.api;
 import org.jetbrains.annotations.Nullable;
 
 public interface UpdateInfo {
-
 	/**
 	 * @return If an update for the mod is available.
 	 */
@@ -22,4 +21,8 @@ public interface UpdateInfo {
 	 */
 	String getDownloadLink();
 
+	/**
+	 * @return The update channel this update is available for.
+	 */
+	UpdateChannel getUpdateChannel();
 }

@@ -158,3 +158,7 @@ option.modmenu.button_update_badge.false=Hidden
 option.modmenu.quick_configure=Quick Configure
 option.modmenu.quick_configure.true=Enabled
 option.modmenu.quick_configure.false=Disabled
+option.modmenu.update_channel=Update Channel
+option.modmenu.update_channel.alpha=All
+option.modmenu.update_channel.beta=Release & Beta
+option.modmenu.update_channel.release=Release
