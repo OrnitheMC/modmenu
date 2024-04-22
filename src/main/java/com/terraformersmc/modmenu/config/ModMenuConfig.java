@@ -1,6 +1,7 @@
 package com.terraformersmc.modmenu.config;
 
 import com.google.gson.annotations.SerializedName;
+import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.config.option.BooleanConfigOption;
 import com.terraformersmc.modmenu.config.option.ConfigOption;
 import com.terraformersmc.modmenu.config.option.EnumConfigOption;
@@ -41,6 +42,7 @@ public class ModMenuConfig {
 	public static final StringSetConfigOption DISABLE_UPDATE_CHECKER = new StringSetConfigOption("disable_update_checker", new HashSet<>());
 	public static final BooleanConfigOption UPDATE_CHECKER = new BooleanConfigOption("update_checker", true);
 	public static final BooleanConfigOption BUTTON_UPDATE_BADGE = new BooleanConfigOption("button_update_badge", true);
+	public static final EnumConfigOption<UpdateChannel> UPDATE_CHANNEL = new EnumConfigOption<>("update_channel", UpdateChannel.RELEASE);
 	public static final BooleanConfigOption QUICK_CONFIGURE = new BooleanConfigOption("quick_configure", true);
 
 	public static ConfigOption[] asOptions() {
