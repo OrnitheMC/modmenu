@@ -53,7 +53,7 @@ public class FabricMod implements Mod {
 		this.container = modContainer;
 		this.metadata = modContainer.getMetadata();
 
-		if ("minecraft".equals(metadata.getId()) || "fabricloader".equals(metadata.getId()) || "java".equals(metadata.getId()) || "quilt_loader".equals(metadata.getId())) {
+		if ("minecraft".equals(metadata.getId()) || "java".equals(metadata.getId())) {
 			allowsUpdateChecks = false;
 		}
 
