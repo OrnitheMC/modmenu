@@ -7,17 +7,15 @@ import com.google.gson.annotations.SerializedName;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.fabricmc.loader.api.FabricLoader;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +28,6 @@ import java.util.concurrent.CompletableFuture;
 public class UpdateCheckerUtil {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Update Checker");
 
-	private static final HttpClient client = HttpClientBuilder.create().build();
 	private static boolean modrinthApiV2Deprecated = false;
 
 	private static boolean allowsUpdateChecks(Mod mod) {
@@ -51,10 +48,21 @@ public class UpdateCheckerUtil {
 	public static void checkForCustomUpdates() {
 		ModMenu.MODS.values().stream().filter(UpdateCheckerUtil::allowsUpdateChecks).forEach(mod -> {
 			UpdateChecker updateChecker = mod.getUpdateChecker();
+
 			if (updateChecker == null) {
 				return;
 			}
-			UpdateCheckerThread.run(mod, () -> mod.setUpdateInfo(updateChecker.checkForUpdates()));
+
+			UpdateCheckerThread.run(mod, () -> {
+				UpdateInfo update = updateChecker.checkForUpdates();
+
+				if (update == null) {
+					return;
+				}
+
+				mod.setUpdateInfo(update);
+				LOGGER.info("Update available for '{}@{}'", mod.getId(), mod.getVersion());
+			});
 		});
 	}
 
@@ -80,16 +88,10 @@ public class UpdateCheckerUtil {
 			}
 		});
 
-		String environment = ModMenu.devEnvironment ? "/development" : "";
-		String primaryLoader = ModMenu.runningQuilt ? "quilt" : "fabric";
 		List<String> loaders = ModMenu.runningQuilt ? Arrays.asList("fabric", "quilt") : Arrays.asList("fabric");
 
 		String mcVer = FabricLoader.getInstance().getModContainer("minecraft").get()
 		.getMetadata().getVersion().getFriendlyString();
-		String version = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
-				.get().getMetadata().getVersion().getFriendlyString();
-		final String modMenuVersion = version.split("\\+", 2)[0]; // Strip build metadata for privacy
-		final String userAgent = String.format("%s/%s (%s/%s%s)", ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
 
 		List<UpdateChannel> updateChannels;
 		UpdateChannel preferredChannel = UpdateChannel.getUserPreference();
@@ -104,18 +106,15 @@ public class UpdateCheckerUtil {
 
 		String body = ModMenu.GSON_MINIFIED.toJson(new LatestVersionsFromHashesBody(modHashes.keySet(), loaders, mcVer, updateChannels));
 
-		LOGGER.debug("User agent: " + userAgent);
 		LOGGER.debug("Body: " + body);
 
 		try {
-			HttpUriRequest latestVersionsRequest = RequestBuilder.post()
+			RequestBuilder latestVersionsRequest = RequestBuilder.post()
 				.setEntity(new StringEntity(body))
-				.addHeader("User-Agent", userAgent)
 				.addHeader("Content-Type", "application/json")
-				.setUri(URI.create("https://api.modrinth.com/v2/version_files/update"))
-				.build();
+				.setUri(URI.create("https://api.modrinth.com/v2/version_files/update"));
 
-			HttpResponse latestVersionsResponse = client.execute(latestVersionsRequest);
+			HttpResponse latestVersionsResponse = HttpUtil.request(latestVersionsRequest);
 
 			int status = latestVersionsResponse.getStatusLine().getStatusCode();
 			LOGGER.debug("Status: " + status);

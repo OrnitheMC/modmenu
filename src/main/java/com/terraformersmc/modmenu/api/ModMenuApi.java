@@ -69,6 +69,16 @@ public interface ModMenuApi {
 	}
 
 	/**
+	 * Used to provide update checkers for other mods. A mod registering its own
+	 * update checker will take priority over any provided ones should both exist.
+	 *
+	 * @return a map of mod ids to update checkers.
+	 */
+	default Map<String, UpdateChecker> getProvidedUpdateCheckers() {
+		return ImmutableMap.of();
+	}
+
+	/**
 	 * Used to mark mods with a badge indicating that they are
 	 * provided by a modpack.
 	 * <p>

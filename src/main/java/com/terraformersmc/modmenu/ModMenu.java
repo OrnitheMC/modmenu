@@ -72,6 +72,8 @@ public class ModMenu implements ClientModInitializer {
 		ModMenuConfigManager.initializeConfig();
 		Set<String> modpackMods = new HashSet<>();
 		Map<String, UpdateChecker> updateCheckers = new HashMap<>();
+		Map<String, UpdateChecker> providedUpdateCheckers = new HashMap<>();
+
 		FabricLoader.getInstance().getEntrypointContainers("modmenu", ModMenuApi.class).forEach(entrypoint -> {
 			ModMetadata metadata = entrypoint.getProvider().getMetadata();
 			String modId = metadata.getId();
@@ -80,6 +82,7 @@ public class ModMenu implements ClientModInitializer {
 				configScreenFactories.put(modId, api.getModConfigScreenFactory());
 				apiImplementations.add(api);
 				updateCheckers.put(modId, api.getUpdateChecker());
+				providedUpdateCheckers.putAll(api.getProvidedUpdateCheckers());
 				api.attachModpackBadges(modpackMods::add);
 			} catch (Throwable e) {
 				LOGGER.error("Mod {} provides a broken implementation of ModMenuApi", modId, e);
@@ -96,9 +99,14 @@ public class ModMenu implements ClientModInitializer {
 				mod = new FabricMod(modContainer, modpackMods);
 			}
 
-			mod.setUpdateChecker(updateCheckers.get(mod.getId()));
+			UpdateChecker updateChecker = updateCheckers.get(mod.getId());
+
+			if (updateChecker == null) {
+				updateChecker = providedUpdateCheckers.get(mod.getId());
+			}
 
 			MODS.put(mod.getId(), mod);
+			mod.setUpdateChecker(updateChecker);
 		}
 
 		checkForUpdates();
