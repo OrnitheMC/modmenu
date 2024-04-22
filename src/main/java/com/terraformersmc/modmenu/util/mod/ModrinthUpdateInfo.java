@@ -1,17 +1,19 @@
 package com.terraformersmc.modmenu.util.mod;
 
+import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 
 public class ModrinthUpdateInfo implements UpdateInfo {
+	protected final String projectId;
+	protected final String versionId;
+	protected final String versionNumber;
+	protected final UpdateChannel updateChannel;
 
-	protected String projectId;
-	protected String versionId;
-	protected String versionNumber;
-
-	public ModrinthUpdateInfo(String projectId, String versionId, String versionNumber) {
+	public ModrinthUpdateInfo(String projectId, String versionId, String versionNumber, UpdateChannel updateChannel) {
 		this.projectId = projectId;
 		this.versionId = versionId;
 		this.versionNumber = versionNumber;
+		this.updateChannel = updateChannel;
 	}
 
 	@Override
@@ -36,4 +38,8 @@ public class ModrinthUpdateInfo implements UpdateInfo {
 		return versionNumber;
 	}
 
+	@Override
+	public UpdateChannel getUpdateChannel() {
+		return this.updateChannel;
+	}
 }

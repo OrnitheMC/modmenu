@@ -101,7 +101,7 @@ public class ModMenu implements ClientModInitializer {
 			MODS.put(mod.getId(), mod);
 		}
 
-		UpdateCheckerUtil.checkForUpdates();
+		checkForUpdates();
 
 		Map<String, Mod> dummyParents = new HashMap<>();
 
@@ -127,6 +127,10 @@ public class ModMenu implements ClientModInitializer {
 
 	public static void clearModCountCache() {
 		cachedDisplayedModCount = -1;
+	}
+
+	public static void checkForUpdates() {
+		UpdateCheckerUtil.checkForUpdates();
 	}
 
 	public static boolean areModUpdatesAvailable() {
