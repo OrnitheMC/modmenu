@@ -66,6 +66,7 @@ public class ModMenuOptionsScreen extends Screen {
 
 	@Override
 	public void removed() {
+		ModMenu.checkForUpdates();
 		ModMenuConfigManager.save();
 	}
 }
