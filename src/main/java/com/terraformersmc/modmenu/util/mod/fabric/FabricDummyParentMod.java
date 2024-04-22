@@ -1,5 +1,6 @@
 package com.terraformersmc.modmenu.util.mod.fabric;
 
+import com.google.common.collect.ImmutableMap;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.api.UpdateInfo;
@@ -89,13 +90,13 @@ public class FabricDummyParentMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		return new ArrayList<>();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		return ImmutableMap.of();
 	}
 
 	@Override
-	public @NotNull List<String> getCredits() {
-		return new ArrayList<>();
+	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+		return new TreeMap<>();
 	}
 
 	@Override
