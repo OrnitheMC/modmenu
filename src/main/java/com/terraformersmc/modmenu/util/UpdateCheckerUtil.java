@@ -86,9 +86,9 @@ public class UpdateCheckerUtil {
 
 		String mcVer = FabricLoader.getInstance().getModContainer("minecraft").get()
 		.getMetadata().getVersion().getFriendlyString();
-		String[] splitVersion = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
-			.get().getMetadata().getVersion().getFriendlyString().split("\\+", 1); // Strip build metadata for privacy
-		final String modMenuVersion = splitVersion.length > 1 ? splitVersion[1] : splitVersion[0];
+		String version = FabricLoader.getInstance().getModContainer(ModMenu.MOD_ID)
+				.get().getMetadata().getVersion().getFriendlyString();
+		final String modMenuVersion = version.split("\\+", 2)[0]; // Strip build metadata for privacy
 		final String userAgent = String.format("%s/%s (%s/%s%s)", ModMenu.GITHUB_REF, modMenuVersion, mcVer, primaryLoader, environment);
 
 		List<UpdateChannel> updateChannels;
