@@ -443,7 +443,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 	private Text creditsRoleText(String roleName) {
 		// Replace spaces and dashes in role names with underscores if they exist
 		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
-		String translationKey = roleName.replaceAll("[\\s-]", "_");
+		String translationKey = roleName.replaceAll("[\\s-]", "_").toLowerCase();
 
 		return new TranslatableText("modmenu.credits.role." + translationKey).append(new LiteralText(":"));
 	}
