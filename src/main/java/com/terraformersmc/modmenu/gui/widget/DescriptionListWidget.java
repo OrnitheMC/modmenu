@@ -35,7 +35,6 @@ public class DescriptionListWidget extends EntryListWidget {
 
 	private static final String HAS_UPDATE_TEXT = I18n.translate("modmenu.hasUpdate");
 	private static final String EXPERIMENTAL_TEXT = /*Formatting.GOLD +*/ I18n.translate("modmenu.experimental");
-	private static final String MODRINTH_TEXT = I18n.translate("modmenu.modrinth");
 	private static final String DOWNLOAD_TEXT = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.downloadLink");
 	private static final String CHILD_HAS_UPDATE_TEXT = I18n.translate("modmenu.childHasUpdate");
 	private static final String LINKS_TEXT = I18n.translate("modmenu.links");
@@ -125,29 +124,21 @@ public class DescriptionListWidget extends EntryListWidget {
 							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
-						if (updateInfo instanceof ModrinthUpdateInfo) {
-							ModrinthUpdateInfo modrinthUpdateInfo = (ModrinthUpdateInfo) updateInfo;
-							String updateText = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(modrinthUpdateInfo.getVersionNumber()), MODRINTH_TEXT);
-
-							for (Object line : textRenderer.split(updateText, wrapWidth - 16)) {
-								this.entries.add(new LinkEntry((String) line, modrinthUpdateInfo.getDownloadLink(), 8));
-							}
+						String updateMessage = updateInfo.getUpdateMessage();
+						String downloadLink = updateInfo.getDownloadLink();
+						if (updateMessage == null) {
+							updateMessage = DOWNLOAD_TEXT;
 						} else {
-							String updateMessage = updateInfo.getUpdateMessage();
-							String downloadLink = updateInfo.getDownloadLink();
-							if (updateMessage == null) {
-								updateMessage = DOWNLOAD_TEXT;
-							} else {
-								if (downloadLink != null) {
-									updateMessage = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ updateMessage;
-								}
+							if (downloadLink != null) {
+								updateMessage = "" + /*Formatting.BLUE + Formatting.UNDERLINE +*/ updateMessage;
 							}
-							for (Object line : textRenderer.split(updateMessage, wrapWidth - 16)) {
-								if (downloadLink != null) {
-									this.entries.add(new LinkEntry((String) line, downloadLink, 8));
-								} else {
-									this.entries.add(new DescriptionEntry((String) line, 8));
-								}
+						}
+
+						for (Object line : textRenderer.split(updateMessage, wrapWidth - 16)) {
+							if (downloadLink != null) {
+								this.entries.add(new LinkEntry((String) line, downloadLink, 8));
+							} else {
+								this.entries.add(new DescriptionEntry((String) line, 8));
 							}
 						}
 					}
