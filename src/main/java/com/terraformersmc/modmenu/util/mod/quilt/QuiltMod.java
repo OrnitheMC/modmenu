@@ -16,17 +16,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class QuiltMod extends FabricMod {
@@ -61,7 +60,7 @@ public class QuiltMod extends FabricMod {
 
 	@Override
 	public @NotNull Map<String, Collection<String>> getContributors() {
-		Map<String, Collection<String>> contributors = new HashMap<>();
+		Map<String, Collection<String>> contributors = new LinkedHashMap<>();
 
 		for (ModContributor contributor : this.metadata.contributors()) {
 			contributors.put(contributor.name(), contributor.roles());
@@ -71,14 +70,14 @@ public class QuiltMod extends FabricMod {
 	}
 
 	@Override
-	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
-		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
+		SortedMap<String, Set<String>> credits = new TreeMap<>();
 
 		Map<String, Collection<String>> contributors = this.getContributors();
 
 		for (Map.Entry<String, Collection<String>> contributor : contributors.entrySet()) {
 			for (String role : contributor.getValue()) {
-				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.computeIfAbsent(role, key -> new LinkedHashSet<>());
 				credits.get(role).add(contributor.getKey());
 			}
 		}
