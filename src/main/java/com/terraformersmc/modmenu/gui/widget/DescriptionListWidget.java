@@ -216,7 +216,7 @@ public class DescriptionListWidget extends EntryListWidget {
 							this.entries.add(new MojangCreditsEntry((String) line));
 						}
 					} else if (!"java".equals(mod.getId())) {
-						SortedMap<String, SortedSet<String>> credits = mod.getCredits();
+						SortedMap<String, Set<String>> credits = mod.getCredits();
 
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
@@ -225,12 +225,12 @@ public class DescriptionListWidget extends EntryListWidget {
 								this.entries.add(new DescriptionEntry((String) line));
 							}
 
-							Iterator<Map.Entry<String, SortedSet<String>>> iterator = credits.entrySet().iterator();
+							Iterator<Map.Entry<String, Set<String>>> iterator = credits.entrySet().iterator();
 
 							while (iterator.hasNext()) {
 								int indent = 8;
 
-								Map.Entry<String, SortedSet<String>> role = iterator.next();
+								Map.Entry<String, Set<String>> role = iterator.next();
 								String roleName = role.getKey();
 
 								for (Object line : textRenderer.split(this.creditsRoleText(roleName), wrapWidth - 16)) {
