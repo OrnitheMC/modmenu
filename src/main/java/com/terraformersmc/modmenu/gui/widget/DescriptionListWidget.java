@@ -40,7 +40,6 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
 	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
-	private static final Text MODRINTH_TEXT = new TranslatableText("modmenu.modrinth");
 	private static final Text DOWNLOAD_TEXT = new TranslatableText("modmenu.downloadLink").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 	private static final Text CHILD_HAS_UPDATE_TEXT = new TranslatableText("modmenu.childHasUpdate");
 	private static final Text LINKS_TEXT = new TranslatableText("modmenu.links");
@@ -128,30 +127,20 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 							this.entries.add(new DescriptionEntry(line, 8));
 						}
 
-						if (updateInfo instanceof ModrinthUpdateInfo) {
-							ModrinthUpdateInfo modrinthUpdateInfo = (ModrinthUpdateInfo) updateInfo;
-							Text updateText = new TranslatableText("modmenu.updateText", VersionUtil.stripPrefix(modrinthUpdateInfo.getVersionNumber()), MODRINTH_TEXT)
-								.setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
-
-							for (String line : textRenderer.wrapLines(updateText.getFormattedContent(), wrapWidth - 16)) {
-								this.entries.add(new LinkEntry(line, modrinthUpdateInfo.getDownloadLink(), 8));
-							}
+						Text updateMessage = updateInfo.getUpdateMessage();
+						String downloadLink = updateInfo.getDownloadLink();
+						if (updateMessage == null) {
+							updateMessage = DOWNLOAD_TEXT;
 						} else {
-							Text updateMessage = updateInfo.getUpdateMessage();
-							String downloadLink = updateInfo.getDownloadLink();
-							if (updateMessage == null) {
-								updateMessage = DOWNLOAD_TEXT;
-							} else {
-								if (downloadLink != null) {
-									updateMessage = updateMessage.copy().setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
-								}
+							if (downloadLink != null) {
+								updateMessage = updateMessage.copy().setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 							}
-							for (String line : textRenderer.wrapLines(updateMessage.getFormattedContent(), wrapWidth - 16)) {
-								if (downloadLink != null) {
-									this.entries.add(new LinkEntry(line, downloadLink, 8));
-								} else {
-									this.entries.add(new DescriptionEntry(line, 8));
-								}
+						}
+						for (String line : textRenderer.wrapLines(updateMessage.getFormattedContent(), wrapWidth - 16)) {
+							if (downloadLink != null) {
+								this.entries.add(new LinkEntry(line, downloadLink, 8));
+							} else {
+								this.entries.add(new DescriptionEntry(line, 8));
 							}
 						}
 					}
