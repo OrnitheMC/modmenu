@@ -10,6 +10,7 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,6 +26,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
+import net.minecraft.resource.language.I18n;
 
 public class FabricLoaderUpdateChecker implements UpdateChecker {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Fabric Update Checker");
@@ -116,7 +118,7 @@ public class FabricLoaderUpdateChecker implements UpdateChecker {
 		}
 
 		LOGGER.debug("Fabric Loader has a matching update available!");
-		return new FabricLoaderUpdateInfo(stableVersion);
+		return new FabricLoaderUpdateInfo(match.getFriendlyString(), stableVersion);
 	}
 
 	private static boolean isNewer(Version self, Version other) {
@@ -128,15 +130,22 @@ public class FabricLoaderUpdateChecker implements UpdateChecker {
 	}
 
 	private static class FabricLoaderUpdateInfo implements UpdateInfo {
+		private final String version;
 		private final boolean isStable;
 
-		private FabricLoaderUpdateInfo(boolean isStable) {
+		private FabricLoaderUpdateInfo(String version, boolean isStable) {
+			this.version = version;
 			this.isStable = isStable;
 		}
 
 		@Override
 		public boolean isUpdateAvailable() {
 			return true;
+		}
+
+		@Override
+		public @Nullable String getUpdateMessage() {
+			return I18n.translate("modmenu.install_version", this.version);
 		}
 
 		@Override
