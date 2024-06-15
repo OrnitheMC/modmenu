@@ -54,7 +54,9 @@ public class FabricMod implements Mod {
 		this.container = modContainer;
 		this.metadata = modContainer.getMetadata();
 
-		if ("minecraft".equals(metadata.getId()) || "java".equals(metadata.getId())) {
+		String id = metadata.getId();
+
+		if ("minecraft".equals(id) || "java".equals(id)) {
 			allowsUpdateChecks = false;
 		}
 
@@ -80,13 +82,13 @@ public class FabricMod implements Mod {
 								CustomValueUtil.getString("icon", parentObj),
 								CustomValueUtil.getStringSet("badges", parentObj).orElse(new HashSet<>())
 						);
-						if (parentId.orElse("").equals(this.metadata.getId())) {
+						if (parentId.orElse("").equals(id)) {
 							parentId = Optional.empty();
 							parentData = null;
 							throw new RuntimeException("Mod declared itself as its own parent");
 						}
 					} catch (Throwable t) {
-						LOGGER.error("Error loading parent data from mod: " + metadata.getId(), t);
+						LOGGER.error("Error loading parent data from mod: " + id, t);
 					}
 				}
 			}
@@ -97,12 +99,12 @@ public class FabricMod implements Mod {
 		this.modMenuData = new ModMenuData(
 				badgeNames,
 				parentId,
-				parentData
+				parentData,
+				id
 		);
 
 		/* Hardcode parents and badges for OSL & Fabric Loader */
-		String id = metadata.getId();
-		if (id.startsWith("osl-")) {
+		if (metadata.getId().startsWith("osl-")) {
 			modMenuData.fillParentIfEmpty("osl");
 			modMenuData.badges.add(Badge.LIBRARY);
 		}
@@ -364,8 +366,8 @@ public class FabricMod implements Mod {
 		private @Nullable
 		final DummyParentData dummyParentData;
 
-		public ModMenuData(Set<String> badges, Optional<String> parent, DummyParentData dummyParentData) {
-			this.badges = Badge.convert(badges);
+		public ModMenuData(Set<String> badges, Optional<String> parent, DummyParentData dummyParentData, String id) {
+			this.badges = Badge.convert(badges, id);
 			this.parent = parent;
 			this.dummyParentData = dummyParentData;
 		}
@@ -412,7 +414,7 @@ public class FabricMod implements Mod {
 				this.name = name;
 				this.description = description;
 				this.icon = icon;
-				this.badges = Badge.convert(badges);
+				this.badges = Badge.convert(badges, id);
 			}
 
 			public String getId() {
