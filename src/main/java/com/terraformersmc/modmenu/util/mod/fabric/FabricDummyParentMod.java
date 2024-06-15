@@ -95,7 +95,7 @@ public class FabricDummyParentMod implements Mod {
 	}
 
 	@Override
-	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
 		return new TreeMap<>();
 	}
 

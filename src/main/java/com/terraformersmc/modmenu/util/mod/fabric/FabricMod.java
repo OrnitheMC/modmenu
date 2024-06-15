@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.system.CallbackI.V;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -210,7 +211,7 @@ public class FabricMod implements Mod {
 
 	@Override
 	public @NotNull Map<String, Collection<String>> getContributors() {
-		Map<String, Collection<String>> contributors = new HashMap<>();
+		Map<String, Collection<String>> contributors = new LinkedHashMap<>();
 
 		for (Person contributor : this.metadata.getContributors()) {
 			contributors.put(contributor.getName(), Arrays.asList("Contributor"));
@@ -220,8 +221,8 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull SortedMap<String, SortedSet<String>> getCredits() {
-		SortedMap<String, SortedSet<String>> credits = new TreeMap<>();
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
+		SortedMap<String, Set<String>> credits = new TreeMap<>();
 
 		List<String> authors = this.getAuthors();
 		Map<String, Collection<String>> contributors = this.getContributors();
@@ -232,7 +233,7 @@ public class FabricMod implements Mod {
 
 		for (Map.Entry<String, Collection<String>> contributor : contributors.entrySet()) {
 			for (String role : contributor.getValue()) {
-				credits.computeIfAbsent(role, key -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER));
+				credits.computeIfAbsent(role, key -> new LinkedHashSet<>());
 				credits.get(role).add(contributor.getKey());
 			}
 		}
