@@ -3,6 +3,7 @@ package com.terraformersmc.modmenu.gui.widget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tessellator;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
@@ -13,19 +14,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.ConfirmationListener;
 import net.minecraft.client.gui.screen.CreditsScreen;
+import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.Style;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.lwjgl.opengl.GL11;
 
@@ -33,7 +39,7 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 
 	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
 	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
-	private static final Text MODRINTH_TEXT = new TranslatableText("modmenu.modrinth");
+	private static final Text DOWNLOAD_TEXT = new TranslatableText("modmenu.downloadLink").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
 	private static final Text CHILD_HAS_UPDATE_TEXT = new TranslatableText("modmenu.childHasUpdate");
 	private static final Text LINKS_TEXT = new TranslatableText("modmenu.links");
 	private static final Text SOURCE_TEXT = new TranslatableText("modmenu.source").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
@@ -103,7 +109,8 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 				}
 
 				if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(mod.getId())) {
-					if (mod.getModrinthData() != null) {
+					UpdateInfo updateInfo = mod.getUpdateInfo();
+					if (updateInfo != null && updateInfo.isUpdateAvailable()) {
 						this.entries.add(emptyEntry);
 
 						int index = 0;
@@ -119,13 +126,22 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
-						Text updateText = new TranslatableText("modmenu.updateText", VersionUtil.stripPrefix(mod.getModrinthData().versionNumber()), MODRINTH_TEXT)
-							.setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
+						Text updateMessage = updateInfo.getUpdateMessage();
+						String downloadLink = updateInfo.getDownloadLink();
+						if (updateMessage == null) {
+							updateMessage = DOWNLOAD_TEXT;
+						} else {
+							if (downloadLink != null) {
+								updateMessage = updateMessage.copy().setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
+							}
+						}
 
-						String versionLink = String.format("https://modrinth.com/project/%s/version/%s", mod.getModrinthData().projectId(), mod.getModrinthData().versionId());
-
-						for (Object line : textRenderer.wrapLines(updateText.getFormattedContent(), wrapWidth - 16)) {
-							this.entries.add(new LinkEntry((String) line, versionLink, 8));
+						for (Object line : textRenderer.wrapLines(updateMessage.getFormattedContent(), wrapWidth - 16)) {
+							if (downloadLink != null) {
+								this.entries.add(new LinkEntry((String) line, downloadLink, 8));
+							} else {
+								this.entries.add(new DescriptionEntry((String) line, 8));
+							}
 						}
 					}
 					if (mod.getChildHasUpdate()) {
@@ -193,7 +209,8 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 							this.entries.add(new MojangCreditsEntry((String) line));
 						}
 					} else if (!"java".equals(mod.getId())) {
-						List<String> credits = mod.getCredits();
+						SortedMap<String, Set<String>> credits = mod.getCredits();
+
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
 
@@ -201,11 +218,30 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 								this.entries.add(new DescriptionEntry((String) line));
 							}
 
-							for (String credit : credits) {
+							Iterator<Map.Entry<String, Set<String>>> iterator = credits.entrySet().iterator();
+
+							while (iterator.hasNext()) {
 								int indent = 8;
-								for (Object line : textRenderer.wrapLines(credit, wrapWidth - 16)) {
+
+								Map.Entry<String, Set<String>> role = iterator.next();
+								String roleName = role.getKey();
+
+								for (Object line : textRenderer.wrapLines(this.creditsRoleText(roleName).getFormattedContent(), wrapWidth - 16)) {
 									this.entries.add(new DescriptionEntry((String) line, indent));
 									indent = 16;
+								}
+
+								for (String contributor : role.getValue()) {
+									indent = 16;
+
+									for (Object line : textRenderer.wrapLines(new LiteralText(contributor).getFormattedContent(), wrapWidth - 24)) {
+										this.entries.add(new DescriptionEntry((String) line, indent));
+										indent = 24;
+									}
+								}
+
+								if (iterator.hasNext()) {
+									this.entries.add(emptyEntry);
 								}
 							}
 						}
@@ -325,6 +361,14 @@ public class DescriptionListWidget extends EntryListWidget implements Confirmati
 		}
 
 		minecraft.openScreen(this.parent);
+	}
+
+	private Text creditsRoleText(String roleName) {
+		// Replace spaces and dashes in role names with underscores if they exist
+		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+		String translationKey = roleName.replaceAll("[\\s-]", "_").toLowerCase();
+
+		return new TranslatableText("modmenu.credits.role." + translationKey).append(new LiteralText(":"));
 	}
 
 	protected class DescriptionEntry implements EntryListWidget.Entry {
