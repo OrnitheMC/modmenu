@@ -147,7 +147,7 @@ public class QuiltLoaderUpdateChecker implements UpdateChecker {
 
 		@Override
 		public String getDownloadLink() {
-			return "https://quiltmc.org/en/install/client";
+			return "https://ornithemc.net";
 		}
 
 		@Override
