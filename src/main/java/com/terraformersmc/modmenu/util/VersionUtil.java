@@ -6,9 +6,7 @@ import java.util.List;
 public final class VersionUtil {
 	private static final List<String> PREFIXES = Arrays.asList("version", "ver", "v");
 
-	private VersionUtil() {
-		return;
-	}
+	private VersionUtil() {}
 
 	public static String stripPrefix(String version) {
 		version = version.trim();
@@ -24,5 +22,9 @@ public final class VersionUtil {
 
 	public static String getPrefixedVersion(String version) {
 		return "v" + stripPrefix(version);
+	}
+
+	public static String removeBuildMetadata(String version) {
+		return version.split("\\+")[0];
 	}
 }
