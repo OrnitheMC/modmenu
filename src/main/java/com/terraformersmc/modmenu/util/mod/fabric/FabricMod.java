@@ -5,11 +5,12 @@ import com.google.common.collect.Sets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.OptionalUtil;
 import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
-import com.terraformersmc.modmenu.util.mod.ModrinthData;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.*;
@@ -39,7 +40,8 @@ public class FabricMod implements Mod {
 
 	protected final Map<String, String> links = new HashMap<>();
 
-	protected @Nullable ModrinthData modrinthData = null;
+	protected @Nullable UpdateChecker updateChecker = null;
+	protected @Nullable UpdateInfo updateInfo = null;
 
 	protected boolean defaultIconWarning = true;
 
@@ -51,7 +53,9 @@ public class FabricMod implements Mod {
 		this.container = modContainer;
 		this.metadata = modContainer.getMetadata();
 
-		if ("minecraft".equals(metadata.getId()) || "fabricloader".equals(metadata.getId()) || "java".equals(metadata.getId()) || "quilt_loader".equals(metadata.getId())) {
+		String id = metadata.getId();
+
+		if ("minecraft".equals(id) || "java".equals(id)) {
 			allowsUpdateChecks = false;
 		}
 
@@ -77,13 +81,13 @@ public class FabricMod implements Mod {
 								CustomValueUtil.getString("icon", parentObj),
 								CustomValueUtil.getStringSet("badges", parentObj).orElse(new HashSet<>())
 						);
-						if (parentId.orElse("").equals(this.metadata.getId())) {
+						if (parentId.orElse("").equals(id)) {
 							parentId = Optional.empty();
 							parentData = null;
 							throw new RuntimeException("Mod declared itself as its own parent");
 						}
 					} catch (Throwable t) {
-						LOGGER.error("Error loading parent data from mod: " + metadata.getId(), t);
+						LOGGER.error("Error loading parent data from mod: " + id, t);
 					}
 				}
 			}
@@ -94,12 +98,12 @@ public class FabricMod implements Mod {
 		this.modMenuData = new ModMenuData(
 				badgeNames,
 				parentId,
-				parentData
+				parentData,
+				id
 		);
 
 		/* Hardcode parents and badges for OSL & Fabric Loader */
-		String id = metadata.getId();
-		if (id.startsWith("osl-")) {
+		if (metadata.getId().startsWith("osl-")) {
 			modMenuData.fillParentIfEmpty("osl");
 			modMenuData.badges.add(Badge.LIBRARY);
 		}
@@ -207,20 +211,35 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @NotNull List<String> getContributors() {
-		List<String> authors = metadata.getContributors().stream().map(Person::getName).collect(Collectors.toList());
-		if ("minecraft".equals(getId()) && authors.isEmpty()) {
-			return Lists.newArrayList();
+	public @NotNull Map<String, Collection<String>> getContributors() {
+		Map<String, Collection<String>> contributors = new LinkedHashMap<>();
+
+		for (Person contributor : this.metadata.getContributors()) {
+			contributors.put(contributor.getName(), Arrays.asList("Contributor"));
 		}
-		return authors;
+
+		return contributors;
 	}
 
-	@NotNull
-	public List<String> getCredits() {
-		List<String> list = new ArrayList<>();
-		list.addAll(getAuthors());
-		list.addAll(getContributors());
-		return list;
+	@Override
+	public @NotNull SortedMap<String, Set<String>> getCredits() {
+		SortedMap<String, Set<String>> credits = new TreeMap<>();
+
+		List<String> authors = this.getAuthors();
+		Map<String, Collection<String>> contributors = this.getContributors();
+
+		for (String author : authors) {
+			contributors.put(author, Arrays.asList("Author"));
+		}
+
+		for (Map.Entry<String, Collection<String>> contributor : contributors.entrySet()) {
+			for (String role : contributor.getValue()) {
+				credits.computeIfAbsent(role, key -> new LinkedHashSet<>());
+				credits.get(role).add(contributor.getKey());
+			}
+		}
+
+		return credits;
 	}
 
 	@Override
@@ -275,20 +294,34 @@ public class FabricMod implements Mod {
 	}
 
 	@Override
-	public @Nullable ModrinthData getModrinthData() {
-		return this.modrinthData;
-	}
-
-	@Override
 	public boolean allowsUpdateChecks() {
-		return this.allowsUpdateChecks || ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId());
+		if (ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(this.getId())) {
+			return false;
+		}
+
+		return this.allowsUpdateChecks;
 	}
 
 	@Override
-	public void setModrinthData(ModrinthData modrinthData) {
-		this.modrinthData = modrinthData;
+	public @Nullable UpdateChecker getUpdateChecker() {
+		return updateChecker;
+	}
+
+	@Override
+	public void setUpdateChecker(@Nullable UpdateChecker updateChecker) {
+		this.updateChecker = updateChecker;
+	}
+
+	@Override
+	public @Nullable UpdateInfo getUpdateInfo() {
+		return updateInfo;
+	}
+
+	@Override
+	public void setUpdateInfo(@Nullable UpdateInfo updateInfo) {
+		this.updateInfo = updateInfo;
 		String parent = getParent();
-		if (parent != null && modrinthData != null) {
+		if (parent != null && updateInfo != null && updateInfo.isUpdateAvailable()) {
 			ModMenu.MODS.get(parent).setChildHasUpdate();
 		}
 	}
@@ -332,8 +365,8 @@ public class FabricMod implements Mod {
 		private @Nullable
 		final DummyParentData dummyParentData;
 
-		public ModMenuData(Set<String> badges, Optional<String> parent, DummyParentData dummyParentData) {
-			this.badges = Badge.convert(badges);
+		public ModMenuData(Set<String> badges, Optional<String> parent, DummyParentData dummyParentData, String id) {
+			this.badges = Badge.convert(badges, id);
 			this.parent = parent;
 			this.dummyParentData = dummyParentData;
 		}
@@ -380,7 +413,7 @@ public class FabricMod implements Mod {
 				this.name = name;
 				this.description = description;
 				this.icon = icon;
-				this.badges = Badge.convert(badges);
+				this.badges = Badge.convert(badges, id);
 			}
 
 			public String getId() {
