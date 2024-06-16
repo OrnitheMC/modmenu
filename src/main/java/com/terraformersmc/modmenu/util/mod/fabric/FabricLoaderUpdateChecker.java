@@ -151,7 +151,7 @@ public class FabricLoaderUpdateChecker implements UpdateChecker {
 
 		@Override
 		public String getDownloadLink() {
-			return "https://fabricmc.net/use/installer";
+			return "https://ornithemc.net";
 		}
 
 		@Override
