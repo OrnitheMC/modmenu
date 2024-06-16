@@ -3,6 +3,7 @@ key.modmenu.open_menu=Мод исемлеген ачу
 modmenu.title=Модлар
 modmenu.nameTranslation.modmenu=Mod Menu
 modmenu.descriptionTranslation.modmenu=Утыртылган модлар исемлеген карау өчен мод менюсын өсти.
+  
 modmenu.loaded=(%s йөкләнгән)
 modmenu.loaded.short=(%s)
 modmenu.loaded.69.secret=(%s йөкләнгән... шәп)
@@ -11,6 +12,7 @@ modmenu.mods.n= (%s мод)
 modmenu.mods.1= (%s мод)
 modmenu.mods.69.secret= (%s мод... шәп)
 modmenu.mods.420.secret= (%s мод... баш әйләнә башлады...)
+  
 modmenu.search=Модлар эзләү
 modmenu.searchTerms.library=api апи апиай китапханә
 modmenu.searchTerms.patchwork=patchwork forge fml фордж форҗ форж патчворк фмл патчуорк
@@ -19,6 +21,7 @@ modmenu.searchTerms.deprecated=искергән иске борынгы әүвә
 modmenu.searchTerms.clientside=клиент клиентлы
 modmenu.searchTerms.configurable=көйләүләр көйләнелә торган көйләнмә көйләү көйләнеш
 modmenu.searchTerms.hasUpdate=яңартулар версия яңарту
+  
 modmenu.toggleFilterOptions=Фильтрлар
 modmenu.showingMods.n=%s мод күрсәтелә
 modmenu.showingMods.1=%s мод күрсәтелә
@@ -28,25 +31,28 @@ modmenu.showingModsLibraries.n.n=%s мод һәм %s китапханә күрс
 modmenu.showingModsLibraries.n.1=%s мод һәм %s китапханә күрсәтелә
 modmenu.showingModsLibraries.1.n=%s мод һәм %s китапханә күрсәтелә
 modmenu.showingModsLibraries.1.1=%s мод һәм %s китапханә күрсәтелә
+  
 modmenu.badge.library=Китапханә
 modmenu.badge.clientsideOnly=Клиент
 modmenu.badge.deprecated=Искергән
 modmenu.badge.forge=Forge
 modmenu.badge.modpack=Мод җыелмасы
 modmenu.badge.minecraft=Minecraft
+  
 modmenu.dropInfo.line1=Модларны өстәү өчен файлларны
 modmenu.dropInfo.line2=бу тәрәзәгә күчерегез
 modmenu.dropConfirm=Бу модларны мод папкасына күчереп алырга телисезме?
 modmenu.dropSuccessful.line1=Модлар күчереп алынды
 modmenu.dropSuccessful.line2=Модлар эшләү өчен уенны яңадан кушыгыз
+  
 modmenu.modIdToolTip=Модның ID: %s
 modmenu.authorPrefix=Автор(лар): %s
 modmenu.config=Көйләүләрне үзгәртү
 modmenu.configure=Көйләүләр...
-modmenu.configure.error=«%s» көйләүләрен йөкләп булмады
-Mod Menu түгел, ә «%s» автор(лар)ына хәбәр итегез
+modmenu.configure.error=«%s» көйләүләрен йөкләп булмады\nMod Menu түгел, ә «%s» автор(лар)ына хәбәр итегез
 modmenu.website=Сайт
 modmenu.issues=Мәсьәләләр
+  
 modmenu.credits=Автор(лар):
 modmenu.viewCredits=Автор(лар) күрсәтү
 modmenu.license=Лицензия:
@@ -56,6 +62,8 @@ modmenu.hasUpdate=Яңарту бар:
 modmenu.experimental=(Mod Menu яңарту тикшерүчесе — эксперименталь функция!)
 modmenu.childHasUpdate=Бу модның бала өчен яңарту бар.
 modmenu.updateText=%2$s сайтында %1$s версиясе
+modmenu.downloadLink=Йөкләнү
+  
 modmenu.buymeacoffee=Buy Me a Coffee
 modmenu.coindrop=Coindrop
 modmenu.crowdin=Crowdin
@@ -77,13 +85,24 @@ modmenu.twitch=Twitch
 modmenu.twitter=Twitter
 modmenu.wiki=Вики
 modmenu.youtube=YouTube
+
+modmenu.credits.role.author=Авторлар
+modmenu.credits.role.contributor=Катнашучылар
+modmenu.credits.role.translator=Тәрҗемәчеләр
+modmenu.credits.role.maintainer=Дәвам иттерүчеләр
+modmenu.credits.role.playtester=Уен тикшерүчеләре
+modmenu.credits.role.illustrator=Иллюстраторлар
+modmenu.credits.role.owner=Хуҗалар
+  
 modmenu.modsFolder=Модлар папкасы
 modmenu.configsFolder=Көйләүләр папкасы
+  
 modmenu.nameTranslation.minecraft=Minecraft
 modmenu.descriptionTranslation.minecraft=Төп уен.
 modmenu.nameTranslation.java=Java
 modmenu.descriptionTranslation.java=Java үтәү мохите.
 modmenu.javaDistributionName=Кабызылган: %s
+  
 modmenu.options=Мод исемлегенең көйләүләре
 option.modmenu.sorting=Тәртипләү
 option.modmenu.sorting.ascending=A-Z
@@ -153,3 +172,7 @@ option.modmenu.button_update_badge.false=Яшерен
 option.modmenu.quick_configure=Тиз көйләүләр
 option.modmenu.quick_configure.true=Кушык
 option.modmenu.quick_configure.false=Сүнек
+option.modmenu.update_channel=Update Channel
+option.modmenu.update_channel.alpha=All
+option.modmenu.update_channel.beta=Release & Beta
+option.modmenu.update_channel.release=Release
