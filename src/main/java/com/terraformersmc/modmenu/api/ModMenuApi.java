@@ -43,6 +43,16 @@ public interface ModMenuApi {
 	}
 
 	/**
+	 * Used for mods that have their own update checking logic.
+	 * By returning your own {@link UpdateChecker} instance, you can override ModMenus built-in update checking logic.
+	 *
+	 * @return An {@link UpdateChecker} or <code>null</code> if ModMenu should handle update checking.
+	 */
+	default UpdateChecker getUpdateChecker() {
+		return null;
+	}
+
+	/**
 	 * Used to provide config screen factories for other mods. This takes second
 	 * priority to a mod's own config screen factory provider. For example, if
 	 * mod `xyz` supplies a config screen factory, mod `abc` providing a config
@@ -55,6 +65,16 @@ public interface ModMenuApi {
 	 * @return a map of mod ids to screen factories.
 	 */
 	default Map<String, ConfigScreenFactory<?>> getProvidedConfigScreenFactories() {
+		return ImmutableMap.of();
+	}
+
+	/**
+	 * Used to provide update checkers for other mods. A mod registering its own
+	 * update checker will take priority over any provided ones should both exist.
+	 *
+	 * @return a map of mod ids to update checkers.
+	 */
+	default Map<String, UpdateChecker> getProvidedUpdateCheckers() {
 		return ImmutableMap.of();
 	}
 
