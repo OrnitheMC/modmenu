@@ -63,6 +63,7 @@
   "modmenu.experimental": "(Mod Menu яңарту тикшерүчесе — эксперименталь функция!)",
   "modmenu.childHasUpdate": "Бу модның бала өчен яңарту бар.",
   "modmenu.updateText": "%2$s сайтында %1$s версиясе",
+  "modmenu.downloadLink": "Йөкләнү",
   
   "modmenu.buymeacoffee": "Buy Me a Coffee",
   "modmenu.coindrop": "Coindrop",
@@ -85,6 +86,14 @@
   "modmenu.twitter": "Twitter",
   "modmenu.wiki": "Вики",
   "modmenu.youtube": "YouTube",
+
+  "modmenu.credits.role.author": "Авторлар",
+  "modmenu.credits.role.contributor": "Катнашучылар",
+  "modmenu.credits.role.translator": "Тәрҗемәчеләр",
+  "modmenu.credits.role.maintainer": "Дәвам иттерүчеләр",
+  "modmenu.credits.role.playtester": "Уен тикшерүчеләре",
+  "modmenu.credits.role.illustrator": "Иллюстраторлар",
+  "modmenu.credits.role.owner": "Хуҗалар",
   
   "modmenu.modsFolder": "Модлар папкасы",
   "modmenu.configsFolder": "Көйләүләр папкасы",
@@ -163,5 +172,9 @@
   "option.modmenu.button_update_badge.false": "Яшерен",
   "option.modmenu.quick_configure": "Тиз көйләүләр",
   "option.modmenu.quick_configure.true": "Кушык",
-  "option.modmenu.quick_configure.false": "Сүнек"
+  "option.modmenu.quick_configure.false": "Сүнек",
+  "option.modmenu.update_channel": "Update Channel",
+  "option.modmenu.update_channel.alpha": "All",
+  "option.modmenu.update_channel.beta": "Release & Beta",
+  "option.modmenu.update_channel.release": "Release"
 }

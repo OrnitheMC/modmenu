@@ -63,6 +63,8 @@
   "modmenu.experimental": "(Mod Menu update checker is experimental!)",
   "modmenu.childHasUpdate": "A child of this mod has an update available.",
   "modmenu.updateText": "v%s on %s",
+  "modmenu.install_version": "Install version %s",
+  "modmenu.downloadLink": "Download",
 
   "modmenu.buymeacoffee": "Buy Me a Coffee",
   "modmenu.coindrop": "Coindrop",
@@ -82,9 +84,17 @@
   "modmenu.paypal": "PayPal",
   "modmenu.reddit": "Reddit",
   "modmenu.twitch": "Twitch",
-  "modmenu.twitter": "Twitter",
+  "modmenu.twitter": "X (Twitter)",
   "modmenu.wiki": "Wiki",
   "modmenu.youtube": "YouTube",
+
+  "modmenu.credits.role.author": "Authors",
+  "modmenu.credits.role.contributor": "Contributors",
+  "modmenu.credits.role.translator": "Translators",
+  "modmenu.credits.role.maintainer": "Maintainers",
+  "modmenu.credits.role.playtester": "Playtesters",
+  "modmenu.credits.role.illustrator": "Illustrators",
+  "modmenu.credits.role.owner": "Owners",
 
   "modmenu.modsFolder": "Open Mods Folder",
   "modmenu.configsFolder": "Open Configs Folder",
@@ -165,5 +175,9 @@
   "option.modmenu.button_update_badge.false": "Hidden",
   "option.modmenu.quick_configure": "Quick Configure",
   "option.modmenu.quick_configure.true": "Enabled",
-  "option.modmenu.quick_configure.false": "Disabled"
+  "option.modmenu.quick_configure.false": "Disabled",
+  "option.modmenu.update_channel": "Update Channel",
+  "option.modmenu.update_channel.alpha": "All",
+  "option.modmenu.update_channel.beta": "Release & Beta",
+  "option.modmenu.update_channel.release": "Release"
 }

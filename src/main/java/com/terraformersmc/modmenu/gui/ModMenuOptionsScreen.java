@@ -1,5 +1,6 @@
 package com.terraformersmc.modmenu.gui;
 
+import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.gui.widget.ConfigOptionListWidget;
@@ -27,6 +28,7 @@ public class ModMenuOptionsScreen extends Screen {
 		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")) {
 			@Override
 			public void m_9319498(double d, double e) {
+				ModMenu.checkForUpdates();
 				ModMenuConfigManager.save();
 				ModMenuOptionsScreen.this.minecraft.openScreen(ModMenuOptionsScreen.this.previous);
 			}
@@ -43,6 +45,7 @@ public class ModMenuOptionsScreen extends Screen {
 
 	@Override
 	public void removed() {
+		ModMenu.checkForUpdates();
 		ModMenuConfigManager.save();
 	}
 }

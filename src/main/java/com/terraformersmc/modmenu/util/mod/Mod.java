@@ -1,7 +1,9 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
+import com.google.common.base.Predicates;
+import com.terraformersmc.modmenu.ModMenu;
+import com.terraformersmc.modmenu.api.UpdateChecker;
+import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import net.fabricmc.loader.api.metadata.ModOrigin;
@@ -12,7 +14,6 @@ import net.minecraft.text.TranslatableText;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import java.io.IOException;
 import java.util.*;
@@ -72,11 +73,17 @@ public interface Mod {
 	@NotNull
 	List<String> getAuthors();
 
+	/**
+	 * @return a mapping of contributors to their roles.
+	 */
 	@NotNull
-	List<String> getContributors();
+	Map<String, Collection<String>> getContributors();
 
+	/**
+	 * @return a mapping of roles to each contributor with that role.
+	 */
 	@NotNull
-	List<String> getCredits();
+	SortedMap<String, Set<String>> getCredits();
 
 	@NotNull
 	Set<Badge> getBadges();
@@ -101,16 +108,30 @@ public interface Mod {
 
 	boolean isReal();
 
-	@Nullable
-	ModrinthData getModrinthData();
-
 	boolean allowsUpdateChecks();
+
+	@Nullable
+	UpdateChecker getUpdateChecker();
+
+	void setUpdateChecker(@Nullable UpdateChecker updateChecker);
+
+	@Nullable
+	UpdateInfo getUpdateInfo();
+
+	void setUpdateInfo(@Nullable UpdateInfo updateInfo);
+
+	default boolean hasUpdate() {
+		UpdateInfo updateInfo = getUpdateInfo();
+		if (updateInfo == null) {
+			return false;
+		}
+
+		return updateInfo.isUpdateAvailable() && updateInfo.getUpdateChannel().compareTo(ModMenuConfig.UPDATE_CHANNEL.getValue()) >= 0;
+	}
 
 	default @Nullable String getSha512Hash() throws IOException {
 		return null;
 	}
-
-	void setModrinthData(ModrinthData modrinthData);
 
 	void setChildHasUpdate();
 
@@ -150,8 +171,17 @@ public interface Mod {
 			return this.fillColor;
 		}
 
-		public static Set<Badge> convert(Set<String> badgeKeys) {
-			return badgeKeys.stream().map(KEY_MAP::get).collect(Collectors.toSet());
+		public static Set<Badge> convert(Set<String> badgeKeys, String modId) {
+			return badgeKeys.stream()
+					.map(key -> {
+						if (!KEY_MAP.containsKey(key)) {
+							ModMenu.LOGGER.warn("Skipping unknown badge key '{}' specified by mod '{}'", key, modId);
+						}
+
+						return KEY_MAP.get(key);
+					})
+					.filter(Objects::nonNull)
+					.collect(Collectors.toSet());
 		}
 
 		static {
