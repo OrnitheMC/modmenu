@@ -11,7 +11,6 @@ import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
-import net.fabricmc.loader.api.FabricLoader;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
@@ -211,8 +210,7 @@ public class UpdateCheckerUtil {
 	}
 
 	private static @Nullable Map<String, VersionUpdate> getUpdatedVersions(Collection<String> modHashes) {
-		String mcVer = FabricLoader.getInstance().getModContainer("minecraft").get()
-		.getMetadata().getVersion().getFriendlyString();
+		String mcVer = VersionUtil.getModrinthCompatibleMcVersion();
 		List<String> loaders = ModMenu.runningQuilt ? Arrays.asList("fabric", "quilt") : Arrays.asList("fabric");
 
 		List<UpdateChannel> updateChannels;
