@@ -6,6 +6,7 @@
   "client": [
     "AccessorButtonWidget",
     "InvokerScreen",
+    "ListWidgetMixin",
     "MixinGameMenu",
     "MixinTitleScreen"
   ],
