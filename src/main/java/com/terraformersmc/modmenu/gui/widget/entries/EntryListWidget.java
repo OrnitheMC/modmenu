@@ -153,7 +153,7 @@ public abstract class EntryListWidget extends ListWidget {
 		bufferBuilder.vertex(this.minX, this.maxY - n3, 0.0, 0.0, 0.0);
 		bufferBuilder.end();
 		n2 = this.getMaxScroll();
-		if (n2 > 0) {
+		if (n2 > 0 && this.getHeight() > 0) {
 			int n11;
 			n = (this.maxY - this.minY) * (this.maxY - this.minY) / this.getHeight();
 			if (n < 32) {
