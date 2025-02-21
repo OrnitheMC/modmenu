@@ -1,7 +1,7 @@
 plugins {
 	id 'maven-publish'
-	id 'fabric-loom' version '1.5-SNAPSHOT'
-	id 'ploceus' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
+	id 'ploceus' version '1.10-SNAPSHOT'
 }
 
 base {
@@ -19,15 +19,11 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.layered {
-		mappings "net.ornithemc:feather:${project.minecraft_version}+build.${project.feather_build}:v2"
-		addLayer ploceus.nestedMappings()
-	}
-	nests "net.ornithemc:nests:${project.minecraft_version}+build.${project.nests_build}"
+	mappings ploceus.featherMappings(project.feather_build)
+	nests ploceus.nests(project.nests_build)
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
-	ploceus.addCommonLibraries()
 	ploceus.dependOsl(project.osl_version)
 }
 
