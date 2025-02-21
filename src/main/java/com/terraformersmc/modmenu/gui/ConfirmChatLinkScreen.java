@@ -7,19 +7,24 @@ import net.minecraft.locale.LanguageManager;
 
 public abstract class ConfirmChatLinkScreen extends ConfirmScreen {
 
+	private String confirmText;
+	private String abortText;
 	private String warning;
 	private String copy;
 
-	public ConfirmChatLinkScreen(Screen parent, String string, int id) {
-		super(parent, LanguageManager.getInstance().translate("chat.link.confirm"), string, LanguageManager.getInstance().translate("gui.yes"), LanguageManager.getInstance().translate("gui.no"), id);
+	public ConfirmChatLinkScreen(Screen parent, String chatLink, int id) {
+		super(parent, LanguageManager.getInstance().translate("chat.link.confirm"), chatLink, "", "", id);
 		LanguageManager languageManager = LanguageManager.getInstance();
+		this.confirmText = languageManager.translate("gui.yes");
+		this.abortText = languageManager.translate("gui.no");
 		this.copy = languageManager.translate("chat.copy");
 		this.warning = languageManager.translate("chat.link.warning");
 	}
 
 	public void init() {
-		super.init();
+		this.buttons.add(new ButtonWidget(0, this.width / 3 - 83 + 0, this.height / 6 + 96, 100, 20, this.confirmText));
 		this.buttons.add(new ButtonWidget(2, this.width / 3 - 83 + 105, this.height / 6 + 96, 100, 20, this.copy));
+		this.buttons.add(new ButtonWidget(1, this.width / 3 - 83 + 210, this.height / 6 + 96, 100, 20, this.abortText));
 	}
 
 	protected void buttonClicked(ButtonWidget button) {
