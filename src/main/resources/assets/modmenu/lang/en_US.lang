@@ -1,6 +1,11 @@
 # fixing a vanilla translation
 menu.mods=Texture Packs
 
+# confirm chat link translations
+chat.link.confirm=Are you sure you want to open the following website?
+chat.link.warning=Never open links from people that you don't trust!
+chat.copy=Copy to Clipboard
+
 category.modmenu.name=Mod Menu
 key.modmenu.open_menu=Open Mod Menu
 modmenu.title=Mods
