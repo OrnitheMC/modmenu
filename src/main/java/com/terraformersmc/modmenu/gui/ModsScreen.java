@@ -284,7 +284,9 @@ public class ModsScreen extends Screen implements Controller {
 	@Override
 	public void keyPressed(char chr, int key) {
 		this.searchBox.keyPressed(chr, key);
-		this.modList.reloadFilters();
+		// Prevent mod list scrolling down when pressing alt
+		// Handling keyboard input is done by the TextFieldWidget Mixin
+		// this.modList.reloadFilters();
 		super.keyPressed(chr, key);
 	}
 
