@@ -348,18 +348,16 @@ public class DescriptionListWidget extends EntryListWidget {
 					this.mouseYStart = mouseY;
 				}
 			} else {
-				while (/*!this.minecraft.options.touchscreen &&*/ Mouse.next()) {
-					int dwheel = Mouse.getEventDWheel();
-					if (dwheel != 0) {
-						if (dwheel > 0) {
-							dwheel = -1;
-						} else if (dwheel < 0) {
-							dwheel = 1;
-						}
-						this.scrollAmount += dwheel * this.entryHeight / 2;
+				int dwheel = Mouse.getEventDWheel();
+				if (dwheel != 0) {
+					if (dwheel > 0) {
+						dwheel = -1;
+					} else {
+						dwheel = 1;
 					}
-					this.minecraft.screen.handleMouse();
+					this.scrollAmount += dwheel * this.entryHeight;
 				}
+
 				this.mouseYStart = -1.0f;
 			}
 		}
