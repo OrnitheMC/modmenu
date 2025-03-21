@@ -91,7 +91,8 @@ public class DescriptionListWidget extends EntryListWidget {
 		if (selectedEntry != lastSelected) {
 			lastSelected = selectedEntry;
 			clear();
-			scroll(-Integer.MAX_VALUE);
+			// Prevent text jumping around
+			// scroll(-Integer.MAX_VALUE);
 			if (lastSelected != null) {
 				DescriptionEntry emptyEntry = new DescriptionEntry("");
 				int wrapWidth = getRowWidth() - 5;
