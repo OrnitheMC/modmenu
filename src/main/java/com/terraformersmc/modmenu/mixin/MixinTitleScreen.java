@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(TitleScreen.class)
+@Mixin(value = TitleScreen.class, priority = 1001)
 public abstract class MixinTitleScreen extends Screen {
 	/** button id for menu.multiplayer button */
 	private static final int MULTIPLAYER = 2;
@@ -78,7 +78,7 @@ public abstract class MixinTitleScreen extends Screen {
 			if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
 				replacementKey = specificKey + ".secret";
 			}
-			return string.replace(I18n.translate(I18n.translate("menu.modded")), I18n.translate(replacementKey, count));
+			return string + I18n.translate(replacementKey, count);
 		}
 		return string;
 	}
