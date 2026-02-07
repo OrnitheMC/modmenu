@@ -11,12 +11,11 @@ version = "${project.version}+mc${project.minecraft_version}"
 group = project.maven_group
 
 loom {
-	clientOnlyMinecraftJar()
 	accessWidenerPath = file("src/main/resources/modmenu.classtweaker")
 }
 
 ploceus {
-	clientOnlyMappings()
+	setIntermediaryGeneration(2)
 }
 
 repositories {
@@ -28,12 +27,13 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings ploceus.featherMappings(project.feather_build)
-	nests ploceus.nests(project.nests_build)
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
-	ploceus.dependOsl(project.osl_version, "client")
+	mappings ploceus.featherMappings(project.feather_build)
+	clientNests ploceus.nests(project.nests_build, 'client')
+
+	ploceus.dependOsl(project.osl_version)
 }
 
 processResources {
