@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.util;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.mixin.AccessorMinecraft;
 import com.terraformersmc.modmenu.util.mod.Mod;
@@ -8,6 +7,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
@@ -65,12 +65,12 @@ public class DrawingUtil extends GuiElement {
 	public static void drawTexture(int x, int y, float u, float v, int width, int height, float scaleU, float scaleV) {
 		float invertedScaleU = 1.0f / scaleU;
 		float invertedScaleV = 1.0f / scaleV;
-		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
-		bufferBuilder.start();
-		bufferBuilder.vertex(x, y + height, 0.0, u * invertedScaleU, (v + (float) height) * invertedScaleV);
-		bufferBuilder.vertex(x + width, y + height, 0.0, (u + (float) width) * invertedScaleU, (v + (float) height) * invertedScaleV);
-		bufferBuilder.vertex(x + width, y, 0.0, (u + (float) width) * invertedScaleU, v * invertedScaleV);
-		bufferBuilder.vertex(x, y, 0.0, u * invertedScaleU, v * invertedScaleV);
-		bufferBuilder.end();
+		Tesselator tesselator = Tesselator.INSTANCE;
+		tesselator.begin();
+		tesselator.vertex(x, y + height, 0.0, u * invertedScaleU, (v + (float) height) * invertedScaleV);
+		tesselator.vertex(x + width, y + height, 0.0, (u + (float) width) * invertedScaleU, (v + (float) height) * invertedScaleV);
+		tesselator.vertex(x + width, y, 0.0, (u + (float) width) * invertedScaleU, v * invertedScaleV);
+		tesselator.vertex(x, y, 0.0, u * invertedScaleU, v * invertedScaleV);
+		tesselator.end();
 	}
 }

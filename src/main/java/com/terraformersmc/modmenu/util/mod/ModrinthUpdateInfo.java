@@ -5,8 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.VersionUtil;
-
-import net.minecraft.resource.language.I18n;
+import net.minecraft.locale.I18n;
 
 public class ModrinthUpdateInfo implements UpdateInfo {
 	protected final String projectId;
