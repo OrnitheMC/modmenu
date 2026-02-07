@@ -1,13 +1,11 @@
 package com.terraformersmc.modmenu.mixin;
 
 import java.util.Properties;
-
+import net.minecraft.locale.Language;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.locale.LanguageManager;
-
-@Mixin(LanguageManager.class)
+@Mixin(Language.class)
 public interface AccessorLanguageManager {
 
 	@Accessor("translations")

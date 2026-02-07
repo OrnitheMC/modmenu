@@ -1,10 +1,8 @@
 package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
-
-import net.minecraft.client.resource.language.I18n;
-
 import java.util.Locale;
+import net.minecraft.locale.I18n;
 
 public class EnumConfigOption<E extends Enum<E>> implements ConfigOption {
 	private final String key, translationKey;
