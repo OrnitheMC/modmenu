@@ -12,6 +12,7 @@ group = project.maven_group
 
 loom {
 	clientOnlyMinecraftJar()
+	accessWidenerPath = file("src/main/resources/modmenu.classtweaker")
 }
 
 ploceus {
@@ -33,10 +34,6 @@ dependencies {
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
 	ploceus.dependOsl(project.osl_version, "client")
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/modmenu.accesswidener")
 }
 
 processResources {
