@@ -102,15 +102,15 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		@Override
 		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (button == 0) {
-				if (this.left != null && this.left.isMouseOver(minecraft, mouseX, mouseY)) {
+				if (this.left != null && this.left.mouseClicked(minecraft, mouseX, mouseY)) {
 					this.leftOption.click();
-					this.left.playDownSound(minecraft.getSoundManager());
+					this.left.playClickSound(minecraft.getSoundManager());
 					this.left.message = this.leftOption.getValueLabel();
 					return true;
 				}
-				if (this.right != null && this.right.isMouseOver(minecraft, mouseX, mouseY)) {
+				if (this.right != null && this.right.mouseClicked(minecraft, mouseX, mouseY)) {
 					this.rightOption.click();
-					this.right.playDownSound(minecraft.getSoundManager());
+					this.right.playClickSound(minecraft.getSoundManager());
 					this.right.message = this.rightOption.getValueLabel();
 					return true;
 				}
