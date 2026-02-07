@@ -3,7 +3,7 @@ package com.terraformersmc.modmenu.gui;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.locale.LanguageManager;
+import net.minecraft.locale.Language;
 
 public abstract class ConfirmChatLinkScreen extends ConfirmScreen {
 
@@ -13,8 +13,8 @@ public abstract class ConfirmChatLinkScreen extends ConfirmScreen {
 	private String copy;
 
 	public ConfirmChatLinkScreen(Screen parent, String chatLink, int id) {
-		super(parent, LanguageManager.getInstance().translate("chat.link.confirm"), chatLink, "", "", id);
-		LanguageManager languageManager = LanguageManager.getInstance();
+		super(parent, Language.getInstance().translate("chat.link.confirm"), chatLink, "", "", id);
+		Language languageManager = Language.getInstance();
 		this.confirmText = languageManager.translate("gui.yes");
 		this.abortText = languageManager.translate("gui.no");
 		this.copy = languageManager.translate("chat.copy");
