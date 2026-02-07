@@ -102,7 +102,7 @@
   "mixins": [
     "mixins.modmenu.json"
   ],
-  "accessWidener": "modmenu.accesswidener",
+  "accessWidener": "modmenu.classtweaker",
   "custom": {
     "modmenu": {
       "links": {
