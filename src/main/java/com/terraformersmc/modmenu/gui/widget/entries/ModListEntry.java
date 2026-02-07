@@ -1,8 +1,6 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
 import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -15,6 +13,7 @@ import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.client.render.texture.DynamicTexture;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.client.resource.Identifier;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.LiteralText;
@@ -42,7 +41,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 	}
 
 	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
 		x += getXOffset();
 		rowWidth -= getXOffset();
 		int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;
