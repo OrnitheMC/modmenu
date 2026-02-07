@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -12,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.TextRenderer;
+import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.resource.Identifier;
 import net.minecraft.text.Formatting;
@@ -61,18 +61,18 @@ public class ModListEntry implements EntryListWidget.Entry {
 		Text trimmedName = name;
 		int maxNameWidth = rowWidth - iconSize - 3;
 		TextRenderer font = this.client.textRenderer;
-		if (font.getStringWidth(name.getFormattedContent()) > maxNameWidth) {
+		if (font.getWidth(name.getFormattedString()) > maxNameWidth) {
 			Text ellipsis = new LiteralText("...");
-			trimmedName = new LiteralText("").append(font.trimToWidth(name.getFormattedContent(), maxNameWidth - font.getStringWidth(ellipsis.getFormattedContent()))).append(ellipsis);
+			trimmedName = new LiteralText("").append(font.trim(name.getFormattedString(), maxNameWidth - font.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
 		}
-		font.drawWithoutShadow(trimmedName.getFormattedContent(), x + iconSize + 3, y + 1, 0xFFFFFF);
+		font.draw(trimmedName.getFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;
 		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.hasUpdate() || mod.getChildHasUpdate())) {
-			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getStringWidth(name.getFormattedContent()) + 2, y);
+			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2, y);
 			updateBadgeXOffset = 11;
 		}
 		if (!ModMenuConfig.HIDE_BADGES.getValue()) {
-			new ModBadgeRenderer(x + iconSize + 3 + font.getStringWidth(name.getFormattedContent()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
+			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
 		}
 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
 			String summary = mod.getSummary();
@@ -92,7 +92,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 					GuiElement.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 					if (hoveringIcon) {
 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
-						this.list.getParent().setTooltip(this.client.textRenderer.wrapLines(new TranslatableText("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).setStyle(new Style().setColor(Formatting.RED)).getFormattedContent(), 175));
+						this.list.getParent().setTooltip(this.client.textRenderer.split(new TranslatableText("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).setStyle(new Style().setColor(Formatting.RED)).getFormattedString(), 175));
 					}
 				} else {
 					this.client.getTextureManager().bind(MOD_CONFIGURATION_ICON);
