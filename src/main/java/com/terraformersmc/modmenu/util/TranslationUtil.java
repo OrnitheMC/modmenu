@@ -64,6 +64,6 @@ public class TranslationUtil {
 	}
 
 	public static String translateOptionLabel(Text key, Text value) {
-		return I18n.translate("option.value_label", key.getFormattedContent(), value.getFormattedContent());
+		return I18n.translate("option.value_label", key.getFormattedString(), value.getFormattedString());
 	}
 }
