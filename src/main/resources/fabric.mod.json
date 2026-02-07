@@ -105,7 +105,7 @@
   "accessWidener": "modmenu.classtweaker",
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/unmapped/C_3831727": [
+      "net/minecraft/unmapped/C_23014920": [
         "com/terraformersmc/modmenu/util/TextRendererHelper"
       ]
     },
