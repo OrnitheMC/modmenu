@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 @Mixin(Minecraft.class)
 public class MixinMinecraft {
 
-	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getRunDirectory()Ljava/io/File;"))
+	@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getWorkingDirectory()Ljava/io/File;"))
 	private void modmenu$initGlx(CallbackInfo ci) {
 		GlUtil.init();
 	}
