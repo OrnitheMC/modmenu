@@ -1,7 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GLX;
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -17,6 +15,8 @@ import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.platform.GLX;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.Style;
 import net.minecraft.text.LiteralText;
@@ -252,18 +252,18 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 			}
 		}
 
-		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
+		Tesselator tesselator = Tesselator.INSTANCE;
 
 		{
 			this.minecraft.getTextureManager().bind(Screen.BACKGROUND_LOCATION);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.color(0x20, 0x20, 0x20);
-            bufferBuilder.vertex(this.minX, this.maxY, 0.0, (this.minX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
-            bufferBuilder.vertex(this.maxX, this.maxY, 0.0, (this.maxX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
-            bufferBuilder.vertex(this.maxX, this.minY, 0.0, (this.maxX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
-            bufferBuilder.vertex(this.minX, this.minY, 0.0, (this.minX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
-			bufferBuilder.end();
+			tesselator.begin(GL11.GL_QUADS);
+			tesselator.color(0x20, 0x20, 0x20);
+            tesselator.vertex(this.minX, this.maxY, 0.0, (this.minX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+            tesselator.vertex(this.maxX, this.maxY, 0.0, (this.maxX / 32.0F), ((this.maxY + this.scrollAmount) / 32.0F));
+            tesselator.vertex(this.maxX, this.minY, 0.0, (this.maxX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
+            tesselator.vertex(this.minX, this.minY, 0.0, (this.minX / 32.0F), ((this.minY + this.scrollAmount) / 32.0F));
+			tesselator.end();
 		}
 
 		int listX = this.minX + this.width / 2 - this.getRowWidth() / 2 + 2;
@@ -278,24 +278,24 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-		bufferBuilder.start(GL11.GL_QUADS);
-		bufferBuilder.color(0, 0, 0, 0);
-		bufferBuilder.vertex(this.minX, this.minY + 4, 0.0, 0.0, 1.0);
-		bufferBuilder.vertex(this.maxX, this.minY + 4, 0.0, 1.0, 1.0);
-		bufferBuilder.color(0, 0, 0, 255);
-		bufferBuilder.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
-		bufferBuilder.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
-		bufferBuilder.end();
-		bufferBuilder.start(GL11.GL_QUADS);
-		bufferBuilder.color(0, 0, 0, 255);
-		bufferBuilder.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
-		bufferBuilder.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
-		bufferBuilder.color(0, 0, 0, 0);
-		bufferBuilder.vertex(this.maxX, this.maxY - 4, 0.0, 1.0, 0.0);
-		bufferBuilder.vertex(this.minX, this.maxY - 4, 0.0, 0.0, 0.0);
-		bufferBuilder.end();
+		tesselator.begin(GL11.GL_QUADS);
+		tesselator.color(0, 0, 0, 0);
+		tesselator.vertex(this.minX, this.minY + 4, 0.0, 0.0, 1.0);
+		tesselator.vertex(this.maxX, this.minY + 4, 0.0, 1.0, 1.0);
+		tesselator.color(0, 0, 0, 255);
+		tesselator.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
+		tesselator.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
+		tesselator.end();
+		tesselator.begin(GL11.GL_QUADS);
+		tesselator.color(0, 0, 0, 255);
+		tesselator.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
+		tesselator.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
+		tesselator.color(0, 0, 0, 0);
+		tesselator.vertex(this.maxX, this.maxY - 4, 0.0, 1.0, 0.0);
+		tesselator.vertex(this.minX, this.maxY - 4, 0.0, 0.0, 0.0);
+		tesselator.end();
 
-		this.renderScrollBar(bufferBuilder);
+		this.renderScrollBar(tesselator);
 
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glShadeModel(GL11.GL_FLAT);
@@ -368,13 +368,13 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 	}
 
 	@Override
-	protected void renderEntry(int index, int x, int y, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY) {
+	protected void renderEntry(int index, int x, int y, int height, Tesselator tesselator, int mouseX, int mouseY) {
 		if (y >= this.minY && y + height <= this.maxY) {
-			super.renderEntry(index, x, y, height, bufferBuilder, mouseX, mouseY);
+			super.renderEntry(index, x, y, height, tesselator, mouseX, mouseY);
 		}
 	}
 
-	public void renderScrollBar(BufferBuilder bufferBuilder) {
+	public void renderScrollBar(Tesselator tesselator) {
 		int scrollbarStartX = this.getScrollbarPosition();
 		int scrollbarEndX = scrollbarStartX + 6;
 		int maxScroll = this.getMaxScroll();
@@ -386,27 +386,27 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 				q = this.minY;
 			}
 
-			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.color(0, 0, 0, 0xFF);
-			bufferBuilder.vertex(scrollbarStartX, this.maxY, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX, this.maxY, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX, this.minY, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(scrollbarStartX, this.minY, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
-			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.color(0x80, 0x80, 0x80, 0xFF);
-			bufferBuilder.vertex(scrollbarStartX, q + p, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX, q + p, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX, q, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
-			bufferBuilder.start(GL11.GL_QUADS);
-			bufferBuilder.color(0xC0, 0xC0, 0xC0, 0xFF);
-			bufferBuilder.vertex(scrollbarStartX, q + p - 1, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
+			tesselator.begin(GL11.GL_QUADS);
+			tesselator.color(0, 0, 0, 0xFF);
+			tesselator.vertex(scrollbarStartX, this.maxY, 0.0, 0.0, 1.0);
+			tesselator.vertex(scrollbarEndX, this.maxY, 0.0, 1.0, 1.0);
+			tesselator.vertex(scrollbarEndX, this.minY, 0.0, 1.0, 0.0);
+			tesselator.vertex(scrollbarStartX, this.minY, 0.0, 0.0, 0.0);
+			tesselator.end();
+			tesselator.begin(GL11.GL_QUADS);
+			tesselator.color(0x80, 0x80, 0x80, 0xFF);
+			tesselator.vertex(scrollbarStartX, q + p, 0.0, 0.0, 1.0);
+			tesselator.vertex(scrollbarEndX, q + p, 0.0, 1.0, 1.0);
+			tesselator.vertex(scrollbarEndX, q, 0.0, 1.0, 0.0);
+			tesselator.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
+			tesselator.end();
+			tesselator.begin(GL11.GL_QUADS);
+			tesselator.color(0xC0, 0xC0, 0xC0, 0xFF);
+			tesselator.vertex(scrollbarStartX, q + p - 1, 0.0, 0.0, 1.0);
+			tesselator.vertex(scrollbarEndX - 1, q + p - 1, 0.0, 1.0, 1.0);
+			tesselator.vertex(scrollbarEndX - 1, q, 0.0, 1.0, 0.0);
+			tesselator.vertex(scrollbarStartX, q, 0.0, 0.0, 0.0);
+			tesselator.end();
 		}
 	}
 
@@ -456,7 +456,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		}
 
 		@Override
-		public void render(int index, int x, int y, int width, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
+		public void render(int index, int x, int y, int width, int height, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
 			if (updateTextEntry) {
 				UpdateAvailableBadge.renderBadge(x + indent, y);
 				x+=11;

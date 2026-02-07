@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -10,6 +9,7 @@ import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.client.resource.Identifier;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -34,8 +34,8 @@ public class ParentEntry extends ModListEntry {
 	}
 
 	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
-		super.render(index, x, y, rowWidth, rowHeight, bufferBuilder, mouseX, mouseY, hovered);
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
+		super.render(index, x, y, rowWidth, rowHeight, tesselator, mouseX, mouseY, hovered);
 		TextRenderer font = client.textRenderer;
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
