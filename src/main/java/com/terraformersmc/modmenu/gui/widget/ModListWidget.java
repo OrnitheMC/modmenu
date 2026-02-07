@@ -1,9 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tessellator;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -16,6 +12,10 @@ import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.client.render.platform.GlStateManager;
+import net.minecraft.client.render.vertex.BufferBuilder;
+import net.minecraft.client.render.vertex.DefaultVertexFormat;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -190,8 +190,8 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 	@Override
 	protected void renderList(int x, int y, int mouseX, int mouseY, float delta) {
 		int entryCount = this.size();
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder buffer = tesselator.getBuffer();
 
 		for (int index = 0; index < entryCount; ++index) {
 			int entryTop = this.getRowTop(index);
@@ -211,14 +211,14 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 					buffer.vertex(selectionRight, entryTop + entryHeight + 2, 0.0F).nextVertex();
 					buffer.vertex(selectionRight, entryTop - 2, 0.0F).nextVertex();
 					buffer.vertex(entryLeft, entryTop - 2, 0.0F).nextVertex();
-					tessellator.end();
+					tesselator.end();
 					GlStateManager.color4f(0.0F, 0.0F, 0.0F, 1.0F);
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION);
 					buffer.vertex(entryLeft + 1, entryTop + entryHeight + 1, 0.0F).nextVertex();
 					buffer.vertex(selectionRight - 1, entryTop + entryHeight + 1, 0.0F).nextVertex();
 					buffer.vertex(selectionRight - 1, entryTop - 1, 0.0F).nextVertex();
 					buffer.vertex(entryLeft + 1, entryTop - 1, 0.0F).nextVertex();
-					tessellator.end();
+					tesselator.end();
 				}
 
 				entryLeft = this.getRowLeft();
@@ -245,7 +245,7 @@ public class ModListWidget extends EntryListWidget<ModListEntry> implements Auto
 					return true;
 				}
 			} else if (int_1 == 0) {
-				this.render((int) (double_1 - (double) (this.minX + this.width / 2 - this.getRowWidth() / 2)), (int) (double_2 - (double) this.minY) + (int) this.getScrollAmount() - 4);
+				this.headerClicked((int) (double_1 - (double) (this.minX + this.width / 2 - this.getRowWidth() / 2)), (int) (double_2 - (double) this.minY) + (int) this.getScrollAmount() - 4);
 				return true;
 			}
 

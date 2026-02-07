@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget.entries;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -12,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.TextRenderer;
+import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.resource.Identifier;
 import net.minecraft.text.Formatting;
@@ -60,7 +60,7 @@ public class ModListEntry extends EntryListWidget.Entry<ModListEntry> {
 		TextRenderer font = this.client.textRenderer;
 		if (font.getWidth(name.getFormattedString()) > maxNameWidth) {
 			Text ellipsis = new LiteralText("...");
-			trimmedName = new LiteralText("").append(font.trimToWidth(name.getFormattedString(), maxNameWidth - font.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
+			trimmedName = new LiteralText("").append(font.trim(name.getFormattedString(), maxNameWidth - font.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
 		}
 		font.draw(trimmedName.getFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;

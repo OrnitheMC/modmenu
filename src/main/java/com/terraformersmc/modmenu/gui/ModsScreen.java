@@ -1,7 +1,6 @@
 package com.terraformersmc.modmenu.gui;
 
 import com.google.common.base.Joiner;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
@@ -19,6 +18,7 @@ import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.resource.Identifier;
 import net.minecraft.text.Formatting;
@@ -110,7 +110,7 @@ public class ModsScreen extends Screen {
 		int searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
 		searchBoxX = paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
 		this.searchBox = new TextFieldWidget(SEARCH_BOX, this.textRenderer, searchBoxX, 22, searchBoxWidth, 20);
-		this.searchBox.m_6763105(I18n.translate("modmenu.search"));
+		this.searchBox.setSuggestion(I18n.translate("modmenu.search"));
 		this.searchBox.setResponder((id, text) -> this.modList.filter(text, false));
 
 		for (Mod mod : ModMenu.MODS.values()) {
@@ -140,7 +140,7 @@ public class ModsScreen extends Screen {
 		ButtonWidget configureButton = new TexturedButtonWidget(DESCRIPTION_LIST, width - 24, RIGHT_PANE_Y, 20, 20, 0, 0, 20, CONFIGURE_BUTTON_LOCATION, 32, 64) {
 			private Text tooltip;
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				final String id = Objects.requireNonNull(selected).getMod().getId();
 				if (modHasConfigScreen.get(id)) {
 					Screen configScreen = ModMenu.getConfigScreen(id, ModsScreen.this);
@@ -178,7 +178,7 @@ public class ModsScreen extends Screen {
 		int cappedButtonWidth = Math.min(urlButtonWidths, 200);
 		ButtonWidget websiteButton = new ButtonWidget(WEBSITE, rightPaneX + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.website")) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				final Mod mod = Objects.requireNonNull(selected).getMod();
 				ModsScreen.this.minecraft.openScreen(new ConfirmChatLinkScreen(ModsScreen.this, ModsScreen.this.selected.mod.getWebsite(), WEBSITE, false));
 			}
@@ -192,7 +192,7 @@ public class ModsScreen extends Screen {
 		};
 		ButtonWidget issuesButton = new ButtonWidget(ISSUES, rightPaneX + urlButtonWidths + 4 + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.issues")) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				final Mod mod = Objects.requireNonNull(selected).getMod();
 				ModsScreen.this.minecraft.openScreen(new ConfirmChatLinkScreen(ModsScreen.this, ModsScreen.this.selected.mod.getIssueTracker(), ISSUES, false));
 			}
@@ -207,7 +207,7 @@ public class ModsScreen extends Screen {
 		this.children.add(this.searchBox);
 		ButtonWidget filtersButton = new TexturedButtonWidget(FILTERS, paneWidth / 2 + searchBoxWidth / 2 - 20 / 2 + 2, 22, 20, 20, 0, 0, 20, FILTERS_BUTTON_LOCATION, 32, 64) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				ModsScreen.this.filterOptionsShown = !ModsScreen.this.filterOptionsShown;
 			}
 
@@ -228,7 +228,7 @@ public class ModsScreen extends Screen {
 		updateFiltersX();
 		this.addButton(new ButtonWidget(SORTING, filtersX, 45, sortingWidth, 20, sortingText) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				ModMenuConfig.SORTING.cycleValue();
 				ModMenuConfigManager.save();
 				modList.reloadFilters();
@@ -243,7 +243,7 @@ public class ModsScreen extends Screen {
 		});
 		this.addButton(new ButtonWidget(LIBRARIES, filtersX + sortingWidth + 2, 45, showLibrariesWidth, 20, showLibrariesText) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				ModMenuConfig.SHOW_LIBRARIES.toggleValue();
 				ModMenuConfigManager.save();
 				modList.reloadFilters();
@@ -265,13 +265,13 @@ public class ModsScreen extends Screen {
 		this.children.add(this.descriptionListWidget);
 		this.addButton(new ButtonWidget(MODS_FOLDER, this.width / 2 - 154, this.height - 28, 150, 20, I18n.translate("modmenu.modsFolder")) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				Utils.getOS().openFile(new File(FabricLoader.getInstance().getGameDir().toFile(), "mods"));
 			}
 		});
 		this.addButton(new ButtonWidget(DONE, this.width / 2 + 4, this.height - 28, 150, 20, I18n.translate("gui.done")) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				ModsScreen.this.minecraft.openScreen(ModsScreen.this.previousScreen);
 			}
 		});
@@ -342,7 +342,7 @@ public class ModsScreen extends Screen {
 			int maxNameWidth = this.width - (x + imageOffset);
 			if (textRenderer.getWidth(name.getFormattedString()) > maxNameWidth) {
 				Text ellipsis = new LiteralText("...");
-				trimmedName = new LiteralText("").append(textRenderer.trimToWidth(name.getFormattedString(), maxNameWidth - textRenderer.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
+				trimmedName = new LiteralText("").append(textRenderer.trim(name.getFormattedString(), maxNameWidth - textRenderer.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
 			}
 			this.textRenderer.draw(trimmedName.getFormattedString(), x + imageOffset, RIGHT_PANE_Y + 1, 0xFFFFFF);
 			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName.getFormattedString())) {

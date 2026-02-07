@@ -75,7 +75,7 @@ public abstract class MixinTitleScreen extends Screen {
 				} else if (ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.ICON) {
 					this.addButton(new UpdateCheckerTexturedButtonWidget(MODS, this.width / 2 + 104, buttonsY, 20, 20, 0, 0, 20, FABRIC_ICON_BUTTON_LOCATION, 32, 64) {
 						@Override
-						public void m_9319498(double d, double e) {
+						public void click(double d, double e) {
 							MixinTitleScreen.this.minecraft.openScreen(new ModsScreen(MixinTitleScreen.this));
 						}
 					});

@@ -1,12 +1,12 @@
 package com.terraformersmc.modmenu.util;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
+import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.text.*;
 import net.minecraft.util.math.MathHelper;
 

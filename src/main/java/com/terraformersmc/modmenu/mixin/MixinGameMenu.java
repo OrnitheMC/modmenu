@@ -69,7 +69,7 @@ public abstract class MixinGameMenu extends Screen {
 				if (style == ModMenuConfig.GameMenuButtonStyle.ICON) {
 					this.addButton(new UpdateCheckerTexturedButtonWidget(MODS, modsButtonX, modsButtonY, modsButtonWidth, modsButtonHeight, 0, 0, 20, FABRIC_ICON_BUTTON_LOCATION, 32, 64) {
 						@Override
-						public void m_9319498(double d, double e) {
+						public void click(double d, double e) {
 							MixinGameMenu.this.minecraft.openScreen(new ModsScreen(MixinGameMenu.this));
 						}
 					});

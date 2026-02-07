@@ -1,12 +1,10 @@
 package com.terraformersmc.modmenu.util.mod.fabric;
 
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.render.platform.NativeImage;
 import net.minecraft.client.render.texture.DynamicTexture;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
-
-import com.mojang.blaze3d.platform.NativeImage;
-
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Closeable;

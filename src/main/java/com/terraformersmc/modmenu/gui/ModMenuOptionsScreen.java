@@ -27,7 +27,7 @@ public class ModMenuOptionsScreen extends Screen {
 		this.children.add(this.list);
 		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				ModMenu.checkForUpdates();
 				ModMenuConfigManager.save();
 				ModMenuOptionsScreen.this.minecraft.openScreen(ModMenuOptionsScreen.this.previous);

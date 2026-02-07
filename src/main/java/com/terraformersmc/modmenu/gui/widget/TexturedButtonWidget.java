@@ -1,11 +1,10 @@
 package com.terraformersmc.modmenu.gui.widget;
 
 
-import com.mojang.blaze3d.platform.GlStateManager;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.resource.Identifier;
 
 public class TexturedButtonWidget extends ButtonWidget {

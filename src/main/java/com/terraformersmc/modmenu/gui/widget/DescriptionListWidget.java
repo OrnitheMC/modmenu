@@ -1,9 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tessellator;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -18,6 +14,10 @@ import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.platform.GlStateManager;
+import net.minecraft.client.render.vertex.BufferBuilder;
+import net.minecraft.client.render.vertex.DefaultVertexFormat;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.text.Formatting;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -228,8 +228,8 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 			}
 		}
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferBuilder = tessellator.getBuilder();
+		Tesselator tesselator = Tesselator.getInstance();
+		BufferBuilder bufferBuilder = tesselator.getBuffer();
 
 		{
 			this.minecraft.getTextureManager().bind(Screen.BACKGROUND_LOCATION);
@@ -239,7 +239,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 			bufferBuilder.vertex(this.maxX, this.maxY, 0.0D).texture(this.maxX / 32.0F, (this.maxY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
 			bufferBuilder.vertex(this.maxX, this.minY, 0.0D).texture(this.maxX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
 			bufferBuilder.vertex(this.minX, this.minY, 0.0D).texture(this.minX / 32.0F, (this.minY + (int) this.getScrollAmount()) / 32.0F).color(32, 32, 32, 255).nextVertex();
-			tessellator.end();
+			tesselator.end();
 		}
 
 		int listX = this.minX + this.width / 2 - this.getRowWidth() / 2 + 2;
@@ -295,9 +295,9 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 				color(0, 0, 0, 0).
 
 				nextVertex();
-		tessellator.end();
+		tesselator.end();
 
-		this.renderScrollBar(bufferBuilder, tessellator);
+		this.renderScrollBar(bufferBuilder, tesselator);
 
 		GlStateManager.enableTexture();
 		GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -312,7 +312,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 		}
 	}
 
-	public void renderScrollBar(BufferBuilder bufferBuilder, Tessellator tessellator) {
+	public void renderScrollBar(BufferBuilder bufferBuilder, Tesselator tesselator) {
 		int scrollbarStartX = this.getScrollbarPosition();
 		int scrollbarEndX = scrollbarStartX + 6;
 		int maxScroll = this.getMaxScroll();
@@ -337,7 +337,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
 			bufferBuilder.vertex(scrollbarEndX - 1, q + p - 1, 0.0D).color(192, 192, 192, 255).nextVertex();
 			bufferBuilder.vertex(scrollbarEndX - 1, q, 0.0D).color(192, 192, 192, 255).nextVertex();
 			bufferBuilder.vertex(scrollbarStartX, q, 0.0D).color(192, 192, 192, 255).nextVertex();
-			tessellator.end();
+			tesselator.end();
 		}
 	}
 

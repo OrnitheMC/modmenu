@@ -29,7 +29,7 @@ public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidg
 		}
 		return new OptionButtonWidget(id, x, y, width, 20, null, option.getValueLabel()) {
 			@Override
-			public void m_9319498(double d, double e) {
+			public void click(double d, double e) {
 				option.click();
 				this.message = option.getValueLabel();
 			}

@@ -1,10 +1,10 @@
 package com.terraformersmc.modmenu.event;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.render.platform.InputConstants;
 import net.ornithemc.osl.keybinds.api.KeyBindingEvents;
 import net.ornithemc.osl.lifecycle.api.client.MinecraftClientEvents;
 
