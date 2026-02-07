@@ -3,8 +3,6 @@ package com.terraformersmc.modmenu.gui.widget.entries;
 import java.awt.image.BufferedImage;
 
 import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.widget.ModListWidget;
@@ -15,7 +13,8 @@ import com.terraformersmc.modmenu.util.mod.ModBadgeRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.render.vertex.Tesselator;
+import net.minecraft.locale.I18n;
 
 public class ModListEntry implements EntryListWidget.Entry {
 	public static final String UNKNOWN_ICON = "/gui/unknown_pack.png";
@@ -38,7 +37,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 	}
 
 	@Override
-	public void render(int index, int x, int y, int rowWidth, int rowHeight, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
+	public void render(int index, int x, int y, int rowWidth, int rowHeight, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
 		x += getXOffset();
 		rowWidth -= getXOffset();
 		int iconSize = ModMenuConfig.COMPACT_LIST.getValue() ? COMPACT_ICON_SIZE : FULL_ICON_SIZE;
@@ -131,7 +130,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 		if (this.iconGlId == null) {
 			BufferedImage icon = mod.getIcon(list.getFabricIconHandler(), 64 * this.client.options.guiScale);
 			if (icon != null) {
-				this.iconGlId = this.client.textureManager.bind(icon);
+				this.iconGlId = this.client.textureManager.load(icon);
 			} else {
 				this.iconGlId = this.client.textureManager.load(UNKNOWN_ICON);
 			}
