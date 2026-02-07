@@ -4,19 +4,19 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.KeyBinding;
-//import net.ornithemc.osl.keybinds.api.KeyBindingEvents;
-import net.ornithemc.osl.lifecycle.api.MinecraftEvents;
+import net.ornithemc.osl.keybinds.api.KeyBindingEvents;
+import net.ornithemc.osl.lifecycle.api.client.MinecraftClientEvents;
 import org.lwjgl.input.Keyboard;
 
 public class ModMenuEventHandler {
 	private static KeyBinding MENU_KEY_BIND;
 
 	public static void register() {
-		/*KeyBindingEvents.REGISTER_KEYBINDS.register(registry -> MENU_KEY_BIND = registry.register(
+		KeyBindingEvents.REGISTER_KEYBINDS.register(registry -> MENU_KEY_BIND = registry.register(
 				"key.modmenu.open_menu",
 				Keyboard.KEY_NONE
-		));*/
-		MinecraftEvents.TICK_END.register(ModMenuEventHandler::onClientEndTick);
+		));
+		MinecraftClientEvents.TICK_END.register(ModMenuEventHandler::onClientEndTick);
 	}
 
 	private static void onClientEndTick(Minecraft client) {
