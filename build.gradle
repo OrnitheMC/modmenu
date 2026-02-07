@@ -10,6 +10,10 @@ base {
 version = "${project.version}+mc${project.minecraft_version}"
 group = project.maven_group
 
+ploceus {
+	setIntermediaryGeneration(2)
+}
+
 repositories {
 	maven {
 		name = 'Quilt'
@@ -19,9 +23,10 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings ploceus.featherMappings(project.feather_build)
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
+
+	mappings ploceus.featherMappings(project.feather_build)
 
 	ploceus.dependOsl(project.osl_version)
 }
