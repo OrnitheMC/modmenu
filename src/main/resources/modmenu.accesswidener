@@ -1,6 +1,6 @@
 accessWidener v2 named
 
-accessible	method	net/minecraft/client/Minecraft getOs ()Lnet/minecraft/util/OS;
+accessible	method	net/minecraft/client/Minecraft getOs ()Lnet/minecraft/client/Minecraft__OS;
 accessible	method	net/minecraft/client/gui/widget/ListWidget capScrolling ()V
 accessible	method	net/minecraft/client/render/texture/TextureManager	load	(Ljava/lang/String;)I
 accessible	method	net/minecraft/client/render/texture/TextureManager	bind	(I)V

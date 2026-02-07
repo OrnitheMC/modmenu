@@ -1,7 +1,6 @@
 package com.terraformersmc.modmenu.gui;
 
 import com.google.common.base.Joiner;
-import com.mojang.blaze3d.platform.Lighting;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
@@ -24,8 +23,9 @@ import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.resource.language.I18n;
+import net.minecraft.client.render.entity.ItemRenderer;
+import net.minecraft.client.render.platform.Lighting;
+import net.minecraft.locale.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -239,7 +239,7 @@ public class ModsScreen extends Screen implements Controller {
 			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getWebsite(), WEBSITE) {
 
 				@Override
-				public void m_2404638() {
+				public void copyChatLink() {
 				}
 			});
 			break;
@@ -249,7 +249,7 @@ public class ModsScreen extends Screen implements Controller {
 			minecraft.openScreen(new ConfirmChatLinkScreen(this, mod.getIssueTracker(), ISSUES) {
 
 				@Override
-				public void m_2404638() {
+				public void copyChatLink() {
 				}
 			});
 			break;
