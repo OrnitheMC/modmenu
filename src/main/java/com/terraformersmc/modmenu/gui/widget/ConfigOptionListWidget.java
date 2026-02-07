@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.config.option.ConfigOption;
 import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
 import com.terraformersmc.modmenu.mixin.AccessorButtonWidget;
@@ -13,6 +11,7 @@ import com.terraformersmc.modmenu.mixin.AccessorButtonWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionButtonWidget;
+import net.minecraft.client.render.vertex.Tesselator;
 
 public class ConfigOptionListWidget extends EntryListWidget {
 	private final Minecraft minecraft;
@@ -92,7 +91,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		}
 
 		@Override
-		public void render(int index, int x, int y, int width, int height, BufferBuilder bufferBuilder, int mouseX, int mouseY, boolean hovered) {
+		public void render(int index, int x, int y, int width, int height, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
 			if (this.left != null) {
 				this.left.y = y;
 				this.left.render(minecraft, mouseX, mouseY);
@@ -106,15 +105,15 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		@Override
 		public boolean mouseClicked(int index, int mouseX, int mouseY, int button, int entryMouseX, int entryMouseY) {
 			if (button == 0) {
-				if (this.left != null && this.left.isMouseOver(minecraft, mouseX, mouseY)) {
+				if (this.left != null && this.left.mouseClicked(minecraft, mouseX, mouseY)) {
 					this.leftOption.click();
-					minecraft.soundSystem.play("random.click", 1.0f, 1.0f);
+					minecraft.soundEngine.play("random.click", 1.0f, 1.0f);
 					this.left.message = this.leftOption.getValueLabel();
 					return true;
 				}
-				if (this.right != null && this.right.isMouseOver(minecraft, mouseX, mouseY)) {
+				if (this.right != null && this.right.mouseClicked(minecraft, mouseX, mouseY)) {
 					this.rightOption.click();
-					minecraft.soundSystem.play("random.click", 1.0f, 1.0f);
+					minecraft.soundEngine.play("random.click", 1.0f, 1.0f);
 					this.right.message = this.rightOption.getValueLabel();
 					return true;
 				}

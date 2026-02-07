@@ -1,10 +1,8 @@
 package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
-
-import net.minecraft.client.resource.language.I18n;
-
 import java.util.Set;
+import net.minecraft.locale.I18n;
 
 public class StringSetConfigOption {
 	private final String key, translationKey;

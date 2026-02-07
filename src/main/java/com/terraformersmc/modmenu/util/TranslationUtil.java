@@ -1,11 +1,9 @@
 package com.terraformersmc.modmenu.util;
 
 import com.terraformersmc.modmenu.ModMenu;
-
-import net.minecraft.client.resource.language.I18n;
-
 import java.text.NumberFormat;
 import java.util.Arrays;
+import net.minecraft.locale.I18n;
 
 public class TranslationUtil {
 	public static String translateNumeric(String key, int[]... args) {

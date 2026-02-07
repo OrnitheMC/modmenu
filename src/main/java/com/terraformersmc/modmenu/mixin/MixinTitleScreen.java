@@ -11,8 +11,7 @@ import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.resource.language.I18n;
-
+import net.minecraft.locale.I18n;
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
