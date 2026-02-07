@@ -74,7 +74,7 @@ public abstract class MixinTitleScreen extends Screen {
 		}
 	}
 
-	@ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;m_0986658(II)V"), method = "init", index = 1)
+	@ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;setSize(II)V"), method = "init", index = 1)
 	private int adjustRealmsHeight(int height) {
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MODS_BUTTON_STYLE.getValue() == ModMenuConfig.TitleMenuButtonStyle.CLASSIC) {
 			return height - 51;
