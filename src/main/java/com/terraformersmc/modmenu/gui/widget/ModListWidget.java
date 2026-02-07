@@ -1,6 +1,5 @@
 package com.terraformersmc.modmenu.gui.widget;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -13,6 +12,7 @@ import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.util.math.MathHelper;
 
 import org.lwjgl.input.Keyboard;
@@ -207,7 +207,7 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 	@Override
 	protected void renderList(int x, int y, int mouseX, int mouseY) {
 		int entryCount = this.size();
-		BufferBuilder buffer = BufferBuilder.INSTANCE;
+		Tesselator buffer = Tesselator.INSTANCE;
 
 		for (int index = 0; index < entryCount; ++index) {
 			int entryTop = this.getRowTop(index);
@@ -223,14 +223,14 @@ public class ModListWidget extends EntryListWidget implements AutoCloseable {
 					float float_2 = this.isFocused() ? 1.0F : 0.5F;
 					GL11.glDisable(GL11.GL_TEXTURE_2D);
 					GL11.glColor4f(float_2, float_2, float_2, 1.0F);
-					buffer.start(GL11.GL_QUADS);
+					buffer.begin(GL11.GL_QUADS);
 					buffer.vertex(entryLeft, entryTop + entryHeight + 2, 0.0F);
 					buffer.vertex(selectionRight, entryTop + entryHeight + 2, 0.0F);
 					buffer.vertex(selectionRight, entryTop - 2, 0.0F);
 					buffer.vertex(entryLeft, entryTop - 2, 0.0F);
 					buffer.end();
 					GL11.glColor4f(0.0F, 0.0F, 0.0F, 1.0F);
-					buffer.start(GL11.GL_QUADS);
+					buffer.begin(GL11.GL_QUADS);
 					buffer.vertex(entryLeft + 1, entryTop + entryHeight + 1, 0.0F);
 					buffer.vertex(selectionRight - 1, entryTop + entryHeight + 1, 0.0F);
 					buffer.vertex(selectionRight - 1, entryTop - 1, 0.0F);
