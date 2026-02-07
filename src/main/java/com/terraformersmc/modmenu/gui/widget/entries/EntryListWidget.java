@@ -2,15 +2,13 @@ package com.terraformersmc.modmenu.gui.widget.entries;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import com.mojang.blaze3d.vertex.BufferBuilder;
-
 import com.terraformersmc.modmenu.util.GlUtil;
 import com.terraformersmc.modmenu.util.ListWidgetHelper;
 import com.terraformersmc.modmenu.util.MathUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ListWidget;
+import net.minecraft.client.render.vertex.Tesselator;
 
 public abstract class EntryListWidget extends ListWidget implements ListWidgetHelper {
 
@@ -112,25 +110,25 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 		this.capScrolling();
 		GL11.glDisable(2896);
 		GL11.glDisable(2912);
-		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
+		Tesselator tesselator = Tesselator.INSTANCE;
 		this.minecraft.textureManager.bind(this.minecraft.textureManager.load("/gui/background.png"));
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
-		bufferBuilder.start();
-		bufferBuilder.color(0x202020);
-		bufferBuilder.vertex(this.minX, this.maxY, 0.0, (float) this.minX / f,
+		tesselator.begin();
+		tesselator.color(0x202020);
+		tesselator.vertex(this.minX, this.maxY, 0.0, (float) this.minX / f,
 				(float) (this.maxY + (int) this.scrollAmount) / f);
-		bufferBuilder.vertex(this.maxX, this.maxY, 0.0, (float) this.maxX / f,
+		tesselator.vertex(this.maxX, this.maxY, 0.0, (float) this.maxX / f,
 				(float) (this.maxY + (int) this.scrollAmount) / f);
-		bufferBuilder.vertex(this.maxX, this.minY, 0.0, (float) this.maxX / f,
+		tesselator.vertex(this.maxX, this.minY, 0.0, (float) this.maxX / f,
 				(float) (this.minY + (int) this.scrollAmount) / f);
-		bufferBuilder.vertex(this.minX, this.minY, 0.0, (float) this.minX / f,
+		tesselator.vertex(this.minX, this.minY, 0.0, (float) this.minX / f,
 				(float) (this.minY + (int) this.scrollAmount) / f);
-		bufferBuilder.end();
+		tesselator.end();
 		n5 = this.minX + (this.width / 2 - this.getRowWidth() / 2 + 2);
 		n4 = this.minY + 4 - (int) this.scrollAmount;
 		if (this.renderHeader) {
-			this.renderHeader(n5, n4, bufferBuilder);
+			this.renderHeader(n5, n4, tesselator);
 		}
 		this.renderList(n5, n4, mouseX, mouseY);
 		GL11.glDisable(2929);
@@ -142,22 +140,22 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 		GL11.glDisable(3008);
 		GL11.glShadeModel(7425);
 		GL11.glDisable(3553);
-		bufferBuilder.start();
-		bufferBuilder.color(0, 0);
-		bufferBuilder.vertex(this.minX, this.minY + n3, 0.0, 0.0, 1.0);
-		bufferBuilder.vertex(this.maxX, this.minY + n3, 0.0, 1.0, 1.0);
-		bufferBuilder.color(0, 255);
-		bufferBuilder.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
-		bufferBuilder.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
-		bufferBuilder.end();
-		bufferBuilder.start();
-		bufferBuilder.color(0, 255);
-		bufferBuilder.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
-		bufferBuilder.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
-		bufferBuilder.color(0, 0);
-		bufferBuilder.vertex(this.maxX, this.maxY - n3, 0.0, 1.0, 0.0);
-		bufferBuilder.vertex(this.minX, this.maxY - n3, 0.0, 0.0, 0.0);
-		bufferBuilder.end();
+		tesselator.begin();
+		tesselator.color(0, 0);
+		tesselator.vertex(this.minX, this.minY + n3, 0.0, 0.0, 1.0);
+		tesselator.vertex(this.maxX, this.minY + n3, 0.0, 1.0, 1.0);
+		tesselator.color(0, 255);
+		tesselator.vertex(this.maxX, this.minY, 0.0, 1.0, 0.0);
+		tesselator.vertex(this.minX, this.minY, 0.0, 0.0, 0.0);
+		tesselator.end();
+		tesselator.begin();
+		tesselator.color(0, 255);
+		tesselator.vertex(this.minX, this.maxY, 0.0, 0.0, 1.0);
+		tesselator.vertex(this.maxX, this.maxY, 0.0, 1.0, 1.0);
+		tesselator.color(0, 0);
+		tesselator.vertex(this.maxX, this.maxY - n3, 0.0, 1.0, 0.0);
+		tesselator.vertex(this.minX, this.maxY - n3, 0.0, 0.0, 0.0);
+		tesselator.end();
 		n2 = this.getMaxScroll();
 		if (n2 > 0 && this.getHeight() > 0) {
 			int n11;
@@ -171,27 +169,27 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 			if ((n11 = (int) this.scrollAmount * (this.maxY - this.minY - n) / n2 + this.minY) < this.minY) {
 				n11 = this.minY;
 			}
-			bufferBuilder.start();
-			bufferBuilder.color(0, 255);
-			bufferBuilder.vertex(n7, this.maxY, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(n8, this.maxY, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(n8, this.minY, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(n7, this.minY, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
-			bufferBuilder.start();
-			bufferBuilder.color(0x808080, 255);
-			bufferBuilder.vertex(n7, n11 + n, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(n8, n11 + n, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(n8, n11, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(n7, n11, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
-			bufferBuilder.start();
-			bufferBuilder.color(0xC0C0C0, 255);
-			bufferBuilder.vertex(n7, n11 + n - 1, 0.0, 0.0, 1.0);
-			bufferBuilder.vertex(n8 - 1, n11 + n - 1, 0.0, 1.0, 1.0);
-			bufferBuilder.vertex(n8 - 1, n11, 0.0, 1.0, 0.0);
-			bufferBuilder.vertex(n7, n11, 0.0, 0.0, 0.0);
-			bufferBuilder.end();
+			tesselator.begin();
+			tesselator.color(0, 255);
+			tesselator.vertex(n7, this.maxY, 0.0, 0.0, 1.0);
+			tesselator.vertex(n8, this.maxY, 0.0, 1.0, 1.0);
+			tesselator.vertex(n8, this.minY, 0.0, 1.0, 0.0);
+			tesselator.vertex(n7, this.minY, 0.0, 0.0, 0.0);
+			tesselator.end();
+			tesselator.begin();
+			tesselator.color(0x808080, 255);
+			tesselator.vertex(n7, n11 + n, 0.0, 0.0, 1.0);
+			tesselator.vertex(n8, n11 + n, 0.0, 1.0, 1.0);
+			tesselator.vertex(n8, n11, 0.0, 1.0, 0.0);
+			tesselator.vertex(n7, n11, 0.0, 0.0, 0.0);
+			tesselator.end();
+			tesselator.begin();
+			tesselator.color(0xC0C0C0, 255);
+			tesselator.vertex(n7, n11 + n - 1, 0.0, 0.0, 1.0);
+			tesselator.vertex(n8 - 1, n11 + n - 1, 0.0, 1.0, 1.0);
+			tesselator.vertex(n8 - 1, n11, 0.0, 1.0, 0.0);
+			tesselator.vertex(n7, n11, 0.0, 0.0, 0.0);
+			tesselator.end();
 		}
 		this.renderDecorations(mouseX, mouseY);
 		GL11.glEnable(3553);
@@ -202,7 +200,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 
 	protected void renderList(int x, int y, int mouseX, int mouseY) {
 		int size = this.size();
-		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
+		Tesselator tesselator = Tesselator.INSTANCE;
 		for (int i = 0; i < size; ++i) {
 			int entryY = y + i * this.entryHeight + this.headerHeight;
 			int entryHeight = this.entryHeight - 4;
@@ -213,42 +211,42 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 				int n5 = this.minX + (this.width / 2 + this.getRowWidth() / 2);
 				GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 				GL11.glDisable(3553);
-				bufferBuilder.start();
-				bufferBuilder.color(0x808080);
-				bufferBuilder.vertex(n4, entryY + entryHeight + 2, 0.0, 0.0, 1.0);
-				bufferBuilder.vertex(n5, entryY + entryHeight + 2, 0.0, 1.0, 1.0);
-				bufferBuilder.vertex(n5, entryY - 2, 0.0, 1.0, 0.0);
-				bufferBuilder.vertex(n4, entryY - 2, 0.0, 0.0, 0.0);
-				bufferBuilder.color(0);
-				bufferBuilder.vertex(n4 + 1, entryY + entryHeight + 1, 0.0, 0.0, 1.0);
-				bufferBuilder.vertex(n5 - 1, entryY + entryHeight + 1, 0.0, 1.0, 1.0);
-				bufferBuilder.vertex(n5 - 1, entryY - 1, 0.0, 1.0, 0.0);
-				bufferBuilder.vertex(n4 + 1, entryY - 1, 0.0, 0.0, 0.0);
-				bufferBuilder.end();
+				tesselator.begin();
+				tesselator.color(0x808080);
+				tesselator.vertex(n4, entryY + entryHeight + 2, 0.0, 0.0, 1.0);
+				tesselator.vertex(n5, entryY + entryHeight + 2, 0.0, 1.0, 1.0);
+				tesselator.vertex(n5, entryY - 2, 0.0, 1.0, 0.0);
+				tesselator.vertex(n4, entryY - 2, 0.0, 0.0, 0.0);
+				tesselator.color(0);
+				tesselator.vertex(n4 + 1, entryY + entryHeight + 1, 0.0, 0.0, 1.0);
+				tesselator.vertex(n5 - 1, entryY + entryHeight + 1, 0.0, 1.0, 1.0);
+				tesselator.vertex(n5 - 1, entryY - 1, 0.0, 1.0, 0.0);
+				tesselator.vertex(n4 + 1, entryY - 1, 0.0, 0.0, 0.0);
+				tesselator.end();
 				GL11.glEnable(3553);
 			}
-			this.renderEntry(i, x, entryY, entryHeight, bufferBuilder);
+			this.renderEntry(i, x, entryY, entryHeight, tesselator);
 		}
 	}
 
 	private void renderHoleBackground(int top, int bottom, int topAlpha, int bottomAlpha) {
-		BufferBuilder bufferBuilder = BufferBuilder.INSTANCE;
+		Tesselator tesselator = Tesselator.INSTANCE;
 		this.minecraft.textureManager.bind(this.minecraft.textureManager.load("/gui/background.png"));
 		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float f = 32.0f;
-		bufferBuilder.start();
-		bufferBuilder.color(0x404040, bottomAlpha);
-		bufferBuilder.vertex(this.minX, bottom, 0.0, 0.0, (float) bottom / f);
-		bufferBuilder.vertex(this.minX + this.width, bottom, 0.0, (float) this.width / f, (float) bottom / f);
-		bufferBuilder.color(0x404040, topAlpha);
-		bufferBuilder.vertex(this.minX + this.width, top, 0.0, (float) this.width / f, (float) top / f);
-		bufferBuilder.vertex(this.minX, top, 0.0, 0.0, (float) top / f);
-		bufferBuilder.end();
+		tesselator.begin();
+		tesselator.color(0x404040, bottomAlpha);
+		tesselator.vertex(this.minX, bottom, 0.0, 0.0, (float) bottom / f);
+		tesselator.vertex(this.minX + this.width, bottom, 0.0, (float) this.width / f, (float) bottom / f);
+		tesselator.color(0x404040, topAlpha);
+		tesselator.vertex(this.minX + this.width, top, 0.0, (float) this.width / f, (float) top / f);
+		tesselator.vertex(this.minX, top, 0.0, 0.0, (float) top / f);
+		tesselator.end();
 	}
 
 	@Override
-	protected void renderEntry(int index, int x, int y, int entryHeight, BufferBuilder bufferBuilder) {
-		this.getEntry(index).render(index, x, y, this.getRowWidth(), entryHeight, bufferBuilder, mouseX, mouseY, this.getEntryAt(mouseX, mouseY) == index);
+	protected void renderEntry(int index, int x, int y, int entryHeight, Tesselator tesselator) {
+		this.getEntry(index).render(index, x, y, this.getRowWidth(), entryHeight, tesselator, mouseX, mouseY, this.getEntryAt(mouseX, mouseY) == index);
 	}
 
 	public boolean mouseClicked(int mouseX, int mouseY, int button) {
@@ -344,7 +342,7 @@ public abstract class EntryListWidget extends ListWidget implements ListWidgetHe
 
 	public static interface Entry {
 
-		void render(int var1, int var2, int var3, int var4, int var5, BufferBuilder var6, int var7, int var8, boolean var9);
+		void render(int var1, int var2, int var3, int var4, int var5, Tesselator var6, int var7, int var8, boolean var9);
 
 		boolean mouseClicked(int var1, int var2, int var3, int var4, int var5, int var6);
 

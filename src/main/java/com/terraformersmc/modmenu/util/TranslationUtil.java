@@ -2,16 +2,14 @@ package com.terraformersmc.modmenu.util;
 
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.mixin.AccessorLanguageManager;
-
-import net.minecraft.locale.LanguageManager;
-import net.minecraft.resource.language.I18n;
-
 import java.text.NumberFormat;
 import java.util.Arrays;
+import net.minecraft.locale.I18n;
+import net.minecraft.locale.Language;
 
 public class TranslationUtil {
 	public static boolean hasTranslation(String key) {
-		return ((AccessorLanguageManager) LanguageManager.getInstance()).getTranslations().containsKey(key);
+		return ((AccessorLanguageManager) Language.getInstance()).getTranslations().containsKey(key);
 	}
 
 	public static String translateNumeric(String key, int[]... args) {
