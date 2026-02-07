@@ -2,11 +2,9 @@ package com.terraformersmc.modmenu.util.mod.fabric;
 
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.render.texture.DynamicTexture;
+import net.minecraft.client.render.texture.TextureUtil;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Logger;
-
-import com.mojang.blaze3d.platform.TextureUtil;
-
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.image.BufferedImage;
