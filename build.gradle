@@ -10,6 +10,10 @@ base {
 version = "${project.version}+mc${project.minecraft_version}"
 group = project.maven_group
 
+loom {
+	accessWidenerPath = file("src/main/resources/modmenu.classtweaker")
+}
+
 repositories {
 	maven {
 		name = 'Quilt'
@@ -25,10 +29,6 @@ dependencies {
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
 	ploceus.dependOsl(project.osl_version)
-}
-
-loom {
-	accessWidenerPath = file("src/main/resources/modmenu.accesswidener")
 }
 
 processResources {
