@@ -1,7 +1,7 @@
 plugins {
 	id 'maven-publish'
-	id 'fabric-loom' version '1.15-SNAPSHOT'
-	id 'ploceus' version '1.15-SNAPSHOT'
+	id 'fabric-loom' version '1.17-SNAPSHOT'
+	id 'ploceus' version '1.17-SNAPSHOT'
 }
 
 base {
@@ -30,10 +30,10 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	compileOnly "org.quiltmc:quilt-loader:${project.quilt_loader_version}"
 
-	mappings ploceus.featherMappings(project.feather_build)
 	clientExceptions ploceus.raven(project.raven_build, 'client')
 	clientSignatures ploceus.sparrow(project.sparrow_build, 'client')
 	clientNests ploceus.nests(project.nests_build, 'client')
+	mappings ploceus.featherMappings(project.feather_build)
 
 	ploceus.dependOsl(project.osl_version)
 }
