@@ -10,6 +10,14 @@ base {
 version = "${project.version}+mc${project.minecraft_version}"
 group = project.maven_group
 
+loom {
+	runs {
+        client {
+             programArgs "--userProperties", "{}"
+        }
+    }
+}
+
 ploceus {
 	setIntermediaryGeneration(2)
 }
