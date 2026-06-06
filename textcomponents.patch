@@ -1,0 +1,1198 @@
+diff --git a/build.gradle b/build.gradle
+index fd06987..6b98b57 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -1,7 +1,7 @@
+ plugins {
+ 	id 'maven-publish'
+-	id 'fabric-loom' version '1.15-SNAPSHOT'
+-	id 'ploceus' version '1.15-SNAPSHOT'
++	id 'fabric-loom' version '1.16-SNAPSHOT'
++	id 'ploceus' version '1.16-SNAPSHOT'
+ }
+ 
+ base {
+diff --git a/gradle.properties b/gradle.properties
+index d02b267..714c9b8 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -7,9 +7,9 @@ archives_base_name = modmenu
+ 
+ # Dependencies
+ minecraft_version = 1.13.2
+-fabric_loader_version = 0.18.4
+-quilt_loader_version = 0.30.0-beta.0
++fabric_loader_version = 0.19.3
++quilt_loader_version = 0.30.0-beta.7
+ 
+ feather_build = 1
+ 
+-osl_version = 0.17.0
++osl_version = 0.19.0-alpha.10
+diff --git a/src/main/java/com/terraformersmc/modmenu/ModMenu.java b/src/main/java/com/terraformersmc/modmenu/ModMenu.java
+index 3a43980..a6b125f 100644
+--- a/src/main/java/com/terraformersmc/modmenu/ModMenu.java
++++ b/src/main/java/com/terraformersmc/modmenu/ModMenu.java
+@@ -22,10 +22,11 @@ import net.fabricmc.loader.api.ModContainer;
+ import net.fabricmc.loader.api.metadata.ModMetadata;
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.resource.language.I18n;
+-import net.minecraft.text.LiteralText;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
+ import net.ornithemc.osl.entrypoints.api.client.ClientModInitializer;
++import net.ornithemc.osl.localization.api.L10n;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -175,23 +176,23 @@ public class ModMenu implements ClientModInitializer {
+ 		return NumberFormat.getInstance().format(cachedDisplayedModCount);
+ 	}
+ 
+-	public static Text createModsButtonText(boolean title) {
++	public static TextComponent createModsButtonText(boolean title) {
+ 		TitleMenuButtonStyle titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
+ 		GameMenuButtonStyle gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
+ 		boolean isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
+ 		boolean isShort = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK : false;
+-		Text modsText = new TranslatableText("modmenu.title");
++		TextComponent modsText = TextComponents.translatable("modmenu.title");
+ 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
+ 			String count = ModMenu.getDisplayedModCount();
+ 			if (isShort) {
+-				modsText.append(new LiteralText(" ")).append(new TranslatableText("modmenu.loaded.short", count));
++				modsText.append(" ").append(TextComponents.translatable("modmenu.loaded.short", count));
+ 			} else {
+ 				String specificKey = "modmenu.loaded." + count;
+-				String key = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
+-				if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
++				String key = L10n.has(specificKey) ? specificKey : "modmenu.loaded";
++				if (ModMenuConfig.EASTER_EGGS.getValue() && L10n.has(specificKey + ".secret")) {
+ 					key = specificKey + ".secret";
+ 				}
+-				modsText.append(new LiteralText(" ")).append(new TranslatableText(key, count));
++				modsText.append(" ").append(TextComponents.translatable(key, count));
+ 			}
+ 		}
+ 		return modsText;
+diff --git a/src/main/java/com/terraformersmc/modmenu/api/ModMenuApi.java b/src/main/java/com/terraformersmc/modmenu/api/ModMenuApi.java
+index db1f70d..21b0265 100644
+--- a/src/main/java/com/terraformersmc/modmenu/api/ModMenuApi.java
++++ b/src/main/java/com/terraformersmc/modmenu/api/ModMenuApi.java
+@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
+ import com.terraformersmc.modmenu.ModMenu;
+ import com.terraformersmc.modmenu.gui.ModsScreen;
+ import net.minecraft.client.gui.screen.Screen;
+-import net.minecraft.text.Text;
++import net.ornithemc.osl.text.api.TextComponent;
+ 
+ import java.util.Map;
+ import java.util.function.Consumer;
+@@ -23,12 +23,12 @@ public interface ModMenuApi {
+ 	}
+ 
+ 	/**
+-	 * Used for creating a {@link Text} just like what would appear
++	 * Used for creating a {@link TextComponent} just like what would appear
+ 	 * on a Mod Menu Mods button
+ 	 *
+ 	 * @return The text that would be displayed on a Mods button
+ 	 */
+-	static Text createModsButtonText() {
++	static TextComponent createModsButtonText() {
+ 		return ModMenu.createModsButtonText(true);
+ 	}
+ 
+diff --git a/src/main/java/com/terraformersmc/modmenu/api/UpdateInfo.java b/src/main/java/com/terraformersmc/modmenu/api/UpdateInfo.java
+index b5f40a4..dbda2fe 100644
+--- a/src/main/java/com/terraformersmc/modmenu/api/UpdateInfo.java
++++ b/src/main/java/com/terraformersmc/modmenu/api/UpdateInfo.java
+@@ -1,6 +1,7 @@
+ package com.terraformersmc.modmenu.api;
+ 
+-import net.minecraft.text.Text;
++import net.ornithemc.osl.text.api.TextComponent;
++
+ import org.jetbrains.annotations.Nullable;
+ 
+ public interface UpdateInfo {
+@@ -13,7 +14,7 @@ public interface UpdateInfo {
+ 	 * @return The message that is getting displayed when an update is available or <code>null</code> to let ModMenu handle displaying the message.
+ 	 */
+ 	@Nullable
+-	default Text getUpdateMessage() {
++	default TextComponent getUpdateMessage() {
+ 		return null;
+ 	}
+ 
+diff --git a/src/main/java/com/terraformersmc/modmenu/config/option/BooleanConfigOption.java b/src/main/java/com/terraformersmc/modmenu/config/option/BooleanConfigOption.java
+index ba595af..ee1116c 100644
+--- a/src/main/java/com/terraformersmc/modmenu/config/option/BooleanConfigOption.java
++++ b/src/main/java/com/terraformersmc/modmenu/config/option/BooleanConfigOption.java
+@@ -2,22 +2,24 @@ package com.terraformersmc.modmenu.config.option;
+ 
+ import com.terraformersmc.modmenu.util.TranslationUtil;
+ 
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ public class BooleanConfigOption implements ConfigOption {
+-	private final String key, translationKey;
++	private final String key;
+ 	private final boolean defaultValue;
+-	private final Text enabledText;
+-	private final Text disabledText;
++	private final TextComponent description;
++	private final TextComponent enabledText;
++	private final TextComponent disabledText;
+ 
+ 	public BooleanConfigOption(String key, boolean defaultValue, String enabledKey, String disabledKey) {
+ 		ConfigOptionStorage.setBoolean(key, defaultValue);
++		String translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.key = key;
+-		this.translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.defaultValue = defaultValue;
+-		this.enabledText = new TranslatableText(translationKey + "." + enabledKey);
+-		this.disabledText = new TranslatableText(translationKey + "." + disabledKey);
++		this.description = TextComponents.translatable(translationKey);
++		this.enabledText = TextComponents.translatable(translationKey + "." + enabledKey);
++		this.disabledText = TextComponents.translatable(translationKey + "." + disabledKey);
+ 	}
+ 
+ 	public BooleanConfigOption(String key, boolean defaultValue) {
+@@ -46,7 +48,7 @@ public class BooleanConfigOption implements ConfigOption {
+ 
+ 	@Override
+ 	public String getValueLabel() {
+-		return TranslationUtil.translateOptionLabel(new TranslatableText(translationKey), getValue() ? enabledText : disabledText);
++		return TranslationUtil.translateOptionLabel(description, getValue() ? enabledText : disabledText);
+ 	}
+ 
+ 	@Override
+diff --git a/src/main/java/com/terraformersmc/modmenu/config/option/EnumConfigOption.java b/src/main/java/com/terraformersmc/modmenu/config/option/EnumConfigOption.java
+index 0050539..d1597df 100644
+--- a/src/main/java/com/terraformersmc/modmenu/config/option/EnumConfigOption.java
++++ b/src/main/java/com/terraformersmc/modmenu/config/option/EnumConfigOption.java
+@@ -1,22 +1,30 @@
+ package com.terraformersmc.modmenu.config.option;
+ 
+ import com.terraformersmc.modmenu.util.TranslationUtil;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import java.util.Locale;
+ 
+ public class EnumConfigOption<E extends Enum<E>> implements ConfigOption {
+-	private final String key, translationKey;
++	private final String key;
+ 	private final Class<E> enumClass;
+ 	private final E defaultValue;
++	private final TextComponent description;
++	private final TextComponent[] valueTexts;
+ 
+ 	public EnumConfigOption(String key, E defaultValue) {
+ 		ConfigOptionStorage.setEnum(key, defaultValue);
++		String translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.key = key;
+-		this.translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.enumClass = defaultValue.getDeclaringClass();
+ 		this.defaultValue = defaultValue;
++		this.description = TextComponents.translatable(translationKey);
++		this.valueTexts = new TextComponent[this.enumClass.getEnumConstants().length];
++		for (E value : this.enumClass.getEnumConstants()) {
++			this.valueTexts[value.ordinal()] = TextComponents.translatable(translationKey + "." + value.name().toLowerCase(Locale.ROOT));
++		}
+ 	}
+ 
+ 	public String getKey() {
+@@ -43,13 +51,9 @@ public class EnumConfigOption<E extends Enum<E>> implements ConfigOption {
+ 		return defaultValue;
+ 	}
+ 
+-	private static <E extends Enum<E>> Text getValueText(EnumConfigOption<E> option, E value) {
+-		return new TranslatableText(option.translationKey + "." + value.name().toLowerCase(Locale.ROOT));
+-	}
+-
+ 	@Override
+ 	public String getValueLabel() {
+-		return TranslationUtil.translateOptionLabel(new TranslatableText(translationKey), getValueText(this, getValue()));
++		return TranslationUtil.translateOptionLabel(description, valueTexts[this.getValue().ordinal()]);
+ 	}
+ 
+ 	@Override
+diff --git a/src/main/java/com/terraformersmc/modmenu/config/option/StringSetConfigOption.java b/src/main/java/com/terraformersmc/modmenu/config/option/StringSetConfigOption.java
+index 179c390..ddac962 100644
+--- a/src/main/java/com/terraformersmc/modmenu/config/option/StringSetConfigOption.java
++++ b/src/main/java/com/terraformersmc/modmenu/config/option/StringSetConfigOption.java
+@@ -1,22 +1,24 @@
+ package com.terraformersmc.modmenu.config.option;
+ 
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import com.terraformersmc.modmenu.util.TranslationUtil;
+ 
+ import java.util.Set;
+ 
+ public class StringSetConfigOption {
+-	private final String key, translationKey;
++	private final String key;
+ 	private final Set<String> defaultValue;
++	private final TextComponent description;
+ 
+ 	public StringSetConfigOption(String key, Set<String> defaultValue) {
+ 		super();
+ 		ConfigOptionStorage.setStringSet(key, defaultValue);
++		String translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.key = key;
+-		this.translationKey = TranslationUtil.translationKeyOf("option", key);
+ 		this.defaultValue = defaultValue;
++		this.description = TextComponents.translatable(translationKey);
+ 	}
+ 
+ 	public String getKey() {
+@@ -31,8 +33,8 @@ public class StringSetConfigOption {
+ 		ConfigOptionStorage.setStringSet(key, value);
+ 	}
+ 
+-	public Text getMessage() {
+-		return new TranslatableText(translationKey);
++	public TextComponent getMessage() {
++		return description;
+ 	}
+ 
+ 	public Set<String> getDefaultValue() {
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/ModMenuOptionsScreen.java b/src/main/java/com/terraformersmc/modmenu/gui/ModMenuOptionsScreen.java
+index 7f6880c..c6bb502 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/ModMenuOptionsScreen.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/ModMenuOptionsScreen.java
+@@ -6,7 +6,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfigManager;
+ import com.terraformersmc.modmenu.gui.widget.ConfigOptionListWidget;
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.widget.ButtonWidget;
+-import net.minecraft.client.resource.language.I18n;
++import net.ornithemc.osl.localization.api.L10n;
+ 
+ public class ModMenuOptionsScreen extends Screen {
+ 
+@@ -18,14 +18,14 @@ public class ModMenuOptionsScreen extends Screen {
+ 
+ 	public ModMenuOptionsScreen(Screen previous) {
+ 		this.previous = previous;
+-		this.title = I18n.translate("modmenu.options");
++		this.title = L10n.get("modmenu.options");
+ 	}
+ 
+ 
+ 	protected void init() {
+ 		this.list = new ConfigOptionListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25, ModMenuConfig.asOptions());
+ 		this.children.add(this.list);
+-		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")) {
++		this.addButton(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, L10n.get("gui.done")) {
+ 			@Override
+ 			public void click(double d, double e) {
+ 				ModMenu.checkForUpdates();
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/ModsScreen.java b/src/main/java/com/terraformersmc/modmenu/gui/ModsScreen.java
+index 7713ec0..e12b557 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/ModsScreen.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/ModsScreen.java
+@@ -19,13 +19,13 @@ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.widget.ButtonWidget;
+ import net.minecraft.client.gui.widget.TextFieldWidget;
+ import net.minecraft.client.render.platform.GlStateManager;
+-import net.minecraft.client.resource.language.I18n;
+ import net.minecraft.resource.Identifier;
+-import net.minecraft.text.Formatting;
+-import net.minecraft.text.LiteralText;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
+ import net.minecraft.util.Utils;
++import net.ornithemc.osl.localization.api.L10n;
++import net.ornithemc.osl.text.api.Formatting;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -49,12 +49,12 @@ public class ModsScreen extends Screen {
+ 	private static final int LIBRARIES = 6;
+ 	private static final int MODS_FOLDER = 7;
+ 	private static final int DONE = 8;
+-	private static final Text TOGGLE_FILTER_OPTIONS = new TranslatableText("modmenu.toggleFilterOptions");
+-	private static final Text CONFIGURE = new TranslatableText("modmenu.configure");
++	private static final TextComponent TOGGLE_FILTER_OPTIONS = TextComponents.translatable("modmenu.toggleFilterOptions");
++	private static final TextComponent CONFIGURE = TextComponents.translatable("modmenu.configure");
+ 	private static final Logger LOGGER = LogManager.getLogger("Mod Menu | ModsScreen");
+ 	private TextFieldWidget searchBox;
+ 	private DescriptionListWidget descriptionListWidget;
+-	private final Text title;
++	private final TextComponent title;
+ 	private final Screen previousScreen;
+ 	private ModListWidget modList;
+ 	private ModListEntry selected;
+@@ -79,7 +79,7 @@ public class ModsScreen extends Screen {
+ 	public final Map<String, Throwable> modScreenErrors = new HashMap<>();
+ 
+ 	public ModsScreen(Screen previousScreen) {
+-		this.title = new TranslatableText("modmenu.title");
++		this.title = TextComponents.translatable("modmenu.title");
+ 		this.previousScreen = previousScreen;
+ 	}
+ 
+@@ -110,7 +110,7 @@ public class ModsScreen extends Screen {
+ 		int searchBoxWidth = ModMenuConfig.CONFIG_MODE.getValue() ? Math.min(200, searchWidthMax) : searchWidthMax;
+ 		searchBoxX = paneWidth / 2 - searchBoxWidth / 2 - filtersButtonSize / 2;
+ 		this.searchBox = new TextFieldWidget(SEARCH_BOX, this.textRenderer, searchBoxX, 22, searchBoxWidth, 20);
+-		this.searchBox.setSuggestion(I18n.translate("modmenu.search"));
++		this.searchBox.setSuggestion(L10n.get("modmenu.search"));
+ 		this.searchBox.setResponder((id, text) -> this.modList.filter(text, false));
+ 
+ 		for (Mod mod : ModMenu.MODS.values()) {
+@@ -138,7 +138,7 @@ public class ModsScreen extends Screen {
+ 		this.descriptionListWidget = new DescriptionListWidget(this.minecraft, paneWidth, this.height, RIGHT_PANE_Y + 60, this.height - 36, textRenderer.fontHeight + 1, this);
+ 		this.descriptionListWidget.setX(rightPaneX);
+ 		ButtonWidget configureButton = new TexturedButtonWidget(DESCRIPTION_LIST, width - 24, RIGHT_PANE_Y, 20, 20, 0, 0, 20, CONFIGURE_BUTTON_LOCATION, 32, 64) {
+-			private Text tooltip;
++			private TextComponent tooltip;
+ 			@Override
+ 			public void click(double d, double e) {
+ 				final String id = Objects.requireNonNull(selected).getMod().getId();
+@@ -162,7 +162,7 @@ public class ModsScreen extends Screen {
+ 				visible = selected != null && modHasConfigScreen.get(modId) || modScreenErrors.containsKey(modId);
+ 				if (modScreenErrors.containsKey(modId)) {
+ 					Throwable e = modScreenErrors.get(modId);
+-					this.tooltip = new TranslatableText("modmenu.configure.error", modId, modId).copy().append("\n\n").append(e.toString()).setFormatting(Formatting.RED);
++					this.tooltip = TextComponents.translatable("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).format(Formatting.RED);
+ 				} else {
+ 					this.tooltip = CONFIGURE;
+ 				}
+@@ -171,12 +171,12 @@ public class ModsScreen extends Screen {
+ 
+ 			@Override
+ 			public void renderTooltip(int mouseX, int mouseY) {
+-				ModsScreen.this.renderTooltip(this.tooltip.getFormattedString(), mouseX, mouseY);
++				ModsScreen.this.renderTooltip(this.tooltip.buildFormattedString(), mouseX, mouseY);
+ 			}
+ 		};
+ 		int urlButtonWidths = paneWidth / 2 - 2;
+ 		int cappedButtonWidth = Math.min(urlButtonWidths, 200);
+-		ButtonWidget websiteButton = new ButtonWidget(WEBSITE, rightPaneX + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.website")) {
++		ButtonWidget websiteButton = new ButtonWidget(WEBSITE, rightPaneX + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, L10n.get("modmenu.website")) {
+ 			@Override
+ 			public void click(double d, double e) {
+ 				final Mod mod = Objects.requireNonNull(selected).getMod();
+@@ -190,7 +190,7 @@ public class ModsScreen extends Screen {
+ 				super.render(mouseX, mouseY, delta);
+ 			}
+ 		};
+-		ButtonWidget issuesButton = new ButtonWidget(ISSUES, rightPaneX + urlButtonWidths + 4 + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, I18n.translate("modmenu.issues")) {
++		ButtonWidget issuesButton = new ButtonWidget(ISSUES, rightPaneX + urlButtonWidths + 4 + (urlButtonWidths / 2) - (cappedButtonWidth / 2), RIGHT_PANE_Y + 36, Math.min(urlButtonWidths, 200), 20, L10n.get("modmenu.issues")) {
+ 			@Override
+ 			public void click(double d, double e) {
+ 				final Mod mod = Objects.requireNonNull(selected).getMod();
+@@ -213,7 +213,7 @@ public class ModsScreen extends Screen {
+ 
+ 			@Override
+ 			public void renderTooltip(int mouseX, int mouseY) {
+-				ModsScreen.this.renderTooltip(TOGGLE_FILTER_OPTIONS.getFormattedString(), mouseX, mouseY);
++				ModsScreen.this.renderTooltip(TOGGLE_FILTER_OPTIONS.buildFormattedString(), mouseX, mouseY);
+ 			}
+ 		};
+ 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
+@@ -263,13 +263,13 @@ public class ModsScreen extends Screen {
+ 		this.addButton(websiteButton);
+ 		this.addButton(issuesButton);
+ 		this.children.add(this.descriptionListWidget);
+-		this.addButton(new ButtonWidget(MODS_FOLDER, this.width / 2 - 154, this.height - 28, 150, 20, I18n.translate("modmenu.modsFolder")) {
++		this.addButton(new ButtonWidget(MODS_FOLDER, this.width / 2 - 154, this.height - 28, 150, 20, L10n.get("modmenu.modsFolder")) {
+ 			@Override
+ 			public void click(double d, double e) {
+ 				Utils.getOS().openFile(new File(FabricLoader.getInstance().getGameDir().toFile(), "mods"));
+ 			}
+ 		});
+-		this.addButton(new ButtonWidget(DONE, this.width / 2 + 4, this.height - 28, 150, 20, I18n.translate("gui.done")) {
++		this.addButton(new ButtonWidget(DONE, this.width / 2 + 4, this.height - 28, 150, 20, L10n.get("gui.done")) {
+ 			@Override
+ 			public void click(double d, double e) {
+ 				ModsScreen.this.minecraft.openScreen(ModsScreen.this.previousScreen);
+@@ -303,23 +303,23 @@ public class ModsScreen extends Screen {
+ 		this.modList.render(mouseX, mouseY, delta);
+ 		this.searchBox.render(mouseX, mouseY, delta);
+ 		GlStateManager.disableBlend();
+-		this.drawCenteredString(this.textRenderer, this.title.getFormattedString(), this.modList.getWidth() / 2, 8, 16777215);
++		this.drawCenteredString(this.textRenderer, this.title.buildFormattedString(), this.modList.getWidth() / 2, 8, 16777215);
+ 		if (!ModMenuConfig.CONFIG_MODE.getValue()) {
+-			Text fullModCount = computeModCountText(true);
++			TextComponent fullModCount = computeModCountText(true);
+ 			if (!ModMenuConfig.CONFIG_MODE.getValue() && updateFiltersX()) {
+ 				if (filterOptionsShown) {
+-					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount.getFormattedString()) <= filtersX - 5) {
+-						this.textRenderer.draw(fullModCount.getFormattedString(), searchBoxX, 52, 0xFFFFFF);
++					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount.buildFormattedString()) <= filtersX - 5) {
++						this.textRenderer.draw(fullModCount.buildFormattedString(), searchBoxX, 52, 0xFFFFFF);
+ 					} else {
+-						this.textRenderer.draw(computeModCountText(false).getFormattedString(), searchBoxX, 46, 0xFFFFFF);
+-						this.textRenderer.draw(computeLibraryCountText().getFormattedString(), searchBoxX, 57, 0xFFFFFF);
++						this.textRenderer.draw(computeModCountText(false).buildFormattedString(), searchBoxX, 46, 0xFFFFFF);
++						this.textRenderer.draw(computeLibraryCountText().buildFormattedString(), searchBoxX, 57, 0xFFFFFF);
+ 					}
+ 				} else {
+-					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount.getFormattedString()) <= modList.getWidth() - 5) {
+-						this.textRenderer.draw(fullModCount.getFormattedString(), searchBoxX, 52, 0xFFFFFF);
++					if (!ModMenuConfig.SHOW_LIBRARIES.getValue() || textRenderer.getWidth(fullModCount.buildFormattedString()) <= modList.getWidth() - 5) {
++						this.textRenderer.draw(fullModCount.buildFormattedString(), searchBoxX, 52, 0xFFFFFF);
+ 					} else {
+-						this.textRenderer.draw(computeModCountText(false).getFormattedString(), searchBoxX, 46, 0xFFFFFF);
+-						this.textRenderer.draw(computeLibraryCountText().getFormattedString(), searchBoxX, 57, 0xFFFFFF);
++						this.textRenderer.draw(computeModCountText(false).buildFormattedString(), searchBoxX, 46, 0xFFFFFF);
++						this.textRenderer.draw(computeLibraryCountText().buildFormattedString(), searchBoxX, 57, 0xFFFFFF);
+ 					}
+ 				}
+ 			}
+@@ -337,19 +337,19 @@ public class ModsScreen extends Screen {
+ 			GlStateManager.disableBlend();
+ 			int lineSpacing = textRenderer.fontHeight + 1;
+ 			int imageOffset = 36;
+-			Text name = new LiteralText(mod.getTranslatedName());
+-			Text trimmedName = name;
++			TextComponent name = TextComponents.literal(mod.getTranslatedName());
++			TextComponent trimmedName = name;
+ 			int maxNameWidth = this.width - (x + imageOffset);
+-			if (textRenderer.getWidth(name.getFormattedString()) > maxNameWidth) {
+-				Text ellipsis = new LiteralText("...");
+-				trimmedName = new LiteralText("").append(textRenderer.trim(name.getFormattedString(), maxNameWidth - textRenderer.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
++			if (textRenderer.getWidth(name.buildFormattedString()) > maxNameWidth) {
++				TextComponent ellipsis = TextComponents.literal("...");
++				trimmedName = TextComponents.literal(textRenderer.trim(name.buildFormattedString(), maxNameWidth - textRenderer.getWidth(ellipsis.buildFormattedString()))).append(ellipsis);
+ 			}
+-			this.textRenderer.draw(trimmedName.getFormattedString(), x + imageOffset, RIGHT_PANE_Y + 1, 0xFFFFFF);
+-			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName.getFormattedString())) {
+-				setTooltip(Arrays.asList(I18n.translate("modmenu.modIdToolTip", mod.getId())));
++			this.textRenderer.draw(trimmedName.buildFormattedString(), x + imageOffset, RIGHT_PANE_Y + 1, 0xFFFFFF);
++			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName.buildFormattedString())) {
++				setTooltip(Arrays.asList(L10n.get("modmenu.modIdToolTip", mod.getId())));
+ 			}
+ 			if (init || modBadgeRenderer == null || modBadgeRenderer.getMod() != mod) {
+-				modBadgeRenderer = new ModBadgeRenderer(x + imageOffset + this.minecraft.textRenderer.getWidth(trimmedName.getFormattedString()) + 2, RIGHT_PANE_Y, width - 28, selectedEntry.mod, this);
++				modBadgeRenderer = new ModBadgeRenderer(x + imageOffset + this.minecraft.textRenderer.getWidth(trimmedName.buildFormattedString()) + 2, RIGHT_PANE_Y, width - 28, selectedEntry.mod, this);
+ 				init = false;
+ 			}
+ 			if (!ModMenuConfig.HIDE_BADGES.getValue()) {
+@@ -367,7 +367,7 @@ public class ModsScreen extends Screen {
+ 				} else {
+ 					authors = names.get(0);
+ 				}
+-				DrawingUtil.drawWrappedString(I18n.translate("modmenu.authorPrefix", authors), x + imageOffset, RIGHT_PANE_Y + 2 + lineSpacing * 2, paneWidth - imageOffset - 4, 1, 0x808080);
++				DrawingUtil.drawWrappedString(L10n.get("modmenu.authorPrefix", authors), x + imageOffset, RIGHT_PANE_Y + 2 + lineSpacing * 2, paneWidth - imageOffset - 4, 1, 0x808080);
+ 			}
+ 		}
+ 		super.render(mouseX, mouseY, delta);
+@@ -376,7 +376,7 @@ public class ModsScreen extends Screen {
+ 		}
+ 	}
+ 
+-	private Text computeModCountText(boolean includeLibs) {
++	private TextComponent computeModCountText(boolean includeLibs) {
+ 		int[] rootMods = formatModCount(ModMenu.ROOT_MODS.values().stream().filter(mod -> !mod.isHidden() && !mod.getBadges().contains(Mod.Badge.LIBRARY)).map(Mod::getId).collect(Collectors.toSet()));
+ 
+ 		if (includeLibs && ModMenuConfig.SHOW_LIBRARIES.getValue()) {
+@@ -387,12 +387,12 @@ public class ModsScreen extends Screen {
+ 		}
+ 	}
+ 
+-	private Text computeLibraryCountText() {
++	private TextComponent computeLibraryCountText() {
+ 		if (ModMenuConfig.SHOW_LIBRARIES.getValue()) {
+ 			int[] rootLibs = formatModCount(ModMenu.ROOT_MODS.values().stream().filter(mod -> !mod.isHidden() && mod.getBadges().contains(Mod.Badge.LIBRARY)).map(Mod::getId).collect(Collectors.toSet()));
+ 			return TranslationUtil.translateNumeric("modmenu.showingLibraries", rootLibs);
+ 		} else {
+-			return new LiteralText(null);
++			return TextComponents.literal(null);
+ 		}
+ 	}
+ 
+@@ -438,7 +438,7 @@ public class ModsScreen extends Screen {
+ 	}
+ 
+ 	private boolean updateFiltersX() {
+-		if ((filtersWidth + textRenderer.getWidth(computeModCountText(true).getFormattedString()) + 20) >= searchRowWidth && ((filtersWidth + textRenderer.getWidth(computeModCountText(false).getFormattedString()) + 20) >= searchRowWidth || (filtersWidth + textRenderer.getWidth(computeLibraryCountText().getFormattedString()) + 20) >= searchRowWidth)) {
++		if ((filtersWidth + textRenderer.getWidth(computeModCountText(true).buildFormattedString()) + 20) >= searchRowWidth && ((filtersWidth + textRenderer.getWidth(computeModCountText(false).buildFormattedString()) + 20) >= searchRowWidth || (filtersWidth + textRenderer.getWidth(computeLibraryCountText().buildFormattedString()) + 20) >= searchRowWidth)) {
+ 			filtersX = paneWidth / 2 - filtersWidth / 2;
+ 			return !filterOptionsShown;
+ 		} else {
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/widget/DescriptionListWidget.java b/src/main/java/com/terraformersmc/modmenu/gui/widget/DescriptionListWidget.java
+index 2a46fe1..58da247 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/widget/DescriptionListWidget.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/widget/DescriptionListWidget.java
+@@ -4,13 +4,11 @@ import com.terraformersmc.modmenu.api.UpdateInfo;
+ import com.terraformersmc.modmenu.config.ModMenuConfig;
+ import com.terraformersmc.modmenu.gui.ModsScreen;
+ import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
+-import com.terraformersmc.modmenu.util.VersionUtil;
+ import com.terraformersmc.modmenu.util.mod.Mod;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
+ import net.minecraft.client.gui.screen.ConfirmationListener;
+ import net.minecraft.client.gui.screen.CreditsScreen;
+-import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.widget.EntryListWidget;
+ import net.minecraft.client.render.*;
+@@ -18,33 +16,31 @@ import net.minecraft.client.render.platform.GlStateManager;
+ import net.minecraft.client.render.vertex.BufferBuilder;
+ import net.minecraft.client.render.vertex.DefaultVertexFormat;
+ import net.minecraft.client.render.vertex.Tesselator;
+-import net.minecraft.text.Formatting;
+-import net.minecraft.text.LiteralText;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
+ import net.minecraft.util.Utils;
+ import net.minecraft.util.math.MathHelper;
++import net.ornithemc.osl.text.api.Formatting;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.SortedMap;
+-import java.util.SortedSet;
+ 
+ import org.lwjgl.opengl.GL11;
+ 
+ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget.DescriptionEntry> implements ConfirmationListener {
+ 
+-	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
+-	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setFormatting(Formatting.GOLD);
+-	private static final Text DOWNLOAD_TEXT = new TranslatableText("modmenu.downloadLink").setFormatting(Formatting.BLUE, Formatting.UNDERLINE);
+-	private static final Text CHILD_HAS_UPDATE_TEXT = new TranslatableText("modmenu.childHasUpdate");
+-	private static final Text LINKS_TEXT = new TranslatableText("modmenu.links");
+-	private static final Text SOURCE_TEXT = new TranslatableText("modmenu.source").setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE);
+-	private static final Text LICENSE_TEXT = new TranslatableText("modmenu.license");
+-	private static final Text VIEW_CREDITS_TEXT = new TranslatableText("modmenu.viewCredits").setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE);
+-	private static final Text CREDITS_TEXT = new TranslatableText("modmenu.credits");
++	private static final TextComponent HAS_UPDATE_TEXT = TextComponents.translatable("modmenu.hasUpdate");
++	private static final TextComponent EXPERIMENTAL_TEXT = TextComponents.translatable("modmenu.experimental").format(Formatting.GOLD);
++	private static final TextComponent DOWNLOAD_TEXT = TextComponents.translatable("modmenu.downloadLink").format(Formatting.BLUE, Formatting.UNDERLINED);
++	private static final TextComponent CHILD_HAS_UPDATE_TEXT = TextComponents.translatable("modmenu.childHasUpdate");
++	private static final TextComponent LINKS_TEXT = TextComponents.translatable("modmenu.links");
++	private static final TextComponent SOURCE_TEXT = TextComponents.translatable("modmenu.source").format(Formatting.BLUE, Formatting.UNDERLINED);
++	private static final TextComponent LICENSE_TEXT = TextComponents.translatable("modmenu.license");
++	private static final TextComponent VIEW_CREDITS_TEXT = TextComponents.translatable("modmenu.viewCredits").format(Formatting.BLUE, Formatting.UNDERLINED);
++	private static final TextComponent CREDITS_TEXT = TextComponents.translatable("modmenu.credits");
+ 
+ 	private final ModsScreen parent;
+ 	private final TextRenderer textRenderer;
+@@ -93,7 +89,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 						children().add(emptyEntry);
+ 
+ 						int index = 0;
+-						for (String line : textRenderer.split(HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
++						for (String line : textRenderer.split(HAS_UPDATE_TEXT.buildFormattedString(), wrapWidth - 11)) {
+ 							DescriptionEntry entry = new DescriptionEntry(line);
+ 							if (index == 0) entry.setUpdateTextEntry();
+ 
+@@ -101,20 +97,20 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 							index += 1;
+ 						}
+ 
+-						for (String line : textRenderer.split(EXPERIMENTAL_TEXT.getFormattedString(), wrapWidth - 16)) {
++						for (String line : textRenderer.split(EXPERIMENTAL_TEXT.buildFormattedString(), wrapWidth - 16)) {
+ 							children().add(new DescriptionEntry(line, 8));
+ 						}
+ 
+-						Text updateMessage = updateInfo.getUpdateMessage();
++						TextComponent updateMessage = updateInfo.getUpdateMessage();
+ 						String downloadLink = updateInfo.getDownloadLink();
+ 						if (updateMessage == null) {
+ 							updateMessage = DOWNLOAD_TEXT;
+ 						} else {
+ 							if (downloadLink != null) {
+-								updateMessage = updateMessage.copy().setFormatting(Formatting.BLUE, Formatting.UNDERLINE);
++								updateMessage = updateMessage.copy().format(Formatting.BLUE, Formatting.UNDERLINED);
+ 							}
+ 						}
+-						for (String line : textRenderer.split(updateMessage.getFormattedString(), wrapWidth - 16)) {
++						for (String line : textRenderer.split(updateMessage.buildFormattedString(), wrapWidth - 16)) {
+ 							if (downloadLink != null) {
+ 								children().add(new LinkEntry(line, downloadLink, 8));
+ 							} else {
+@@ -126,7 +122,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 						children().add(emptyEntry);
+ 
+ 						int index = 0;
+-						for (String line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
++						for (String line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.buildFormattedString(), wrapWidth - 11)) {
+ 							DescriptionEntry entry = new DescriptionEntry(line);
+ 							if (index == 0) entry.setUpdateTextEntry();
+ 
+@@ -141,13 +137,13 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 				if ((!links.isEmpty() || sourceLink != null) && !ModMenuConfig.HIDE_MOD_LINKS.getValue()) {
+ 					children().add(emptyEntry);
+ 
+-					for (String line : textRenderer.split(LINKS_TEXT.getFormattedString(), wrapWidth)) {
++					for (String line : textRenderer.split(LINKS_TEXT.buildFormattedString(), wrapWidth)) {
+ 						children().add(new DescriptionEntry(line));
+ 					}
+ 
+ 					if (sourceLink != null) {
+ 						int indent = 8;
+-						for (String line : textRenderer.split(SOURCE_TEXT.getFormattedString(), wrapWidth - 16)) {
++						for (String line : textRenderer.split(SOURCE_TEXT.buildFormattedString(), wrapWidth - 16)) {
+ 							children().add(new LinkEntry(line, sourceLink, indent));
+ 							indent = 16;
+ 						}
+@@ -155,7 +151,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 
+ 					links.forEach((key, value) -> {
+ 						int indent = 8;
+-						for (String line : textRenderer.split(new TranslatableText(key).setFormatting(Formatting.BLUE).setFormatting(Formatting.UNDERLINE).getFormattedString(), wrapWidth - 16)) {
++						for (String line : textRenderer.split(TextComponents.translatable(key).format(Formatting.BLUE, Formatting.UNDERLINED).buildFormattedString(), wrapWidth - 16)) {
+ 							children().add(new LinkEntry(line, value, indent));
+ 							indent = 16;
+ 						}
+@@ -166,7 +162,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 				if (!ModMenuConfig.HIDE_MOD_LICENSE.getValue() && !licenses.isEmpty()) {
+ 					children().add(emptyEntry);
+ 
+-					for (String line : textRenderer.split(LICENSE_TEXT.getFormattedString(), wrapWidth)) {
++					for (String line : textRenderer.split(LICENSE_TEXT.buildFormattedString(), wrapWidth)) {
+ 						children().add(new DescriptionEntry(line));
+ 					}
+ 
+@@ -183,7 +179,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 					if ("minecraft".equals(mod.getId())) {
+ 						children().add(emptyEntry);
+ 
+-						for (String line : textRenderer.split(VIEW_CREDITS_TEXT.getFormattedString(), wrapWidth)) {
++						for (String line : textRenderer.split(VIEW_CREDITS_TEXT.buildFormattedString(), wrapWidth)) {
+ 							children().add(new MojangCreditsEntry(line));
+ 						}
+ 					} else if (!"java".equals(mod.getId())) {
+@@ -192,7 +188,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 						if (!credits.isEmpty()) {
+ 							children().add(emptyEntry);
+ 
+-							for (String line : textRenderer.split(CREDITS_TEXT.getFormattedString(), wrapWidth)) {
++							for (String line : textRenderer.split(CREDITS_TEXT.buildFormattedString(), wrapWidth)) {
+ 								children().add(new DescriptionEntry(line));
+ 							}
+ 
+@@ -204,7 +200,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 								Map.Entry<String, Set<String>> role = iterator.next();
+ 								String roleName = role.getKey();
+ 
+-								for (String line : textRenderer.split(this.creditsRoleText(roleName).getFormattedString(), wrapWidth - 16)) {
++								for (String line : textRenderer.split(this.creditsRoleText(roleName).buildFormattedString(), wrapWidth - 16)) {
+ 									children().add(new DescriptionEntry(line, indent));
+ 									indent = 16;
+ 								}
+@@ -212,7 +208,7 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 								for (String contributor : role.getValue()) {
+ 									indent = 16;
+ 
+-									for (String line : textRenderer.split(new LiteralText(contributor).getFormattedString(), wrapWidth - 24)) {
++									for (String line : textRenderer.split(TextComponents.literal(contributor).buildFormattedString(), wrapWidth - 24)) {
+ 										children().add(new DescriptionEntry(line, indent));
+ 										indent = 24;
+ 									}
+@@ -359,12 +355,12 @@ public class DescriptionListWidget extends EntryListWidget<DescriptionListWidget
+ 		minecraft.openScreen(this.parent);
+ 	}
+ 
+-	private Text creditsRoleText(String roleName) {
++	private TextComponent creditsRoleText(String roleName) {
+ 		// Replace spaces and dashes in role names with underscores if they exist
+ 		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
+ 		String translationKey = roleName.replaceAll("[\\s-]", "_").toLowerCase();
+ 
+-		return new TranslatableText("modmenu.credits.role." + translationKey).append(new LiteralText(":"));
++		return TextComponents.translatable("modmenu.credits.role." + translationKey).append(TextComponents.literal(":"));
+ 	}
+ 
+ 	protected class DescriptionEntry extends EntryListWidget.Entry<DescriptionEntry> {
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/widget/ModMenuButtonWidget.java b/src/main/java/com/terraformersmc/modmenu/gui/widget/ModMenuButtonWidget.java
+index 2a94f68..2e324fa 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/widget/ModMenuButtonWidget.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/widget/ModMenuButtonWidget.java
+@@ -7,13 +7,13 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.widget.ButtonWidget;
+-import net.minecraft.text.Text;
++import net.ornithemc.osl.text.api.TextComponent;
+ 
+ public class ModMenuButtonWidget extends ButtonWidget {
+ 	private final Screen screen;
+ 
+-	public ModMenuButtonWidget(int id, int x, int y, int width, int height, Text text, Screen screen) {
+-		super(id, x, y, width, height, text.getFormattedString());
++	public ModMenuButtonWidget(int id, int x, int y, int width, int height, TextComponent text, Screen screen) {
++		super(id, x, y, width, height, text.buildFormattedString());
+ 		this.screen = screen;
+ 	}
+ 
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ModListEntry.java b/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ModListEntry.java
+index ac6acae..144078b 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ModListEntry.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ModListEntry.java
+@@ -14,11 +14,10 @@ import net.minecraft.client.render.TextRenderer;
+ import net.minecraft.client.render.platform.GlStateManager;
+ import net.minecraft.client.render.texture.DynamicTexture;
+ import net.minecraft.resource.Identifier;
+-import net.minecraft.text.Formatting;
+-import net.minecraft.text.LiteralText;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
+ import net.minecraft.util.Utils;
++import net.ornithemc.osl.text.api.Formatting;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ public class ModListEntry extends EntryListWidget.Entry<ModListEntry> {
+ 	public static final Identifier UNKNOWN_ICON = new Identifier("textures/misc/unknown_pack.png");
+@@ -54,22 +53,22 @@ public class ModListEntry extends EntryListWidget.Entry<ModListEntry> {
+ 		this.client.getTextureManager().bind(this.getIconTexture());
+ 		GuiElement.drawTexture(x, y, 0.0F, 0.0F, iconSize, iconSize, iconSize, iconSize);
+ 		GlStateManager.disableBlend();
+-		Text name = new LiteralText(mod.getTranslatedName());
+-		Text trimmedName = name;
++		TextComponent name = TextComponents.literal(mod.getTranslatedName());
++		TextComponent trimmedName = name;
+ 		int maxNameWidth = rowWidth - iconSize - 3;
+ 		TextRenderer font = this.client.textRenderer;
+-		if (font.getWidth(name.getFormattedString()) > maxNameWidth) {
+-			Text ellipsis = new LiteralText("...");
+-			trimmedName = new LiteralText("").append(font.trim(name.getFormattedString(), maxNameWidth - font.getWidth(ellipsis.getFormattedString()))).append(ellipsis);
++		if (font.getWidth(name.buildFormattedString()) > maxNameWidth) {
++			TextComponent ellipsis = TextComponents.literal("...");
++			trimmedName = TextComponents.literal(font.trim(name.buildFormattedString(), maxNameWidth - font.getWidth(ellipsis.buildFormattedString()))).append(ellipsis);
+ 		}
+-		font.draw(trimmedName.getFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
++		font.draw(trimmedName.buildFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
+ 		int updateBadgeXOffset = 0;
+ 		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.hasUpdate() || mod.getChildHasUpdate())) {
+-			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2, y);
++			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2, y);
+ 			updateBadgeXOffset = 11;
+ 		}
+ 		if (!ModMenuConfig.HIDE_BADGES.getValue()) {
+-			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.getFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
++			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
+ 		}
+ 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
+ 			String summary = mod.getSummary();
+@@ -89,7 +88,7 @@ public class ModListEntry extends EntryListWidget.Entry<ModListEntry> {
+ 					GuiElement.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
+ 					if (hoveringIcon) {
+ 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
+-						this.list.getParent().setTooltip(this.client.textRenderer.split(new TranslatableText("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).setFormatting(Formatting.RED).getFormattedString(), 175));
++						this.list.getParent().setTooltip(this.client.textRenderer.split(TextComponents.translatable("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).format(Formatting.RED).buildFormattedString(), 175));
+ 					}
+ 				} else {
+ 					this.client.getTextureManager().bind(MOD_CONFIGURATION_ICON);
+diff --git a/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ParentEntry.java b/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ParentEntry.java
+index bd70805..fda130f 100644
+--- a/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ParentEntry.java
++++ b/src/main/java/com/terraformersmc/modmenu/gui/widget/entries/ParentEntry.java
+@@ -10,9 +10,9 @@ import net.minecraft.client.gui.GuiElement;
+ import net.minecraft.client.render.TextRenderer;
+ import net.minecraft.client.render.platform.GlStateManager;
+ import net.minecraft.resource.Identifier;
+-import net.minecraft.text.LiteralText;
+-import net.minecraft.text.Text;
+ import net.minecraft.util.Utils;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import org.lwjgl.glfw.GLFW;
+ 
+@@ -41,8 +41,8 @@ public class ParentEntry extends ModListEntry {
+ 		int childrenBadgeHeight = font.fontHeight;
+ 		int childrenBadgeWidth = font.fontHeight;
+ 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
+-		Text str = shownChildren == children.size() ? new LiteralText(String.valueOf(shownChildren)) : new LiteralText(shownChildren + "/" + children.size());
+-		int childrenWidth = font.getWidth(str.getFormattedString()) - 1;
++		TextComponent str = shownChildren == children.size() ? TextComponents.literal(String.valueOf(shownChildren)) : TextComponents.literal(shownChildren + "/" + children.size());
++		int childrenWidth = font.getWidth(str.buildFormattedString()) - 1;
+ 		if (childrenBadgeWidth < childrenWidth + 4) {
+ 			childrenBadgeWidth = childrenWidth + 4;
+ 		}
+@@ -56,7 +56,7 @@ public class ParentEntry extends ModListEntry {
+ 		GuiElement.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
+ 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
+ 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
+-		font.draw(str.getFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
++		font.draw(str.buildFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
+ 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
+ 		if (isMouseOver(mouseX, mouseY)) {
+ 			GuiElement.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
+diff --git a/src/main/java/com/terraformersmc/modmenu/mixin/MixinTitleScreen.java b/src/main/java/com/terraformersmc/modmenu/mixin/MixinTitleScreen.java
+index 7808db6..22bf5b0 100644
+--- a/src/main/java/com/terraformersmc/modmenu/mixin/MixinTitleScreen.java
++++ b/src/main/java/com/terraformersmc/modmenu/mixin/MixinTitleScreen.java
+@@ -12,8 +12,8 @@ import net.minecraft.client.gui.GuiEventListener;
+ import net.minecraft.client.gui.screen.Screen;
+ import net.minecraft.client.gui.screen.TitleScreen;
+ import net.minecraft.client.gui.widget.ButtonWidget;
+-import net.minecraft.client.resource.language.I18n;
+ import net.minecraft.resource.Identifier;
++import net.ornithemc.osl.localization.api.L10n;
+ 
+ import java.util.List;
+ 
+@@ -99,11 +99,11 @@ public abstract class MixinTitleScreen extends Screen {
+ 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnTitleScreen()) {
+ 			String count = ModMenu.getDisplayedModCount();
+ 			String specificKey = "modmenu.mods." + count;
+-			String replacementKey = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
+-			if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
++			String replacementKey = L10n.has(specificKey) ? specificKey : "modmenu.mods.n";
++			if (ModMenuConfig.EASTER_EGGS.getValue() && L10n.has(specificKey + ".secret")) {
+ 				replacementKey = specificKey + ".secret";
+ 			}
+-			return string + I18n.translate(replacementKey, count);
++			return string + L10n.get(replacementKey, count);
+ 		}
+ 		return string;
+ 	}
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/DrawingUtil.java b/src/main/java/com/terraformersmc/modmenu/util/DrawingUtil.java
+index fe085b3..faa7a7c 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/DrawingUtil.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/DrawingUtil.java
+@@ -7,8 +7,8 @@ import net.fabricmc.api.Environment;
+ import net.minecraft.client.Minecraft;
+ import net.minecraft.client.gui.GuiElement;
+ import net.minecraft.client.render.platform.GlStateManager;
+-import net.minecraft.text.*;
+ import net.minecraft.util.math.MathHelper;
++import net.ornithemc.osl.text.api.TextComponent;
+ 
+ import java.util.List;
+ import java.util.Random;
+@@ -50,13 +50,13 @@ public class DrawingUtil {
+ 		}
+ 	}
+ 
+-	public static void drawBadge(int x, int y, int tagWidth, Text text, int outlineColor, int fillColor, int textColor) {
++	public static void drawBadge(int x, int y, int tagWidth, TextComponent text, int outlineColor, int fillColor, int textColor) {
+ 		GuiElement.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
+ 		GuiElement.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
+ 		GuiElement.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
+ 		GuiElement.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
+ 		GuiElement.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
+-		String s = text.getFormattedString();
++		String s = text.buildFormattedString();
+ 		CLIENT.textRenderer.draw(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(s)) / (float) 2), y + 1, textColor);
+ 	}
+ }
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/TranslationUtil.java b/src/main/java/com/terraformersmc/modmenu/util/TranslationUtil.java
+index 5842822..d393a95 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/TranslationUtil.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/TranslationUtil.java
+@@ -1,15 +1,16 @@
+ package com.terraformersmc.modmenu.util;
+ 
+ import com.terraformersmc.modmenu.ModMenu;
+-import net.minecraft.client.resource.language.I18n;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++
++import net.ornithemc.osl.localization.api.L10n;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import java.text.NumberFormat;
+ import java.util.Arrays;
+ 
+ public class TranslationUtil {
+-	public static Text translateNumeric(String key, int[]... args) {
++	public static TextComponent translateNumeric(String key, int[]... args) {
+ 		Object[] realArgs = new Object[args.length];
+ 		for (int i = 0; i < args.length; i++) {
+ 			NumberFormat nf = NumberFormat.getInstance();
+@@ -45,18 +46,18 @@ public class TranslationUtil {
+ 				}
+ 			}
+ 			lastKey = fullKey.toString();
+-			if (I18n.hasTranslation(lastKey)) {
+-				return new TranslatableText(lastKey, realArgs);
++			if (L10n.has(lastKey)) {
++				return TextComponents.translatable(lastKey, realArgs);
+ 			}
+ 		}
+-		return new TranslatableText(lastKey, realArgs);
++		return TextComponents.translatable(lastKey, realArgs);
+ 	}
+ 
+ 	public static String translationKeyOf(String type, String id) {
+ 		return type + "." + ModMenu.MOD_ID + "." + id;
+ 	}
+ 
+-	public static String translateOptionLabel(Text key, Text value) {
+-		return I18n.translate("option.value_label", key.getFormattedString(), value.getFormattedString());
++	public static String translateOptionLabel(TextComponent key, TextComponent value) {
++		return L10n.get("option.value_label", key.buildFormattedString(), value.buildFormattedString());
+ 	}
+ }
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/Mod.java b/src/main/java/com/terraformersmc/modmenu/util/mod/Mod.java
+index 94edb7d..4e4fb1c 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/Mod.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/Mod.java
+@@ -1,6 +1,5 @@
+ package com.terraformersmc.modmenu.util.mod;
+ 
+-import com.google.common.base.Predicates;
+ import com.terraformersmc.modmenu.ModMenu;
+ import com.terraformersmc.modmenu.api.UpdateChecker;
+ import com.terraformersmc.modmenu.api.UpdateInfo;
+@@ -8,9 +7,9 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
+ import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
+ import net.fabricmc.loader.api.metadata.ModOrigin;
+ import net.minecraft.client.render.texture.DynamicTexture;
+-import net.minecraft.client.resource.language.I18n;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.localization.api.L10n;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+@@ -29,8 +28,8 @@ public interface Mod {
+ 	@NotNull
+ 	default String getTranslatedName() {
+ 		String translationKey = "modmenu.nameTranslation." + getId();
+-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_NAMES.getValue()) && I18n.hasTranslation(translationKey)) {
+-			return I18n.translate(translationKey);
++		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_NAMES.getValue()) && L10n.has(translationKey)) {
++			return L10n.get(translationKey);
+ 		}
+ 		return getName();
+ 	}
+@@ -46,8 +45,8 @@ public interface Mod {
+ 	@NotNull
+ 	default String getTranslatedSummary() {
+ 		String translationKey = "modmenu.summaryTranslation." + getId();
+-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && I18n.hasTranslation(translationKey)) {
+-			return I18n.translate(translationKey);
++		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && L10n.has(translationKey)) {
++			return L10n.get(translationKey);
+ 		}
+ 		return getTranslatedDescription();
+ 	}
+@@ -58,8 +57,8 @@ public interface Mod {
+ 	@NotNull
+ 	default String getTranslatedDescription() {
+ 		String translatableDescriptionKey = "modmenu.descriptionTranslation." + getId();
+-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && I18n.hasTranslation(translatableDescriptionKey)) {
+-			return I18n.translate(translatableDescriptionKey);
++		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && L10n.has(translatableDescriptionKey)) {
++			return L10n.get(translatableDescriptionKey);
+ 		}
+ 		return getDescription();
+ 	}
+@@ -147,19 +146,19 @@ public interface Mod {
+ 		MODPACK("modmenu.badge.modpack", 0xff7a2b7c, 0xff510d54, null),
+ 		MINECRAFT("modmenu.badge.minecraft", 0xff6f6c6a, 0xff31302f, null);
+ 
+-		private final Text text;
++		private final TextComponent text;
+ 		private final int outlineColor, fillColor;
+ 		private final String key;
+ 		private static final Map<String, Badge> KEY_MAP = new HashMap<>();
+ 
+ 		Badge(String translationKey, int outlineColor, int fillColor, String key) {
+-			this.text = new TranslatableText(translationKey);
++			this.text = TextComponents.translatable(translationKey);
+ 			this.outlineColor = outlineColor;
+ 			this.fillColor = fillColor;
+ 			this.key = key;
+ 		}
+ 
+-		public Text getText() {
++		public TextComponent getText() {
+ 			return this.text;
+ 		}
+ 
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/ModBadgeRenderer.java b/src/main/java/com/terraformersmc/modmenu/util/mod/ModBadgeRenderer.java
+index 7435036..09a30b9 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/ModBadgeRenderer.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/ModBadgeRenderer.java
+@@ -4,7 +4,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
+ import com.terraformersmc.modmenu.gui.ModsScreen;
+ import com.terraformersmc.modmenu.util.DrawingUtil;
+ import net.minecraft.client.Minecraft;
+-import net.minecraft.text.Text;
++import net.ornithemc.osl.text.api.TextComponent;
+ 
+ import java.nio.charset.StandardCharsets;
+ import java.util.Calendar;
+@@ -36,8 +36,8 @@ public class ModBadgeRenderer {
+ 		this.drawBadge(badge.getText(), badge.getOutlineColor(), badge.getFillColor(), mouseX, mouseY);
+ 	}
+ 
+-	public void drawBadge(Text text, int outlineColor, int fillColor, int mouseX, int mouseY) {
+-		int width = client.textRenderer.getWidth(text.getFormattedString()) + 6;
++	public void drawBadge(TextComponent text, int outlineColor, int fillColor, int mouseX, int mouseY) {
++		int width = client.textRenderer.getWidth(text.buildFormattedString()) + 6;
+ 		if (badgeX + width < badgeMax) {
+ 			DrawingUtil.drawBadge(badgeX, badgeY, width, text, outlineColor, fillColor, 0xCACACA);
+ 			badgeX += width + 3;
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/ModSearch.java b/src/main/java/com/terraformersmc/modmenu/util/mod/ModSearch.java
+index 95fb0c4..452ece2 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/ModSearch.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/ModSearch.java
+@@ -3,8 +3,8 @@ package com.terraformersmc.modmenu.util.mod;
+ import com.terraformersmc.modmenu.ModMenu;
+ import com.terraformersmc.modmenu.config.ModMenuConfig;
+ import com.terraformersmc.modmenu.gui.ModsScreen;
+-import net.minecraft.client.resource.language.I18n;
+ import net.minecraft.util.Pair;
++import net.ornithemc.osl.localization.api.L10n;
+ 
+ import java.util.List;
+ import java.util.Locale;
+@@ -36,13 +36,13 @@ public class ModSearch {
+ 		String modTranslatedDescription = mod.getTranslatedDescription();
+ 		String modSummary = mod.getSummary();
+ 
+-		String library = I18n.translate("modmenu.searchTerms.library");
+-		String patchwork = I18n.translate("modmenu.searchTerms.patchwork");
+-		String modpack = I18n.translate("modmenu.searchTerms.modpack");
+-		String deprecated = I18n.translate("modmenu.searchTerms.deprecated");
+-		String clientside = I18n.translate("modmenu.searchTerms.clientside");
+-		String configurable = I18n.translate("modmenu.searchTerms.configurable");
+-		String hasUpdate = I18n.translate("modmenu.searchTerms.hasUpdate");
++		String library = L10n.get("modmenu.searchTerms.library");
++		String patchwork = L10n.get("modmenu.searchTerms.patchwork");
++		String modpack = L10n.get("modmenu.searchTerms.modpack");
++		String deprecated = L10n.get("modmenu.searchTerms.deprecated");
++		String clientside = L10n.get("modmenu.searchTerms.clientside");
++		String configurable = L10n.get("modmenu.searchTerms.configurable");
++		String hasUpdate = L10n.get("modmenu.searchTerms.hasUpdate");
+ 
+ 		// Libraries are currently hidden, ignore them entirely
+ 		if (mod.isHidden() || !ModMenuConfig.SHOW_LIBRARIES.getValue() && mod.getBadges().contains(Mod.Badge.LIBRARY)) {
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/ModrinthUpdateInfo.java b/src/main/java/com/terraformersmc/modmenu/util/mod/ModrinthUpdateInfo.java
+index ae542f3..a71ba90 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/ModrinthUpdateInfo.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/ModrinthUpdateInfo.java
+@@ -6,8 +6,8 @@ import com.terraformersmc.modmenu.api.UpdateChannel;
+ import com.terraformersmc.modmenu.api.UpdateInfo;
+ import com.terraformersmc.modmenu.util.VersionUtil;
+ 
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ public class ModrinthUpdateInfo implements UpdateInfo {
+ 	protected final String projectId;
+@@ -15,7 +15,7 @@ public class ModrinthUpdateInfo implements UpdateInfo {
+ 	protected final String versionNumber;
+ 	protected final UpdateChannel updateChannel;
+ 
+-	private static final Text MODRINTH_TEXT = new TranslatableText("modmenu.modrinth");
++	private static final TextComponent MODRINTH_TEXT = TextComponents.translatable("modmenu.modrinth");
+ 
+ 	public ModrinthUpdateInfo(String projectId, String versionId, String versionNumber, UpdateChannel updateChannel) {
+ 		this.projectId = projectId;
+@@ -30,8 +30,8 @@ public class ModrinthUpdateInfo implements UpdateInfo {
+ 	}
+ 
+ 	@Override
+-	public @Nullable Text getUpdateMessage() {
+-		return new TranslatableText("modmenu.updateText", VersionUtil.stripPrefix(this.versionNumber), MODRINTH_TEXT);
++	public @Nullable TextComponent getUpdateMessage() {
++		return TextComponents.translatable("modmenu.updateText", VersionUtil.stripPrefix(this.versionNumber), MODRINTH_TEXT);
+ 	}
+ 
+ 	@Override
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricLoaderUpdateChecker.java b/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricLoaderUpdateChecker.java
+index 2fc377e..be483a8 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricLoaderUpdateChecker.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricLoaderUpdateChecker.java
+@@ -26,8 +26,8 @@ import net.fabricmc.loader.api.FabricLoader;
+ import net.fabricmc.loader.api.SemanticVersion;
+ import net.fabricmc.loader.api.Version;
+ import net.fabricmc.loader.api.VersionParsingException;
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ public class FabricLoaderUpdateChecker implements UpdateChecker {
+ 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Fabric Update Checker");
+@@ -145,8 +145,8 @@ public class FabricLoaderUpdateChecker implements UpdateChecker {
+ 		}
+ 
+ 		@Override
+-		public @Nullable Text getUpdateMessage() {
+-			return new TranslatableText("modmenu.install_version", this.version);
++		public @Nullable TextComponent getUpdateMessage() {
++			return TextComponents.translatable("modmenu.install_version", this.version);
+ 		}
+ 
+ 		@Override
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricMod.java b/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricMod.java
+index f801810..45d31a6 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricMod.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/fabric/FabricMod.java
+@@ -15,7 +15,8 @@ import net.fabricmc.loader.api.FabricLoader;
+ import net.fabricmc.loader.api.ModContainer;
+ import net.fabricmc.loader.api.metadata.*;
+ import net.minecraft.client.render.texture.DynamicTexture;
+-import net.minecraft.client.resource.language.I18n;
++import net.ornithemc.osl.localization.api.L10n;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -181,7 +182,7 @@ public class FabricMod implements Mod {
+ 	public @NotNull String getTranslatedDescription() {
+ 		String description = Mod.super.getTranslatedDescription();
+ 		if (getId().equals("java")) {
+-			description = description + "\n" + I18n.translate("modmenu.javaDistributionName", getName());
++			description = description + "\n" + L10n.get("modmenu.javaDistributionName", getName());
+ 		}
+ 		return description;
+ 	}
+diff --git a/src/main/java/com/terraformersmc/modmenu/util/mod/quilt/QuiltLoaderUpdateChecker.java b/src/main/java/com/terraformersmc/modmenu/util/mod/quilt/QuiltLoaderUpdateChecker.java
+index 8225f28..8320e36 100644
+--- a/src/main/java/com/terraformersmc/modmenu/util/mod/quilt/QuiltLoaderUpdateChecker.java
++++ b/src/main/java/com/terraformersmc/modmenu/util/mod/quilt/QuiltLoaderUpdateChecker.java
+@@ -24,8 +24,8 @@ import com.terraformersmc.modmenu.api.UpdateInfo;
+ import com.terraformersmc.modmenu.util.HttpUtil;
+ import com.terraformersmc.modmenu.util.JsonUtil;
+ 
+-import net.minecraft.text.Text;
+-import net.minecraft.text.TranslatableText;
++import net.ornithemc.osl.text.api.TextComponent;
++import net.ornithemc.osl.text.api.TextComponents;
+ 
+ public class QuiltLoaderUpdateChecker implements UpdateChecker {
+ 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Quilt Update Checker");
+@@ -142,8 +142,8 @@ public class QuiltLoaderUpdateChecker implements UpdateChecker {
+ 		}
+ 
+ 		@Override
+-		public @Nullable Text getUpdateMessage() {
+-			return new TranslatableText("modmenu.install_version", this.version.raw());
++		public @Nullable TextComponent getUpdateMessage() {
++			return TextComponents.translatable("modmenu.install_version", this.version.raw());
+ 		}
+ 
+ 		@Override
