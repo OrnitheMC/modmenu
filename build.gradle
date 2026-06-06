@@ -12,6 +12,11 @@ group = project.maven_group
 
 loom {
 	accessWidenerPath = file("src/main/resources/modmenu.classtweaker")
+	runs {
+        client {
+             programArgs "--userProperties", "{}"
+        }
+    }
 }
 
 ploceus {
