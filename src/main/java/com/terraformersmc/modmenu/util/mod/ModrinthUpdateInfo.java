@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import com.terraformersmc.modmenu.api.UpdateChannel;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.VersionUtil;
-import net.minecraft.locale.I18n;
+
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class ModrinthUpdateInfo implements UpdateInfo {
 	protected final String projectId;
@@ -13,7 +15,7 @@ public class ModrinthUpdateInfo implements UpdateInfo {
 	protected final String versionNumber;
 	protected final UpdateChannel updateChannel;
 
-	private static final String MODRINTH_TEXT = I18n.translate("modmenu.modrinth");
+	private static final TextComponent MODRINTH_TEXT = TextComponents.translatable("modmenu.modrinth");
 
 	public ModrinthUpdateInfo(String projectId, String versionId, String versionNumber, UpdateChannel updateChannel) {
 		this.projectId = projectId;
@@ -28,8 +30,8 @@ public class ModrinthUpdateInfo implements UpdateInfo {
 	}
 
 	@Override
-	public @Nullable String getUpdateMessage() {
-		return I18n.translate("modmenu.updateText", VersionUtil.stripPrefix(this.versionNumber), MODRINTH_TEXT);
+	public @Nullable TextComponent getUpdateMessage() {
+		return TextComponents.translatable("modmenu.updateText", VersionUtil.stripPrefix(this.versionNumber), MODRINTH_TEXT);
 	}
 
 	@Override

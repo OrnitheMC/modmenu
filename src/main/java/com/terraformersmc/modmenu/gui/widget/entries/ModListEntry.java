@@ -16,7 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.client.render.vertex.Tesselator;
-import net.minecraft.locale.I18n;
+import net.ornithemc.osl.text.api.Formatting;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 	public static final String UNKNOWN_ICON = "/gui/unknown_pack.png";
@@ -52,22 +54,22 @@ public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 		this.bindIconTexture();
 		DrawingUtil.drawTexture(x, y, 0.0F, 0.0F, iconSize, iconSize, iconSize, iconSize);
 		GL11.glDisable(GL11.GL_BLEND);
-		String name = mod.getTranslatedName();
-		String trimmedName = name;
+		TextComponent name = TextComponents.literal(mod.getTranslatedName());
+		TextComponent trimmedName = name;
 		int maxNameWidth = rowWidth - iconSize - 3;
 		TextRenderer font = this.client.textRenderer;
-		if (font.getWidth(name) > maxNameWidth) {
-			String ellipsis = "...";
-			trimmedName = font.trim(name, maxNameWidth - font.getWidth(ellipsis)) + ellipsis;
+		if (font.getWidth(name.buildFormattedString()) > maxNameWidth) {
+			TextComponent ellipsis = TextComponents.literal("...");
+			trimmedName = TextComponents.literal(font.trim(name.buildFormattedString(), maxNameWidth - font.getWidth(ellipsis.buildFormattedString()))).append(ellipsis);
 		}
-		font.draw(trimmedName, x + iconSize + 3, y + 1, 0xFFFFFF);
+		font.draw(trimmedName.buildFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;
 		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.hasUpdate() || mod.getChildHasUpdate())) {
-			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name) + 2, y);
+			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2, y);
 			updateBadgeXOffset = 11;
 		}
 		if (!ModMenuConfig.HIDE_BADGES.getValue()) {
-			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
+			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
 		}
 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
 			String summary = mod.getSummary();
@@ -87,7 +89,7 @@ public class ModListEntry extends GuiElement implements EntryListWidget.Entry {
 					DrawingUtil.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 					if (hoveringIcon) {
 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
-						this.list.getParent().setTooltip(this.client.textRenderer.split(I18n.translate("modmenu.configure.error", modId, modId) + "\n\n" + /*Formatting.RED +*/ e.toString(), 175));
+						this.list.getParent().setTooltip(this.client.textRenderer.split(TextComponents.translatable("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).format(Formatting.RED).buildFormattedString(), 175));
 					}
 				} else {
 					this.client.textureManager.bind(this.client.textureManager.load(MOD_CONFIGURATION_ICON));

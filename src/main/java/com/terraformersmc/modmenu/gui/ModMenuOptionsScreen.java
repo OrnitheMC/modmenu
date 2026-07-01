@@ -6,7 +6,7 @@ import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.gui.widget.ConfigOptionListWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.locale.I18n;
+import net.ornithemc.osl.localization.api.L10n;
 
 public class ModMenuOptionsScreen extends Screen {
 
@@ -20,13 +20,13 @@ public class ModMenuOptionsScreen extends Screen {
 
 	public ModMenuOptionsScreen(Screen previous) {
 		this.previous = previous;
-		this.title = I18n.translate("modmenu.options");
+		this.title = L10n.get("modmenu.options");
 	}
 
 	@Override
 	public void init() {
 		this.list = new ConfigOptionListWidget(this.minecraft, this.width, this.height, 32, this.height - 32, 25, ModMenuConfig.asOptions());
-		this.buttons.add(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done")));
+		this.buttons.add(new ButtonWidget(DONE, this.width / 2 - 100, this.height - 27, 200, 20, L10n.get("gui.done")));
 	}
 
 	@Override
