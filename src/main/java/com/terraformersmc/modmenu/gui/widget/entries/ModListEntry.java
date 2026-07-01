@@ -14,8 +14,9 @@ import net.minecraft.client.render.TextRenderer;
 import net.minecraft.client.render.texture.DynamicTexture;
 import net.minecraft.client.render.vertex.Tesselator;
 import net.minecraft.client.resource.Identifier;
-import net.minecraft.text.Formatting;
-import net.minecraft.text.Text;
+import net.ornithemc.osl.text.api.Formatting;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class ModListEntry implements EntryListWidget.Entry {
 	public static final Identifier UNKNOWN_ICON = new Identifier("textures/misc/unknown_pack.png");
@@ -50,22 +51,22 @@ public class ModListEntry implements EntryListWidget.Entry {
 		this.client.getTextureManager().bind(this.getIconTexture());
 		DrawingUtil.drawTexture(x, y, 0.0F, 0.0F, iconSize, iconSize, iconSize, iconSize);
 		GL11.glDisable(GL11.GL_BLEND);
-		Text name = Text.literal(mod.getTranslatedName());
-		Text trimmedName = name;
+		TextComponent name = TextComponents.literal(mod.getTranslatedName());
+		TextComponent trimmedName = name;
 		int maxNameWidth = rowWidth - iconSize - 3;
 		TextRenderer font = this.client.textRenderer;
-		if (font.getWidth(name.buildString(true)) > maxNameWidth) {
-			Text ellipsis = Text.literal("...");
-			trimmedName = Text.literal("").appendLiteral(font.trim(name.buildString(true), maxNameWidth - font.getWidth(ellipsis.buildString(true)))).append(ellipsis);
+		if (font.getWidth(name.buildFormattedString()) > maxNameWidth) {
+			TextComponent ellipsis = TextComponents.literal("...");
+			trimmedName = TextComponents.literal(font.trim(name.buildFormattedString(), maxNameWidth - font.getWidth(ellipsis.buildFormattedString()))).append(ellipsis);
 		}
-		font.draw(trimmedName.buildString(true), x + iconSize + 3, y + 1, 0xFFFFFF);
+		font.draw(trimmedName.buildFormattedString(), x + iconSize + 3, y + 1, 0xFFFFFF);
 		int updateBadgeXOffset = 0;
 		if (ModMenuConfig.UPDATE_CHECKER.getValue() && !ModMenuConfig.DISABLE_UPDATE_CHECKER.getValue().contains(modId) && (mod.hasUpdate() || mod.getChildHasUpdate())) {
-			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.buildString(true)) + 2, y);
+			UpdateAvailableBadge.renderBadge(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2, y);
 			updateBadgeXOffset = 11;
 		}
 		if (!ModMenuConfig.HIDE_BADGES.getValue()) {
-			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.buildString(true)) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
+			new ModBadgeRenderer(x + iconSize + 3 + font.getWidth(name.buildFormattedString()) + 2 + updateBadgeXOffset, y, x + rowWidth, mod, list.getParent()).draw(mouseX, mouseY);
 		}
 		if (!ModMenuConfig.COMPACT_LIST.getValue()) {
 			String summary = mod.getSummary();
@@ -85,7 +86,7 @@ public class ModListEntry implements EntryListWidget.Entry {
 					DrawingUtil.drawTexture(x, y, 96.0F, (float) v, iconSize, iconSize, textureSize, textureSize);
 					if (hoveringIcon) {
 						Throwable e = this.list.getParent().modScreenErrors.get(modId);
-						this.list.getParent().setTooltip(this.client.textRenderer.split(Text.translatable("modmenu.configure.error", modId, modId).appendLiteral("\n\n").appendLiteral(e.toString()).setColor(Formatting.RED).buildString(true), 175));
+						this.list.getParent().setTooltip(this.client.textRenderer.split(TextComponents.translatable("modmenu.configure.error", modId, modId).append("\n\n").append(e.toString()).format(Formatting.RED).buildFormattedString(), 175));
 					}
 				} else {
 					this.client.getTextureManager().bind(MOD_CONFIGURATION_ICON);

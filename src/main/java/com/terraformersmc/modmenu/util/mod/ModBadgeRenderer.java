@@ -3,7 +3,7 @@ package com.terraformersmc.modmenu.util.mod;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.util.DrawingUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.text.Text;
+import net.ornithemc.osl.text.api.TextComponent;
 
 import java.util.Set;
 
@@ -33,8 +33,8 @@ public class ModBadgeRenderer {
 		this.drawBadge(badge.getText(), badge.getOutlineColor(), badge.getFillColor(), mouseX, mouseY);
 	}
 
-	public void drawBadge(Text text, int outlineColor, int fillColor, int mouseX, int mouseY) {
-		int width = client.textRenderer.getWidth(text.buildString(true)) + 6;
+	public void drawBadge(TextComponent text, int outlineColor, int fillColor, int mouseX, int mouseY) {
+		int width = client.textRenderer.getWidth(text.buildFormattedString()) + 6;
 		if (badgeX + width < badgeMax) {
 			DrawingUtil.drawBadge(badgeX, badgeY, width, text, outlineColor, fillColor, 0xCACACA);
 			badgeX += width + 3;

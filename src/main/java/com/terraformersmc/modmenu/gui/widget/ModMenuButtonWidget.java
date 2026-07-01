@@ -5,11 +5,11 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.ornithemc.osl.text.api.TextComponent;
 
 public class ModMenuButtonWidget extends ButtonWidget {
-	public ModMenuButtonWidget(int id, int x, int y, int width, int height, Text text) {
-		super(id, x, y, width, height, text.buildString(true));
+	public ModMenuButtonWidget(int id, int x, int y, int width, int height, TextComponent text) {
+		super(id, x, y, width, height, text.buildFormattedString());
 	}
 
 	@Override
