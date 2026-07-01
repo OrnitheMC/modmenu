@@ -1,22 +1,16 @@
 package com.terraformersmc.modmenu.util;
 
 import com.terraformersmc.modmenu.ModMenu;
-import com.terraformersmc.modmenu.mixin.AccessorI18n;
-import com.terraformersmc.modmenu.mixin.AccessorTranslationStorage;
 
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.ornithemc.osl.localization.api.L10n;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
 
 public class TranslationUtil {
-	public static boolean hasTranslation(String key) {
-		return ((AccessorTranslationStorage) AccessorI18n.getTranslations()).getTranslations().containsKey(key);
-	}
-
-	public static Text translateNumeric(String key, int[]... args) {
+	public static TextComponent translateNumeric(String key, int[]... args) {
 		Object[] realArgs = new Object[args.length];
 		for (int i = 0; i < args.length; i++) {
 			NumberFormat nf = NumberFormat.getInstance();
@@ -52,18 +46,18 @@ public class TranslationUtil {
 				}
 			}
 			lastKey = fullKey.toString();
-			if (TranslationUtil.hasTranslation(lastKey)) {
-				return new TranslatableText(lastKey, realArgs);
+			if (L10n.has(lastKey)) {
+				return TextComponents.translatable(lastKey, realArgs);
 			}
 		}
-		return new TranslatableText(lastKey, realArgs);
+		return TextComponents.translatable(lastKey, realArgs);
 	}
 
 	public static String translationKeyOf(String type, String id) {
 		return type + "." + ModMenu.MOD_ID + "." + id;
 	}
 
-	public static String translateOptionLabel(Text key, Text value) {
-		return I18n.translate("option.value_label", key.getFormattedString(), value.getFormattedString());
+	public static String translateOptionLabel(TextComponent key, TextComponent value) {
+		return L10n.get("option.value_label", key.buildFormattedString(), value.buildFormattedString());
 	}
 }
