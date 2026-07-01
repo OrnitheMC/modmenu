@@ -1,17 +1,15 @@
 package com.terraformersmc.modmenu.util.mod;
 
-import com.google.common.base.Predicates;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
-import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricIconHandler;
 import net.fabricmc.loader.api.metadata.ModOrigin;
 import net.minecraft.client.render.texture.DynamicTexture;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.ornithemc.osl.localization.api.L10n;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +28,8 @@ public interface Mod {
 	@NotNull
 	default String getTranslatedName() {
 		String translationKey = "modmenu.nameTranslation." + getId();
-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_NAMES.getValue()) && TranslationUtil.hasTranslation(translationKey)) {
-			return I18n.translate(translationKey);
+		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_NAMES.getValue()) && L10n.has(translationKey)) {
+			return L10n.get(translationKey);
 		}
 		return getName();
 	}
@@ -47,8 +45,8 @@ public interface Mod {
 	@NotNull
 	default String getTranslatedSummary() {
 		String translationKey = "modmenu.summaryTranslation." + getId();
-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && TranslationUtil.hasTranslation(translationKey)) {
-			return I18n.translate(translationKey);
+		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && L10n.has(translationKey)) {
+			return L10n.get(translationKey);
 		}
 		return getTranslatedDescription();
 	}
@@ -59,8 +57,8 @@ public interface Mod {
 	@NotNull
 	default String getTranslatedDescription() {
 		String translatableDescriptionKey = "modmenu.descriptionTranslation." + getId();
-		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && TranslationUtil.hasTranslation(translatableDescriptionKey)) {
-			return I18n.translate(translatableDescriptionKey);
+		if ((getId().equals("minecraft") || getId().equals("java") || ModMenuConfig.TRANSLATE_DESCRIPTIONS.getValue()) && L10n.has(translatableDescriptionKey)) {
+			return L10n.get(translatableDescriptionKey);
 		}
 		return getDescription();
 	}
@@ -148,19 +146,19 @@ public interface Mod {
 		MODPACK("modmenu.badge.modpack", 0xff7a2b7c, 0xff510d54, null),
 		MINECRAFT("modmenu.badge.minecraft", 0xff6f6c6a, 0xff31302f, null);
 
-		private final Text text;
+		private final TextComponent text;
 		private final int outlineColor, fillColor;
 		private final String key;
 		private static final Map<String, Badge> KEY_MAP = new HashMap<>();
 
 		Badge(String translationKey, int outlineColor, int fillColor, String key) {
-			this.text = new TranslatableText(translationKey);
+			this.text = TextComponents.translatable(translationKey);
 			this.outlineColor = outlineColor;
 			this.fillColor = fillColor;
 			this.key = key;
 		}
 
-		public Text getText() {
+		public TextComponent getText() {
 			return this.text;
 		}
 
