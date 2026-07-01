@@ -1,19 +1,23 @@
 package com.terraformersmc.modmenu.config.option;
 
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
+
 import com.terraformersmc.modmenu.util.TranslationUtil;
 import java.util.Set;
-import net.minecraft.locale.I18n;
 
 public class StringSetConfigOption {
-	private final String key, translationKey;
+	private final String key;
 	private final Set<String> defaultValue;
+	private final TextComponent description;
 
 	public StringSetConfigOption(String key, Set<String> defaultValue) {
 		super();
 		ConfigOptionStorage.setStringSet(key, defaultValue);
+		String translationKey = TranslationUtil.translationKeyOf("option", key);
 		this.key = key;
-		this.translationKey = TranslationUtil.translationKeyOf("option", key);
 		this.defaultValue = defaultValue;
+		this.description = TextComponents.translatable(translationKey);
 	}
 
 	public String getKey() {
@@ -28,8 +32,8 @@ public class StringSetConfigOption {
 		ConfigOptionStorage.setStringSet(key, value);
 	}
 
-	public String getMessage() {
-		return I18n.translate(translationKey);
+	public TextComponent getMessage() {
+		return description;
 	}
 
 	public Set<String> getDefaultValue() {
