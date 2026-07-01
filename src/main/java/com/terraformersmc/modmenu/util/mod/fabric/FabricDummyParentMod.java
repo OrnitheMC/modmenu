@@ -35,8 +35,8 @@ public class FabricDummyParentMod implements Mod {
 		if (parentData != null) {
 			return parentData.getName().orElse("");
 		}
-		if (id.equals("fabric-api")) {
-			return "Fabric API";
+		if (id.equals("osl")) {
+			return "Ornithe Standard Libraries";
 		}
 		return id;
 	}
@@ -54,8 +54,8 @@ public class FabricDummyParentMod implements Mod {
 		}
 		if (iconPath == null) {
 			iconSourceId = ModMenu.MOD_ID;
-			if (id.equals("fabric-api")) {
-				iconPath = "assets/" + ModMenu.MOD_ID + "/fabric.png";
+			if (id.equals("osl")) {
+				iconPath = "assets/" + ModMenu.MOD_ID + "/ornithe.png";
 			} else {
 				iconPath = "assets/" + ModMenu.MOD_ID + "/unknown_parent.png";
 			}
@@ -106,7 +106,7 @@ public class FabricDummyParentMod implements Mod {
 			return parentData.getBadges();
 		}
 		Set<Badge> badges = new HashSet<Badge>();
-		if (id.equals("fabric-api")) {
+		if (id.equals("osl")) {
 			badges.add(Badge.LIBRARY);
 		}
 
