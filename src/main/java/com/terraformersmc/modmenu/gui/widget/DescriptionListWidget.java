@@ -5,24 +5,20 @@ import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.entries.ModListEntry;
 import com.terraformersmc.modmenu.util.ScreenUtil;
-import com.terraformersmc.modmenu.util.VersionUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.CreditsScreen;
 import net.minecraft.client.gui.screen.ResultListener;
-import com.terraformersmc.modmenu.util.mod.ModrinthUpdateInfo;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.platform.GLX;
 import net.minecraft.client.render.vertex.Tesselator;
-import net.minecraft.text.Formatting;
-import net.minecraft.text.Style;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
+import net.ornithemc.osl.text.api.Formatting;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,22 +26,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class DescriptionListWidget extends EntryListWidget implements ResultListener {
 
-	private static final Text HAS_UPDATE_TEXT = new TranslatableText("modmenu.hasUpdate");
-	private static final Text EXPERIMENTAL_TEXT = new TranslatableText("modmenu.experimental").setStyle(new Style().setColor(Formatting.GOLD));
-	private static final Text DOWNLOAD_TEXT = new TranslatableText("modmenu.downloadLink").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
-	private static final Text CHILD_HAS_UPDATE_TEXT = new TranslatableText("modmenu.childHasUpdate");
-	private static final Text LINKS_TEXT = new TranslatableText("modmenu.links");
-	private static final Text SOURCE_TEXT = new TranslatableText("modmenu.source").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
-	private static final Text LICENSE_TEXT = new TranslatableText("modmenu.license");
-	private static final Text VIEW_CREDITS_TEXT = new TranslatableText("modmenu.viewCredits").setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
-	private static final Text CREDITS_TEXT = new TranslatableText("modmenu.credits");
+	private static final TextComponent HAS_UPDATE_TEXT = TextComponents.translatable("modmenu.hasUpdate");
+	private static final TextComponent EXPERIMENTAL_TEXT = TextComponents.translatable("modmenu.experimental").format(Formatting.GOLD);
+	private static final TextComponent DOWNLOAD_TEXT = TextComponents.translatable("modmenu.downloadLink").format(Formatting.BLUE, Formatting.UNDERLINED);
+	private static final TextComponent CHILD_HAS_UPDATE_TEXT = TextComponents.translatable("modmenu.childHasUpdate");
+	private static final TextComponent LINKS_TEXT = TextComponents.translatable("modmenu.links");
+	private static final TextComponent SOURCE_TEXT = TextComponents.translatable("modmenu.source").format(Formatting.BLUE, Formatting.UNDERLINED);
+	private static final TextComponent LICENSE_TEXT = TextComponents.translatable("modmenu.license");
+	private static final TextComponent VIEW_CREDITS_TEXT = TextComponents.translatable("modmenu.viewCredits").format(Formatting.BLUE, Formatting.UNDERLINED);
+	private static final TextComponent CREDITS_TEXT = TextComponents.translatable("modmenu.credits");
 
 	private final Minecraft minecraft;
 	private final ModsScreen parent;
@@ -117,7 +112,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (Object line : textRenderer.split(HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+						for (Object line : textRenderer.split(HAS_UPDATE_TEXT.buildFormattedString(), wrapWidth - 11)) {
 							DescriptionEntry entry = new DescriptionEntry((String) line);
 							if (index == 0) entry.setUpdateTextEntry();
 
@@ -125,20 +120,20 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 							index += 1;
 						}
 
-						for (Object line : textRenderer.split(EXPERIMENTAL_TEXT.getFormattedString(), wrapWidth - 16)) {
+						for (Object line : textRenderer.split(EXPERIMENTAL_TEXT.buildFormattedString(), wrapWidth - 16)) {
 							this.entries.add(new DescriptionEntry((String) line, 8));
 						}
 
-						Text updateMessage = updateInfo.getUpdateMessage();
+						TextComponent updateMessage = updateInfo.getUpdateMessage();
 						String downloadLink = updateInfo.getDownloadLink();
 						if (updateMessage == null) {
 							updateMessage = DOWNLOAD_TEXT;
 						} else {
 							if (downloadLink != null) {
-								updateMessage = updateMessage.copy().setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true));
+								updateMessage = updateMessage.copy().format(Formatting.BLUE, Formatting.UNDERLINED);
 							}
 						}
-						for (Object line : textRenderer.split(updateMessage.getFormattedString(), wrapWidth - 16)) {
+						for (Object line : textRenderer.split(updateMessage.buildFormattedString(), wrapWidth - 16)) {
 							if (downloadLink != null) {
 								this.entries.add(new LinkEntry((String) line, downloadLink, 8));
 							} else {
@@ -150,7 +145,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 						this.entries.add(emptyEntry);
 
 						int index = 0;
-						for (Object line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.getFormattedString(), wrapWidth - 11)) {
+						for (Object line : textRenderer.split(CHILD_HAS_UPDATE_TEXT.buildFormattedString(), wrapWidth - 11)) {
 							DescriptionEntry entry = new DescriptionEntry((String) line);
 							if (index == 0) entry.setUpdateTextEntry();
 
@@ -165,13 +160,13 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 				if ((!links.isEmpty() || sourceLink != null) && !ModMenuConfig.HIDE_MOD_LINKS.getValue()) {
 					this.entries.add(emptyEntry);
 
-					for (Object line : textRenderer.split(LINKS_TEXT.getFormattedString(), wrapWidth)) {
+					for (Object line : textRenderer.split(LINKS_TEXT.buildFormattedString(), wrapWidth)) {
 						this.entries.add(new DescriptionEntry((String) line));
 					}
 
 					if (sourceLink != null) {
 						int indent = 8;
-						for (Object line : textRenderer.split(SOURCE_TEXT.getFormattedString(), wrapWidth - 16)) {
+						for (Object line : textRenderer.split(SOURCE_TEXT.buildFormattedString(), wrapWidth - 16)) {
 							this.entries.add(new LinkEntry((String) line, sourceLink, indent));
 							indent = 16;
 						}
@@ -179,7 +174,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 
 					links.forEach((key, value) -> {
 						int indent = 8;
-						for (Object line : textRenderer.split(new TranslatableText(key).setStyle(new Style().setColor(Formatting.BLUE).setUnderlined(true)).getFormattedString(), wrapWidth - 16)) {
+						for (Object line : textRenderer.split(TextComponents.translatable(key).format(Formatting.BLUE, Formatting.UNDERLINED).buildFormattedString(), wrapWidth - 16)) {
 							this.entries.add(new LinkEntry((String) line, value, indent));
 							indent = 16;
 						}
@@ -190,7 +185,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 				if (!ModMenuConfig.HIDE_MOD_LICENSE.getValue() && !licenses.isEmpty()) {
 					this.entries.add(emptyEntry);
 
-					for (Object line : textRenderer.split(LICENSE_TEXT.getFormattedString(), wrapWidth)) {
+					for (Object line : textRenderer.split(LICENSE_TEXT.buildFormattedString(), wrapWidth)) {
 						this.entries.add(new DescriptionEntry((String) line));
 					}
 
@@ -207,7 +202,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 					if ("minecraft".equals(mod.getId())) {
 						this.entries.add(emptyEntry);
 
-						for (Object line : textRenderer.split(VIEW_CREDITS_TEXT.getFormattedString(), wrapWidth)) {
+						for (Object line : textRenderer.split(VIEW_CREDITS_TEXT.buildFormattedString(), wrapWidth)) {
 							this.entries.add(new MojangCreditsEntry((String) line));
 						}
 					} else if (!"java".equals(mod.getId())) {
@@ -216,7 +211,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 						if (!credits.isEmpty()) {
 							this.entries.add(emptyEntry);
 
-							for (Object line : textRenderer.split(CREDITS_TEXT.getFormattedString(), wrapWidth)) {
+							for (Object line : textRenderer.split(CREDITS_TEXT.buildFormattedString(), wrapWidth)) {
 								this.entries.add(new DescriptionEntry((String) line));
 							}
 
@@ -228,7 +223,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 								Map.Entry<String, Set<String>> role = iterator.next();
 								String roleName = role.getKey();
 
-								for (Object line : textRenderer.split(this.creditsRoleText(roleName).getFormattedString(), wrapWidth - 16)) {
+								for (Object line : textRenderer.split(this.creditsRoleText(roleName).buildFormattedString(), wrapWidth - 16)) {
 									this.entries.add(new DescriptionEntry((String) line, indent));
 									indent = 16;
 								}
@@ -236,7 +231,7 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 								for (String contributor : role.getValue()) {
 									indent = 16;
 
-									for (Object line : textRenderer.split(new LiteralText(contributor).getFormattedString(), wrapWidth - 24)) {
+									for (Object line : textRenderer.split(TextComponents.literal(contributor).buildFormattedString(), wrapWidth - 24)) {
 										this.entries.add(new DescriptionEntry((String) line, indent));
 										indent = 24;
 									}
@@ -428,12 +423,12 @@ public class DescriptionListWidget extends EntryListWidget implements ResultList
 		minecraft.openScreen(this.parent);
 	}
 
-	private Text creditsRoleText(String roleName) {
+	private TextComponent creditsRoleText(String roleName) {
 		// Replace spaces and dashes in role names with underscores if they exist
 		// Notably Quilted Fabric API does this with FabricMC as "Upstream Owner"
 		String translationKey = roleName.replaceAll("[\\s-]", "_").toLowerCase();
 
-		return new TranslatableText("modmenu.credits.role." + translationKey).append(new LiteralText(":"));
+		return TextComponents.translatable("modmenu.credits.role." + translationKey).append(TextComponents.literal(":"));
 	}
 
 	protected class DescriptionEntry implements EntryListWidget.Entry {
