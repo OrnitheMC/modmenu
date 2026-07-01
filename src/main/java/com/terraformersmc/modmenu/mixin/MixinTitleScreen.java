@@ -3,7 +3,6 @@ package com.terraformersmc.modmenu.mixin;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
-import com.terraformersmc.modmenu.event.ModMenuEventHandler;
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.gui.widget.ModMenuButtonWidget;
 import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
@@ -11,7 +10,8 @@ import com.terraformersmc.modmenu.gui.widget.UpdateCheckerTexturedButtonWidget;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.locale.I18n;
+import net.ornithemc.osl.localization.api.L10n;
+
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -73,11 +73,11 @@ public abstract class MixinTitleScreen extends Screen {
 		if (ModMenuConfig.MODIFY_TITLE_SCREEN.getValue() && ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnTitleScreen()) {
 			String count = ModMenu.getDisplayedModCount();
 			String specificKey = "modmenu.mods." + count;
-			String replacementKey = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.mods.n";
-			if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
+			String replacementKey = L10n.has(specificKey) ? specificKey : "modmenu.mods.n";
+			if (ModMenuConfig.EASTER_EGGS.getValue() && L10n.has(specificKey + ".secret")) {
 				replacementKey = specificKey + ".secret";
 			}
-			return string + I18n.translate(replacementKey, count);
+			return string + L10n.get(replacementKey, count);
 		}
 		return string;
 	}

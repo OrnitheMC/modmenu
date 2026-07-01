@@ -12,8 +12,6 @@ import com.terraformersmc.modmenu.config.ModMenuConfig.GameMenuButtonStyle;
 import com.terraformersmc.modmenu.config.ModMenuConfig.TitleMenuButtonStyle;
 import com.terraformersmc.modmenu.config.ModMenuConfigManager;
 import com.terraformersmc.modmenu.event.ModMenuEventHandler;
-import com.terraformersmc.modmenu.util.GlUtil;
-import com.terraformersmc.modmenu.util.TranslationUtil;
 import com.terraformersmc.modmenu.util.UpdateCheckerUtil;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.fabric.FabricDummyParentMod;
@@ -23,8 +21,11 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.locale.I18n;
 import net.ornithemc.osl.entrypoints.api.client.ClientModInitializer;
+import net.ornithemc.osl.localization.api.L10n;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -174,23 +175,23 @@ public class ModMenu implements ClientModInitializer {
 		return NumberFormat.getInstance().format(cachedDisplayedModCount);
 	}
 
-	public static String createModsButtonText(boolean title) {
+	public static TextComponent createModsButtonText(boolean title) {
 		TitleMenuButtonStyle titleStyle = ModMenuConfig.MODS_BUTTON_STYLE.getValue();
 		GameMenuButtonStyle gameMenuStyle = ModMenuConfig.GAME_MENU_BUTTON_STYLE.getValue();
 		boolean isIcon = title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.ICON : gameMenuStyle == ModMenuConfig.GameMenuButtonStyle.ICON;
 		boolean isShort = /*title ? titleStyle == ModMenuConfig.TitleMenuButtonStyle.SHRINK :*/ false;
-		String modsText = I18n.translate("modmenu.title");
+		TextComponent modsText = TextComponents.translatable("modmenu.title");
 		if (ModMenuConfig.MOD_COUNT_LOCATION.getValue().isOnModsButton() && !isIcon) {
 			String count = ModMenu.getDisplayedModCount();
 			if (isShort) {
-				modsText += " " + I18n.translate("modmenu.loaded.short", count);
+				modsText.append(" ").append(TextComponents.translatable("modmenu.loaded.short", count));
 			} else {
 				String specificKey = "modmenu.loaded." + count;
-				String key = I18n.hasTranslation(specificKey) ? specificKey : "modmenu.loaded";
-				if (ModMenuConfig.EASTER_EGGS.getValue() && I18n.hasTranslation(specificKey + ".secret")) {
+				String key = L10n.has(specificKey) ? specificKey : "modmenu.loaded";
+				if (ModMenuConfig.EASTER_EGGS.getValue() && L10n.has(specificKey + ".secret")) {
 					key = specificKey + ".secret";
 				}
-				modsText += " " + I18n.translate(key, count);
+				modsText.append(" ").append(TextComponents.translatable(key, count));
 			}
 		}
 		return modsText;

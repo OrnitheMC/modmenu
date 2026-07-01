@@ -1,12 +1,17 @@
 package com.terraformersmc.modmenu.util;
 
 import com.terraformersmc.modmenu.ModMenu;
+
+import net.ornithemc.osl.localization.api.L10n;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
+
 import java.text.NumberFormat;
 import java.util.Arrays;
 import net.minecraft.locale.I18n;
 
 public class TranslationUtil {
-	public static String translateNumeric(String key, int[]... args) {
+	public static TextComponent translateNumeric(String key, int[]... args) {
 		Object[] realArgs = new Object[args.length];
 		for (int i = 0; i < args.length; i++) {
 			NumberFormat nf = NumberFormat.getInstance();
@@ -42,18 +47,18 @@ public class TranslationUtil {
 				}
 			}
 			lastKey = fullKey.toString();
-			if (I18n.hasTranslation(lastKey)) {
-				return I18n.translate(lastKey, realArgs);
+			if (L10n.has(lastKey)) {
+				return TextComponents.translatable(lastKey, realArgs);
 			}
 		}
-		return I18n.translate(lastKey, realArgs);
+		return TextComponents.translatable(lastKey, realArgs);
 	}
 
 	public static String translationKeyOf(String type, String id) {
 		return type + "." + ModMenu.MOD_ID + "." + id;
 	}
 
-	public static String translateOptionLabel(String key, String value) {
-		return I18n.translate("option.value_label", key, value);
+	public static String translateOptionLabel(TextComponent key, TextComponent value) {
+		return L10n.get("option.value_label", key.buildFormattedString(), value.buildFormattedString());
 	}
 }
