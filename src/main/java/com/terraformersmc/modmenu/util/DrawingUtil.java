@@ -8,7 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.vertex.Tesselator;
-import net.minecraft.util.math.MathHelper;
+import net.ornithemc.osl.text.api.TextComponent;
 
 import java.util.List;
 import java.util.Random;
@@ -52,13 +52,14 @@ public class DrawingUtil {
 		}
 	}
 
-	public static void drawBadge(int x, int y, int tagWidth, String text, int outlineColor, int fillColor, int textColor) {
+	public static void drawBadge(int x, int y, int tagWidth, TextComponent text, int outlineColor, int fillColor, int textColor) {
 		GuiElement.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
 		GuiElement.fill(x, y, x + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
 		GuiElement.fill(x + 1, y + 1 + CLIENT.textRenderer.fontHeight - 1, x + tagWidth, y + CLIENT.textRenderer.fontHeight + 1, outlineColor);
 		GuiElement.fill( x + tagWidth, y, x + tagWidth + 1, y + CLIENT.textRenderer.fontHeight, outlineColor);
 		GuiElement.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
-		CLIENT.textRenderer.draw(text, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(text)) / (float) 2), y + 1, textColor);
+		String s = text.buildFormattedString();
+		CLIENT.textRenderer.draw(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(s)) / (float) 2), y + 1, textColor);
 	}
 
 	public static void drawTexture(int x, int y, float u, float v, int width, int height, float scaleU, float scaleV) {
