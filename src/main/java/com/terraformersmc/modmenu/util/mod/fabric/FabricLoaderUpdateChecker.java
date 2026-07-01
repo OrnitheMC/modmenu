@@ -26,8 +26,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class FabricLoaderUpdateChecker implements UpdateChecker {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Fabric Update Checker");
@@ -145,8 +145,8 @@ public class FabricLoaderUpdateChecker implements UpdateChecker {
 		}
 
 		@Override
-		public @Nullable Text getUpdateMessage() {
-			return new TranslatableText("modmenu.install_version", this.version);
+		public @Nullable TextComponent getUpdateMessage() {
+			return TextComponents.translatable("modmenu.install_version", this.version);
 		}
 
 		@Override
