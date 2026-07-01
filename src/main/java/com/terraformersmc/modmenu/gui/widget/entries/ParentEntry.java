@@ -10,9 +10,9 @@ import net.minecraft.client.gui.GuiElement;
 import net.minecraft.client.render.TextRenderer;
 import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.resource.Identifier;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.util.Utils;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -41,8 +41,8 @@ public class ParentEntry extends ModListEntry {
 		int childrenBadgeHeight = font.fontHeight;
 		int childrenBadgeWidth = font.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
-		Text str = shownChildren == children.size() ? new LiteralText(String.valueOf(shownChildren)) : new LiteralText(shownChildren + "/" + children.size());
-		int childrenWidth = font.getWidth(str.getFormattedString()) - 1;
+		TextComponent str = shownChildren == children.size() ? TextComponents.literal(String.valueOf(shownChildren)) : TextComponents.literal(shownChildren + "/" + children.size());
+		int childrenWidth = font.getWidth(str.buildFormattedString()) - 1;
 		if (childrenBadgeWidth < childrenWidth + 4) {
 			childrenBadgeWidth = childrenWidth + 4;
 		}
@@ -56,7 +56,7 @@ public class ParentEntry extends ModListEntry {
 		GuiElement.fill( childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth, childrenBadgeY + childrenBadgeHeight - 1, childrenOutlineColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight - 1, childrenFillColor);
 		GuiElement.fill( childrenBadgeX + 1, childrenBadgeY + childrenBadgeHeight - 1, childrenBadgeX + childrenBadgeWidth - 1, childrenBadgeY + childrenBadgeHeight, childrenOutlineColor);
-		font.draw(str.getFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
+		font.draw(str.buildFormattedString(), (int) (childrenBadgeX + (float) childrenBadgeWidth / 2 - (float) childrenWidth / 2), childrenBadgeY + 1, 0xCACACA);
 		this.hoveringIcon = mouseX >= x - 1 && mouseX <= x - 1 + iconSize && mouseY >= y - 1 && mouseY <= y - 1 + iconSize;
 		if (isMouseOver(mouseX, mouseY)) {
 			GuiElement.fill(x, y, x + iconSize, y + iconSize, 0xA0909090);
