@@ -2,22 +2,24 @@ package com.terraformersmc.modmenu.config.option;
 
 import com.terraformersmc.modmenu.util.TranslationUtil;
 
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class BooleanConfigOption implements ConfigOption {
-	private final String key, translationKey;
+	private final String key;
 	private final boolean defaultValue;
-	private final Text enabledText;
-	private final Text disabledText;
+	private final TextComponent description;
+	private final TextComponent enabledText;
+	private final TextComponent disabledText;
 
 	public BooleanConfigOption(String key, boolean defaultValue, String enabledKey, String disabledKey) {
 		ConfigOptionStorage.setBoolean(key, defaultValue);
+		String translationKey = TranslationUtil.translationKeyOf("option", key);
 		this.key = key;
-		this.translationKey = TranslationUtil.translationKeyOf("option", key);
 		this.defaultValue = defaultValue;
-		this.enabledText = new TranslatableText(translationKey + "." + enabledKey);
-		this.disabledText = new TranslatableText(translationKey + "." + disabledKey);
+		this.description = TextComponents.translatable(translationKey);
+		this.enabledText = TextComponents.translatable(translationKey + "." + enabledKey);
+		this.disabledText = TextComponents.translatable(translationKey + "." + disabledKey);
 	}
 
 	public BooleanConfigOption(String key, boolean defaultValue) {
@@ -46,7 +48,7 @@ public class BooleanConfigOption implements ConfigOption {
 
 	@Override
 	public String getValueLabel() {
-		return TranslationUtil.translateOptionLabel(new TranslatableText(translationKey), getValue() ? enabledText : disabledText);
+		return TranslationUtil.translateOptionLabel(description, getValue() ? enabledText : disabledText);
 	}
 
 	@Override
