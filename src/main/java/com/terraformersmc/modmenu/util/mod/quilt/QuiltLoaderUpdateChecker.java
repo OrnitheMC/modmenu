@@ -3,7 +3,6 @@ package com.terraformersmc.modmenu.util.mod.quilt;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
-import net.minecraft.locale.I18n;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.RequestBuilder;
@@ -23,6 +22,9 @@ import com.terraformersmc.modmenu.api.UpdateChecker;
 import com.terraformersmc.modmenu.api.UpdateInfo;
 import com.terraformersmc.modmenu.util.HttpUtil;
 import com.terraformersmc.modmenu.util.JsonUtil;
+
+import net.ornithemc.osl.text.api.TextComponent;
+import net.ornithemc.osl.text.api.TextComponents;
 
 public class QuiltLoaderUpdateChecker implements UpdateChecker {
 	public static final Logger LOGGER = LogManager.getLogger("Mod Menu/Quilt Update Checker");
@@ -139,8 +141,8 @@ public class QuiltLoaderUpdateChecker implements UpdateChecker {
 		}
 
 		@Override
-		public @Nullable String getUpdateMessage() {
-			return I18n.translate("modmenu.install_version", this.version.raw());
+		public @Nullable TextComponent getUpdateMessage() {
+			return TextComponents.translatable("modmenu.install_version", this.version.raw());
 		}
 
 		@Override
