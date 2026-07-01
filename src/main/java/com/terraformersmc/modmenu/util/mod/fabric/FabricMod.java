@@ -159,6 +159,13 @@ public class FabricMod implements Mod {
 		} else if ("java".equals(getId())) {
 			iconSourceId = ModMenu.MOD_ID;
 			iconPath = "assets/" + ModMenu.MOD_ID + "/java_icon.png";
+		} else if (getId().startsWith("osl-")) {
+			if (!ModMenu.MODS.containsKey("osl")) {
+				iconSourceId = ModMenu.MOD_ID;
+				iconPath = "assets/" + ModMenu.MOD_ID + "/ornithe.png";
+			} else {
+				return ModMenu.MODS.get("osl").getIcon(iconHandler, i);
+			}
 		}
 		final String finalIconSourceId = iconSourceId;
 		ModContainer iconSource = FabricLoader.getInstance().getModContainer(iconSourceId).orElseThrow(() -> new RuntimeException("Cannot get ModContainer for Fabric mod with id " + finalIconSourceId));
