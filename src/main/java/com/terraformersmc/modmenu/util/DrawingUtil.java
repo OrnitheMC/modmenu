@@ -6,16 +6,22 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiElement;
+import net.minecraft.client.render.Window;
+import net.minecraft.client.render.pipeline.RenderTarget;
 import net.minecraft.client.render.platform.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 import net.ornithemc.osl.text.api.TextComponent;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
+
+import org.lwjgl.opengl.GL11;
 
 @Environment(EnvType.CLIENT)
 public class DrawingUtil {
 	private static final Minecraft CLIENT = Minecraft.getInstance();
+	private static final ScissorStack SCISSOR_STACK = new ScissorStack();
 
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
@@ -58,5 +64,81 @@ public class DrawingUtil {
 		GuiElement.fill( x + 1, y, x + tagWidth, y + CLIENT.textRenderer.fontHeight, fillColor);
 		String s = text.buildFormattedString();
 		CLIENT.textRenderer.draw(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(s)) / (float) 2), y + 1, textColor);
+	}
+
+	public static void pushScissorArea(int x0, int y0, int x1, int y1) {
+		applyScissorArea(SCISSOR_STACK.push(new ScissorArea(x0, y0, x1 - x0, y1 - y0)));
+	}
+
+	public static void popScissorArea() {
+		applyScissorArea(SCISSOR_STACK.pop());
+	}
+
+	private static void applyScissorArea(ScissorArea area) {
+		if (area == null) {
+			GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		} else {
+			RenderTarget target = CLIENT.getRenderTarget();
+			Window window = new Window(CLIENT, CLIENT.width, CLIENT.height);
+
+			int windowHeight = target.viewHeight;
+			double windowScale = window.getScale();
+
+			int x = (int)(area.x * windowScale);
+			int y = (int)(windowHeight - (area.y + area.height) * windowScale);
+			int width = (int)(area.width * windowScale);
+			int height = (int)(area.height * windowScale);
+
+			GL11.glEnable(GL11.GL_SCISSOR_TEST);
+			GL11.glScissor(x, y, Math.max(0, width), Math.max(0, height));
+		}
+	}
+
+	private static class ScissorStack {
+
+		private final Stack<ScissorArea> areas = new Stack<>();
+
+		public ScissorArea push(ScissorArea area) {
+			if (!areas.isEmpty()) {
+				area = areas.peek().intersection(area);
+			}
+
+			return areas.push(area);
+		}
+
+		public ScissorArea pop() {
+			if (areas.isEmpty()) {
+				throw new IllegalStateException("popping empty scissor stack");
+			} else{
+				areas.pop();
+				return areas.isEmpty() ? null : areas.peek();
+			}
+		}
+	}
+
+	private static class ScissorArea {
+
+		private static final ScissorArea EMPTY = new ScissorArea(0, 0, 0, 0);
+
+		private final int x;
+		private final int y;
+		private final int width;
+		private final int height;
+
+		public ScissorArea(int x, int y, int width, int height) {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+
+		public ScissorArea intersection(ScissorArea o) {
+			int x0 = Math.max(x, o.x);
+			int y0 = Math.max(y, o.y);
+			int x1 = Math.min(x + width, o.x + o.width);
+			int y1 = Math.min(y + height, o.y + o.height);
+
+			return (x0 == x1 || y0 == y1) ? EMPTY : new ScissorArea(x0, y0, x1 - x0, y1 - y0);
+		}
 	}
 }
