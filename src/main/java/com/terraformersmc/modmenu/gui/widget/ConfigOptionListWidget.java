@@ -7,7 +7,6 @@ import com.terraformersmc.modmenu.config.option.ConfigOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.EntryListWidget;
-import net.minecraft.client.gui.widget.OptionButtonWidget;
 
 public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidget.Entry> {
 	private int nextId;
@@ -27,9 +26,10 @@ public class ConfigOptionListWidget extends EntryListWidget<ConfigOptionListWidg
 		if (option == null) {
 			return null;
 		}
-		return new OptionButtonWidget(id, x, y, width, 20, null, option.getValueLabel()) {
+		return new ScrollingButtonWidget(id, x, y, width, 20, option.getValueLabel()) {
+
 			@Override
-			public void click(double d, double e) {
+			public void click(double mouseX, double mouseY) {
 				option.click();
 				this.message = option.getValueLabel();
 			}
