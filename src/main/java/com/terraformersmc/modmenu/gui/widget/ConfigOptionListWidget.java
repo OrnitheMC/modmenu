@@ -6,11 +6,9 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 import com.terraformersmc.modmenu.config.option.ConfigOption;
 import com.terraformersmc.modmenu.gui.widget.entries.EntryListWidget;
-import com.terraformersmc.modmenu.mixin.AccessorButtonWidget;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.OptionButtonWidget;
 import net.minecraft.client.render.vertex.Tesselator;
 
 public class ConfigOptionListWidget extends EntryListWidget {
@@ -35,9 +33,7 @@ public class ConfigOptionListWidget extends EntryListWidget {
 		if (option == null) {
 			return null;
 		}
-		ButtonWidget button = new OptionButtonWidget(id, x, y, null, option.getValueLabel());
-		((AccessorButtonWidget) button).setWidth(width);
-		return button;
+		return new ScrollingButtonWidget(id, x, y, width, 20, option.getValueLabel());
 	}
 
 	@Override
