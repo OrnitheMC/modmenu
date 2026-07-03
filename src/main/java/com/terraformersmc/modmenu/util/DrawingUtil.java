@@ -23,7 +23,7 @@ public class DrawingUtil extends GuiElement {
 	private static final DrawingUtil GUI = new DrawingUtil();
 	private static final ScissorStack SCISSOR_STACK = new ScissorStack();
 
-	public static final int fontHeight = 8;
+	public static final int fontHeight = 9;
 
 	public static void drawRandomVersionBackground(Mod mod, int x, int y, int width, int height) {
 		int seed = mod.getName().hashCode() + mod.getVersion().hashCode();
@@ -50,16 +50,16 @@ public class DrawingUtil extends GuiElement {
 				renderable += "...";
 			}
 			int x1 = x;
-			CLIENT.textRenderer.draw(renderable, x1, y + i * DrawingUtil.fontHeight, color);
+			CLIENT.textRenderer.draw(renderable, x1, y + i * fontHeight, color);
 		}
 	}
 
 	public static void drawBadge(int x, int y, int tagWidth, TextComponent text, int outlineColor, int fillColor, int textColor) {
 		GUI.fill(x + 1, y - 1, x + tagWidth, y, outlineColor);
-		GUI.fill(x, y, x + 1, y + DrawingUtil.fontHeight, outlineColor);
-		GUI.fill(x + 1, y + 1 + DrawingUtil.fontHeight - 1, x + tagWidth, y + DrawingUtil.fontHeight + 1, outlineColor);
-		GUI.fill( x + tagWidth, y, x + tagWidth + 1, y + DrawingUtil.fontHeight, outlineColor);
-		GUI.fill( x + 1, y, x + tagWidth, y + DrawingUtil.fontHeight, fillColor);
+		GUI.fill(x, y, x + 1, y + fontHeight, outlineColor);
+		GUI.fill(x + 1, y + 1 + fontHeight - 1, x + tagWidth, y + fontHeight + 1, outlineColor);
+		GUI.fill( x + tagWidth, y, x + tagWidth + 1, y + fontHeight, outlineColor);
+		GUI.fill( x + 1, y, x + tagWidth, y + fontHeight, fillColor);
 		String s = text.buildFormattedString();
 		CLIENT.textRenderer.draw(s, (int) (x + 1 + (tagWidth - CLIENT.textRenderer.getWidth(s)) / (float) 2), y + 1, textColor);
 	}
