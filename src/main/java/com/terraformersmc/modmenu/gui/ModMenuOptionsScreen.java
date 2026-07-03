@@ -33,6 +33,8 @@ public class ModMenuOptionsScreen extends Screen {
 				ModMenuOptionsScreen.this.minecraft.openScreen(ModMenuOptionsScreen.this.previous);
 			}
 		});
+
+		this.setFocused(this.list);
 	}
 
 	@Override
