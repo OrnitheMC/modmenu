@@ -36,8 +36,8 @@ public class ParentEntry extends ModListEntry {
 	public void render(int index, int x, int y, int rowWidth, int rowHeight, Tesselator tesselator, int mouseX, int mouseY, boolean hovered) {
 		super.render(index, x, y, rowWidth, rowHeight, tesselator, mouseX, mouseY, hovered);
 		TextRenderer font = client.textRenderer;
-		int childrenBadgeHeight = font.fontHeight;
-		int childrenBadgeWidth = font.fontHeight;
+		int childrenBadgeHeight = DrawingUtil.fontHeight;
+		int childrenBadgeWidth = DrawingUtil.fontHeight;
 		int shownChildren = ModSearch.search(list.getParent(), list.getParent().getSearchInput(), getChildren()).size();
 		TextComponent str = shownChildren == children.size() ? TextComponents.literal(String.valueOf(shownChildren)) : TextComponents.literal(shownChildren + "/" + children.size());
 		int childrenWidth = font.getWidth(str.buildFormattedString()) - 1;

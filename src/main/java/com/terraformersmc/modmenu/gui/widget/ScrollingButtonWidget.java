@@ -43,7 +43,7 @@ public class ScrollingButtonWidget extends ButtonWidget {
 				int maxScroll = messageWidth - availableWidth;
 				int scroll = (int) (maxScroll * progress);
 
-				DrawingUtil.pushScissorArea(x, y, x + availableWidth, y + this.textRenderer.fontHeight);
+				DrawingUtil.pushScissorArea(x, y, x + availableWidth, y + DrawingUtil.fontHeight);
 				this.textRenderer.drawWithShadow(this.message, x - scroll, y, 0xFFFFFFFF);
 				DrawingUtil.popScissorArea();
 			} else {

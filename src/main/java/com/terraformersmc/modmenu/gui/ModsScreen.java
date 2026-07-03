@@ -143,7 +143,7 @@ public class ModsScreen extends Screen implements Controller {
 		this.modList.setX(0);
 		modList.reloadFilters();
 
-		this.descriptionListWidget = new DescriptionListWidget(this.minecraft, paneWidth, this.height, RIGHT_PANE_Y + 60, this.height - 36, textRenderer.fontHeight + 1, this);
+		this.descriptionListWidget = new DescriptionListWidget(this.minecraft, paneWidth, this.height, RIGHT_PANE_Y + 60, this.height - 36, DrawingUtil.fontHeight + 1, this);
 		this.descriptionListWidget.setX(rightPaneX);
 		ButtonWidget configureButton = new TexturedButtonWidget(DESCRIPTION_LIST, width - 24, RIGHT_PANE_Y, 20, 20, 0, 0, 20, CONFIGURE_BUTTON_LOCATION, 32, 64) {
 			private TextComponent tooltip;
@@ -358,7 +358,7 @@ public class ModsScreen extends Screen implements Controller {
 			this.selected.bindIconTexture();
 			DrawingUtil.drawTexture(x, RIGHT_PANE_Y, 0.0F, 0.0F, 32, 32, 32, 32);
 			GL11.glDisable(GL11.GL_BLEND);
-			int lineSpacing = textRenderer.fontHeight + 1;
+			int lineSpacing = DrawingUtil.fontHeight + 1;
 			int imageOffset = 36;
 			TextComponent name = TextComponents.literal(mod.getTranslatedName());
 			TextComponent trimmedName = name;
@@ -368,7 +368,7 @@ public class ModsScreen extends Screen implements Controller {
 				trimmedName = TextComponents.literal(textRenderer.trim(name.buildFormattedString(), maxNameWidth - textRenderer.getWidth(ellipsis.buildFormattedString()))).append(ellipsis);
 			}
 			this.textRenderer.draw(trimmedName.buildFormattedString(), x + imageOffset, RIGHT_PANE_Y + 1, 0xFFFFFF);
-			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + textRenderer.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName.buildFormattedString())) {
+			if (mouseX > x + imageOffset && mouseY > RIGHT_PANE_Y + 1 && mouseY < RIGHT_PANE_Y + 1 + DrawingUtil.fontHeight && mouseX < x + imageOffset + textRenderer.getWidth(trimmedName.buildFormattedString())) {
 				setTooltip(Arrays.asList(L10n.get("modmenu.modIdToolTip", mod.getId())));
 			}
 			if (init || modBadgeRenderer == null || modBadgeRenderer.getMod() != mod) {
