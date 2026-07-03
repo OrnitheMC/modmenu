@@ -2,6 +2,7 @@ package com.terraformersmc.modmenu.gui.widget.entries;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
 import com.terraformersmc.modmenu.util.GlUtil;
 
 import net.minecraft.client.Minecraft;
@@ -243,6 +244,15 @@ public abstract class EntryListWidget extends ListWidget {
 	@Override
 	protected void renderEntry(int index, int x, int y, int entryHeight, Tesselator tesselator) {
 		this.getEntry(index).render(index, x, y, this.getRowWidth(), entryHeight, tesselator, mouseX, mouseY, this.getEntryAt(mouseX, mouseY) == index);
+	}
+
+	@Override
+	public int getEntryAt(int x, int y) {
+		int entryMinX = this.minX + this.width / 2 - this.getRowWidth() / 2;
+		int entryMaxX = this.minX + this.width / 2 + this.getRowWidth() / 2;
+		int entryMinY = y - this.minY - this.headerHeight + (int) this.scrollAmount - 4;
+		int entryMaxY = entryMinY / this.entryHeight;
+		return x < this.getScrollbarPosition() && x >= entryMinX && x <= entryMaxX && entryMaxY >= 0 && entryMinY >= 0 && entryMaxY < this.size() ? entryMaxY : -1;
 	}
 
 	public boolean mouseClicked(int mouseX, int mouseY, int button) {
